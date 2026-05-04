@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { Slide, Theme, ElementKey, SlideStyle, TextSize, TextAlign, TextColor, TextWeight, BulletVariant } from "@/lib/prototype/types";
+import type { Slide, Theme, ElementKey, SlideStyle, TextSize, TextAlign, TextColor, TextWeight, BulletVariant, OverlayTint, OverlayStrength, QuadrantPalette } from "@/lib/prototype/types";
 
 interface SlideViewProps {
   slide: Slide;
