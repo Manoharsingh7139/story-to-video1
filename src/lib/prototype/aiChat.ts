@@ -1,4 +1,5 @@
 import type { Slide } from "./types";
+import { pickRandomImage } from "./stockImages";
 
 export interface ChatResult {
   after: Slide;
