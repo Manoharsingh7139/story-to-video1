@@ -6,7 +6,11 @@ export type LayoutId =
   | "two-column"
   | "bullets"
   | "stat"
-  | "divider";
+  | "divider"
+  | "image-left"
+  | "image-right"
+  | "image-full"
+  | "image-grid";
 
 export interface SlideContent {
   title?: string;
@@ -19,6 +23,14 @@ export interface SlideContent {
   leftBody?: string;
   rightTitle?: string;
   rightBody?: string;
+  imageUrl?: string;
+  imageUrl2?: string;
+  imageUrl3?: string;
+  imageUrl4?: string;
+  caption?: string;
+  caption2?: string;
+  caption3?: string;
+  caption4?: string;
 }
 
 export interface Slide {
@@ -48,3 +60,9 @@ export interface Theme {
   fontBody: string;
   radius: string;
 }
+
+// Element selection keys: "title" | "subtitle" | "body" | "stat" | "statLabel"
+//   | "leftTitle" | "leftBody" | "rightTitle" | "rightBody"
+//   | "image" | "image:1" | "image:2" | "image:3" | "image:4"
+//   | "caption:1" ... | "bullet:0" | "bullet:1" ...
+export type ElementKey = string;
