@@ -194,6 +194,7 @@ export const usePrototypeStore = create<PrototypeState>((set, get) => ({
       };
     }),
 
+  pushChat: (slideId, msg) =>
     set((state) => ({
       chatBySlide: {
         ...state.chatBySlide,
