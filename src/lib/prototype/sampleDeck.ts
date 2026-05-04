@@ -1,4 +1,5 @@
 import type { Slide } from "./types";
+import { STOCK_IMAGES } from "./stockImages";
 
 export const SAMPLE_TEXT = `The shift to remote work has fundamentally changed how teams collaborate. Companies that embrace asynchronous communication report 30% higher productivity and significantly better employee retention. But getting there requires intentional changes to processes, tools, and culture.
 
@@ -92,6 +93,30 @@ export const SAMPLE_DECK: Slide[] = [
   },
   {
     id: "s8",
+    layout: "image-right",
+    content: {
+      title: "Trust is the multiplier",
+      body: "When people are trusted to manage their time, they show up with their best work. Surveillance kills the very thing it's trying to measure.",
+      imageUrl: STOCK_IMAGES[0].url,
+    },
+    script:
+      "Trust is the real multiplier. When people own their time, they bring their best work — and they stay.",
+  },
+  {
+    id: "s9",
+    layout: "image-grid",
+    content: {
+      title: "What it looks like in practice",
+      imageUrl: STOCK_IMAGES[5].url, caption: "Written decisions",
+      imageUrl2: STOCK_IMAGES[7].url, caption2: "Outcome reviews",
+      imageUrl3: STOCK_IMAGES[11].url, caption3: "Deep work blocks",
+      imageUrl4: STOCK_IMAGES[2].url, caption4: "Async standups",
+    },
+    script:
+      "Here's what it looks like in practice — written decisions, outcome reviews, deep work blocks, and async standups.",
+  },
+  {
+    id: "s10",
     layout: "title",
     content: {
       title: "The teams who get this right win.",
