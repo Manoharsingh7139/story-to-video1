@@ -6,9 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { VOICES } from "@/lib/prototype/sampleDeck";
-import { Play, Pause, RefreshCw, Mic, Clock, ImageIcon, Type, Trash2, Sparkles } from "lucide-react";
+import { Play, Pause, RefreshCw, Mic, Clock, ImageIcon, Type, Trash2, Sparkles, Plus, GripVertical, List } from "lucide-react";
 import { toast } from "sonner";
 import { ImageReplaceDialog } from "./ImageReplaceDialog";
+import { TextStyleControls, BulletSmartArtPicker, ImageStyleControls, StatStyleControls } from "./StyleControls";
 
 const ELEMENT_LABELS: Record<string, string> = {
   title: "Title",
