@@ -10,7 +10,19 @@ export type LayoutId =
   | "image-left"
   | "image-right"
   | "image-full"
-  | "image-grid";
+  | "image-grid"
+  | "image-bg-overlay"
+  | "image-text-overlay"
+  | "quadrant"
+  | "comparison"
+  | "image-bullets"
+  | "stat-image"
+  | "section-image-bg";
+
+export type OverlayTint = "dark" | "light" | "accent";
+export type OverlayStrength = "soft" | "medium" | "strong";
+export type SideChoice = "left" | "right";
+export type QuadrantPalette = "swot" | "neutral" | "accent";
 
 export type TextSize = "s" | "m" | "l" | "xl";
 export type TextWeight = "regular" | "bold";
