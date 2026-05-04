@@ -168,7 +168,32 @@ export const usePrototypeStore = create<PrototypeState>((set, get) => ({
       return { slides, selectedSlideId: nextSelected, chatBySlide: restChat };
     }),
 
-  pushChat: (slideId, msg) =>
+  regenerateSlide: (id, opts = {}) =>
+    set((state) => {
+      const before = state.slides.find((s) => s.id === id);
+      if (!before) return state;
+      const after = regenerateVariant(before, opts);
+      const label = opts.prompt
+        ? `Regenerated this slide using your prompt.`
+        : opts.keepLayout
+          ? `Regenerated this slide (kept the ${before.layout} layout).`
+          : `Regenerated this slide with a fresh ${after.layout} layout.`;
+      const msg: ChatMessage = {
+        id: `regen-${Date.now()}`,
+        role: "assistant",
+        text: label,
+        edit: { before, after },
+      };
+      return {
+        slides: state.slides.map((s) => (s.id === id ? after : s)),
+        selectedElementKey: null,
+        chatBySlide: {
+          ...state.chatBySlide,
+          [id]: [...(state.chatBySlide[id] ?? []), msg],
+        },
+      };
+    }),
+
     set((state) => ({
       chatBySlide: {
         ...state.chatBySlide,
