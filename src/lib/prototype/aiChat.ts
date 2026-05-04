@@ -1,4 +1,5 @@
 import type { Slide } from "./types";
+import { pickRandomImage } from "./stockImages";
 
 export interface ChatResult {
   after: Slide;
@@ -47,6 +48,47 @@ export function processChatMessage(message: string, slide: Slide): ChatResult | 
         },
       },
       label: "Switched the layout to two-column.",
+    };
+  }
+
+  if (/image.*left|left.*image/.test(m)) {
+    return {
+      after: { ...slide, layout: "image-left", content: { ...slide.content, imageUrl: slide.content.imageUrl ?? pickRandomImage() } },
+      label: "Switched to image-on-the-left layout.",
+    };
+  }
+  if (/image.*right|right.*image/.test(m)) {
+    return {
+      after: { ...slide, layout: "image-right", content: { ...slide.content, imageUrl: slide.content.imageUrl ?? pickRandomImage() } },
+      label: "Switched to image-on-the-right layout.",
+    };
+  }
+  if (/full.*image|image.*full|full[- ]bleed/.test(m)) {
+    return {
+      after: { ...slide, layout: "image-full", content: { ...slide.content, imageUrl: slide.content.imageUrl ?? pickRandomImage() } },
+      label: "Switched to a full-bleed image layout.",
+    };
+  }
+  if (/image.*grid|grid.*image|photo grid/.test(m)) {
+    return {
+      after: {
+        ...slide,
+        layout: "image-grid",
+        content: {
+          ...slide.content,
+          imageUrl: slide.content.imageUrl ?? pickRandomImage(),
+          imageUrl2: slide.content.imageUrl2 ?? pickRandomImage(),
+          imageUrl3: slide.content.imageUrl3 ?? pickRandomImage(),
+          imageUrl4: slide.content.imageUrl4 ?? pickRandomImage(),
+        },
+      },
+      label: "Switched to a 4-image grid layout.",
+    };
+  }
+  if (/replace.*image|new image|swap.*image|different.*image/.test(m)) {
+    return {
+      after: { ...slide, content: { ...slide.content, imageUrl: pickRandomImage(slide.content.imageUrl) } },
+      label: "Replaced the image.",
     };
   }
 

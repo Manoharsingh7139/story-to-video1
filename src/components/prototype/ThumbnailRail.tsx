@@ -1,8 +1,9 @@
 import { usePrototypeStore, estimateDuration } from "@/lib/prototype/store";
 import { THEMES } from "@/lib/prototype/themes";
 import { SlideView } from "./SlideView";
-import { Plus, Copy, Trash2 } from "lucide-react";
+import { Plus, Copy, Trash2, RefreshCw } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -19,6 +20,7 @@ export const ThumbnailRail = () => {
   const duplicateSlide = usePrototypeStore((s) => s.duplicateSlide);
   const deleteSlide = usePrototypeStore((s) => s.deleteSlide);
   const reorderSlides = usePrototypeStore((s) => s.reorderSlides);
+  const regenerateSlide = usePrototypeStore((s) => s.regenerateSlide);
   const theme = THEMES[themeId];
 
   const [dragId, setDragId] = useState<string | null>(null);
@@ -60,6 +62,12 @@ export const ThumbnailRail = () => {
               <ContextMenuContent>
                 <ContextMenuItem onClick={() => duplicateSlide(slide.id)}>
                   <Copy className="h-3.5 w-3.5 mr-2" /> Duplicate
+                </ContextMenuItem>
+                <ContextMenuItem onClick={() => { regenerateSlide(slide.id, { keepLayout: true }); toast.success("Slide regenerated"); }}>
+                  <RefreshCw className="h-3.5 w-3.5 mr-2" /> Regenerate (keep layout)
+                </ContextMenuItem>
+                <ContextMenuItem onClick={() => { regenerateSlide(slide.id); toast.success("Slide regenerated"); }}>
+                  <RefreshCw className="h-3.5 w-3.5 mr-2" /> Regenerate (new layout)
                 </ContextMenuItem>
                 <ContextMenuItem
                   onClick={() => deleteSlide(slide.id)}

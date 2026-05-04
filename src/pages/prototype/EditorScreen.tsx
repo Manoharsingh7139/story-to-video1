@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { usePrototypeStore } from "@/lib/prototype/store";
 import { THEMES, THEME_LIST } from "@/lib/prototype/themes";
 import { SlideView } from "@/components/prototype/SlideView";
@@ -7,27 +7,28 @@ import { ThumbnailRail } from "@/components/prototype/ThumbnailRail";
 import { VoiceoverPanel } from "@/components/prototype/VoiceoverPanel";
 import { ChatPanel } from "@/components/prototype/ChatPanel";
 import { ExportDialog } from "@/components/prototype/ExportDialog";
+import { RegenerateButton } from "@/components/prototype/RegenerateButton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { Sparkles, Download, ArrowLeft, Layout as LayoutIcon, Palette } from "lucide-react";
 import type { LayoutId } from "@/lib/prototype/types";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
-const LAYOUTS: { id: LayoutId; name: string }[] = [
+const TEXT_LAYOUTS: { id: LayoutId; name: string }[] = [
   { id: "title", name: "Title" },
   { id: "title-body", name: "Title + body" },
   { id: "two-column", name: "Two column" },
   { id: "bullets", name: "Bullets" },
   { id: "stat", name: "Big stat" },
   { id: "divider", name: "Section divider" },
+];
+const IMAGE_LAYOUTS: { id: LayoutId; name: string }[] = [
+  { id: "image-left", name: "Image left" },
+  { id: "image-right", name: "Image right" },
+  { id: "image-full", name: "Full-bleed image" },
+  { id: "image-grid", name: "Image grid (2×2)" },
 ];
 
 export default function EditorScreen() {
@@ -41,8 +42,11 @@ export default function EditorScreen() {
   const setSlideBullet = usePrototypeStore((s) => s.setSlideBullet);
   const projectTitle = usePrototypeStore((s) => s.projectTitle);
   const setProjectTitle = usePrototypeStore((s) => s.setProjectTitle);
+  const selectedElementKey = usePrototypeStore((s) => s.selectedElementKey);
+  const selectElement = usePrototypeStore((s) => s.selectElement);
 
   const [exportOpen, setExportOpen] = useState(false);
+  const [chatCollapsed, setChatCollapsed] = useState(() => window.innerHeight < 800);
 
   useEffect(() => {
     if (slides.length === 0) navigate("/");
@@ -55,7 +59,6 @@ export default function EditorScreen() {
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
-      {/* Top bar */}
       <header className="h-12 border-b border-border flex items-center justify-between px-3 flex-shrink-0">
         <div className="flex items-center gap-2 min-w-0">
           <Link to="/" className="p-1.5 rounded hover:bg-muted">
@@ -76,29 +79,32 @@ export default function EditorScreen() {
         </Button>
       </header>
 
-      {/* Main 3-column layout */}
       <div className="flex-1 flex min-h-0">
-        {/* Left: thumbnail rail */}
         <div className="w-56 flex-shrink-0">
           <ThumbnailRail />
         </div>
 
-        {/* Center column: canvas + chat */}
         <div className="flex-1 flex flex-col min-w-0">
-          {/* Canvas toolbar */}
           <div className="h-11 border-b border-border flex items-center gap-2 px-4 flex-shrink-0">
             <div className="flex items-center gap-1.5">
               <LayoutIcon className="h-3.5 w-3.5 text-muted-foreground" />
               <Select value={slide.layout} onValueChange={(v) => setSlideLayout(slide.id, v as LayoutId)}>
-                <SelectTrigger className="h-8 w-[160px] text-xs">
+                <SelectTrigger className="h-8 w-[170px] text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {LAYOUTS.map((l) => (
-                    <SelectItem key={l.id} value={l.id} className="text-xs">
-                      {l.name}
-                    </SelectItem>
-                  ))}
+                  <SelectGroup>
+                    <SelectLabel className="text-[10px] uppercase tracking-wider">Text</SelectLabel>
+                    {TEXT_LAYOUTS.map((l) => (
+                      <SelectItem key={l.id} value={l.id} className="text-xs">{l.name}</SelectItem>
+                    ))}
+                  </SelectGroup>
+                  <SelectGroup>
+                    <SelectLabel className="text-[10px] uppercase tracking-wider">With images</SelectLabel>
+                    {IMAGE_LAYOUTS.map((l) => (
+                      <SelectItem key={l.id} value={l.id} className="text-xs">{l.name}</SelectItem>
+                    ))}
+                  </SelectGroup>
                 </SelectContent>
               </Select>
             </div>
@@ -111,19 +117,23 @@ export default function EditorScreen() {
                 </SelectTrigger>
                 <SelectContent>
                   {THEME_LIST.map((t) => (
-                    <SelectItem key={t.id} value={t.id} className="text-xs">
-                      {t.name}
-                    </SelectItem>
+                    <SelectItem key={t.id} value={t.id} className="text-xs">{t.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
+            <div className="w-px h-5 bg-border mx-1" />
+            <RegenerateButton slideId={slide.id} />
             <div className="ml-auto text-xs text-muted-foreground">
               Slide {slides.findIndex((s) => s.id === slide.id) + 1} of {slides.length}
+              {selectedElementKey && (
+                <span className="ml-3 px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 text-[10px] font-medium">
+                  {selectedElementKey} selected
+                </span>
+              )}
             </div>
           </div>
 
-          {/* Canvas */}
           <div className="flex-1 bg-muted/40 flex items-center justify-center p-8 min-h-0">
             <div
               className="w-full h-full max-w-[1100px] aspect-video rounded-md shadow-xl overflow-hidden border border-border"
@@ -133,19 +143,19 @@ export default function EditorScreen() {
                 slide={slide}
                 theme={theme}
                 editable
+                selectedKey={selectedElementKey}
+                onSelectElement={selectElement}
                 onEdit={(k, v) => setSlideContent(slide.id, k, v)}
                 onEditBullet={(i, v) => setSlideBullet(slide.id, i, v)}
               />
             </div>
           </div>
 
-          {/* Bottom chat */}
-          <div className="h-72 flex-shrink-0">
-            <ChatPanel />
+          <div className={`${chatCollapsed ? "h-10" : "h-44"} flex-shrink-0 transition-[height]`}>
+            <ChatPanel collapsed={chatCollapsed} onToggleCollapsed={() => setChatCollapsed((c) => !c)} />
           </div>
         </div>
 
-        {/* Right: voiceover */}
         <div className="w-80 flex-shrink-0">
           <VoiceoverPanel />
         </div>

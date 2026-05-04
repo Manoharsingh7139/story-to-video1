@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { SAMPLE_DECK, VOICES } from "./sampleDeck";
-import type { ChatMessage, Slide, ThemeId, LayoutId } from "./types";
+import { regenerateVariant } from "./slideVariants";
+import type { ChatMessage, ElementKey, Slide, ThemeId, LayoutId } from "./types";
 
 interface PrototypeState {
   sourceText: string;
@@ -9,6 +10,7 @@ interface PrototypeState {
   voice: string;
   slides: Slide[];
   selectedSlideId: string;
+  selectedElementKey: ElementKey | null;
   chatBySlide: Record<string, ChatMessage[]>;
 
   setSourceText: (t: string) => void;
@@ -18,6 +20,7 @@ interface PrototypeState {
 
   loadSampleDeck: () => void;
   selectSlide: (id: string) => void;
+  selectElement: (key: ElementKey | null) => void;
   updateSlide: (id: string, updater: (s: Slide) => Slide) => void;
   setSlideLayout: (id: string, layout: LayoutId) => void;
   setSlideScript: (id: string, script: string) => void;
@@ -27,6 +30,7 @@ interface PrototypeState {
   addSlide: () => void;
   duplicateSlide: (id: string) => void;
   deleteSlide: (id: string) => void;
+  regenerateSlide: (id: string, opts?: { keepLayout?: boolean; prompt?: string }) => void;
 
   pushChat: (slideId: string, msg: ChatMessage) => void;
   applyEditFromChat: (slideId: string, after: Slide, label: string) => void;
@@ -48,6 +52,7 @@ export const usePrototypeStore = create<PrototypeState>((set, get) => ({
   voice: VOICES[0],
   slides: [],
   selectedSlideId: "",
+  selectedElementKey: null,
   chatBySlide: {},
 
   setSourceText: (t) => set({ sourceText: t }),
@@ -56,17 +61,19 @@ export const usePrototypeStore = create<PrototypeState>((set, get) => ({
   setVoice: (v) => set({ voice: v }),
 
   loadSampleDeck: () => {
-    const slides = SAMPLE_DECK.map((s) => ({ ...s, content: { ...s.content }, bullets: undefined }));
+    const slides = SAMPLE_DECK.map((s) => ({ ...s, content: { ...s.content } }));
     const chat: Record<string, ChatMessage[]> = {};
     slides.forEach((s) => (chat[s.id] = initialChatFor(s.id)));
     set({
-      slides: SAMPLE_DECK.map((s) => ({ ...s, content: { ...s.content } })),
+      slides,
       selectedSlideId: SAMPLE_DECK[0].id,
+      selectedElementKey: null,
       chatBySlide: chat,
     });
   },
 
-  selectSlide: (id) => set({ selectedSlideId: id }),
+  selectSlide: (id) => set({ selectedSlideId: id, selectedElementKey: null }),
+  selectElement: (key) => set({ selectedElementKey: key }),
 
   updateSlide: (id, updater) =>
     set((state) => ({
@@ -159,6 +166,32 @@ export const usePrototypeStore = create<PrototypeState>((set, get) => ({
           : state.selectedSlideId;
       const { [id]: _removed, ...restChat } = state.chatBySlide;
       return { slides, selectedSlideId: nextSelected, chatBySlide: restChat };
+    }),
+
+  regenerateSlide: (id, opts = {}) =>
+    set((state) => {
+      const before = state.slides.find((s) => s.id === id);
+      if (!before) return state;
+      const after = regenerateVariant(before, opts);
+      const label = opts.prompt
+        ? `Regenerated this slide using your prompt.`
+        : opts.keepLayout
+          ? `Regenerated this slide (kept the ${before.layout} layout).`
+          : `Regenerated this slide with a fresh ${after.layout} layout.`;
+      const msg: ChatMessage = {
+        id: `regen-${Date.now()}`,
+        role: "assistant",
+        text: label,
+        edit: { before, after },
+      };
+      return {
+        slides: state.slides.map((s) => (s.id === id ? after : s)),
+        selectedElementKey: null,
+        chatBySlide: {
+          ...state.chatBySlide,
+          [id]: [...(state.chatBySlide[id] ?? []), msg],
+        },
+      };
     }),
 
   pushChat: (slideId, msg) =>
