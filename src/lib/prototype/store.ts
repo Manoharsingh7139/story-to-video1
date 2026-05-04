@@ -110,6 +110,33 @@ export const usePrototypeStore = create<PrototypeState>((set, get) => ({
       }),
     })),
 
+  setSlideStyle: (id, patch) =>
+    set((state) => ({
+      slides: state.slides.map((s) =>
+        s.id === id
+          ? { ...s, content: { ...s.content, style: { ...(s.content.style ?? {}), ...patch } } }
+          : s,
+      ),
+    })),
+
+  addBullet: (id) =>
+    set((state) => ({
+      slides: state.slides.map((s) =>
+        s.id === id
+          ? { ...s, content: { ...s.content, bullets: [...(s.content.bullets ?? []), "New point"] } }
+          : s,
+      ),
+    })),
+
+  removeBullet: (id, index) =>
+    set((state) => ({
+      slides: state.slides.map((s) => {
+        if (s.id !== id) return s;
+        const bullets = (s.content.bullets ?? []).filter((_, i) => i !== index);
+        return { ...s, content: { ...s.content, bullets } };
+      }),
+    })),
+
   reorderSlides: (fromId, toId) =>
     set((state) => {
       if (fromId === toId) return state;
