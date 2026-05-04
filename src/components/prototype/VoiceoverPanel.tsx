@@ -29,6 +29,10 @@ const ELEMENT_LABELS: Record<string, string> = {
   imageUrl2: "Image 2",
   imageUrl3: "Image 3",
   imageUrl4: "Image 4",
+  q1Title: "Strengths title", q1Body: "Strengths body",
+  q2Title: "Weaknesses title", q2Body: "Weaknesses body",
+  q3Title: "Opportunities title", q3Body: "Opportunities body",
+  q4Title: "Threats title", q4Body: "Threats body",
 };
 
 export const VoiceoverPanel = () => {
