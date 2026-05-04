@@ -9,7 +9,7 @@ import { VOICES } from "@/lib/prototype/sampleDeck";
 import { Play, Pause, RefreshCw, Mic, Clock, ImageIcon, Type, Trash2, Sparkles, Plus, GripVertical, List } from "lucide-react";
 import { toast } from "sonner";
 import { ImageReplaceDialog } from "./ImageReplaceDialog";
-import { TextStyleControls, BulletSmartArtPicker, ImageStyleControls, StatStyleControls } from "./StyleControls";
+import { TextStyleControls, BulletSmartArtPicker, ImageStyleControls, StatStyleControls, QuadrantStyleControls } from "./StyleControls";
 
 const ELEMENT_LABELS: Record<string, string> = {
   title: "Title",
@@ -29,6 +29,10 @@ const ELEMENT_LABELS: Record<string, string> = {
   imageUrl2: "Image 2",
   imageUrl3: "Image 3",
   imageUrl4: "Image 4",
+  q1Title: "Strengths title", q1Body: "Strengths body",
+  q2Title: "Weaknesses title", q2Body: "Weaknesses body",
+  q3Title: "Opportunities title", q3Body: "Opportunities body",
+  q4Title: "Threats title", q4Body: "Threats body",
 };
 
 export const VoiceoverPanel = () => {
@@ -182,7 +186,7 @@ export const VoiceoverPanel = () => {
           </div>
           <div className="border-t border-border pt-3">
             <SectionHeader label="Style" />
-            <ImageStyleControls slideId={slide.id} isGrid={isGrid} />
+            <ImageStyleControls slideId={slide.id} isGrid={isGrid} layout={slide.layout} />
           </div>
           <ImageReplaceDialog
             open={imgDialogOpen}
@@ -236,12 +240,12 @@ export const VoiceoverPanel = () => {
 
     // Generic text field — title, subtitle, body, leftTitle, etc.
     const value = (slide.content as any)[k] as string | undefined;
-    const isLong = k === "body" || k === "leftBody" || k === "rightBody";
+    const isLong = k === "body" || k === "leftBody" || k === "rightBody" || /Body$/.test(k);
     const styleField: "title" | "subtitle" | "body" | null =
       k === "title" ? "title" :
       k === "subtitle" ? "subtitle" :
-      (k === "body" || k === "leftBody" || k === "rightBody") ? "body" :
-      (k === "leftTitle" || k === "rightTitle") ? "title" : null;
+      (k === "body" || k === "leftBody" || k === "rightBody" || /Body$/.test(k)) ? "body" :
+      (k === "leftTitle" || k === "rightTitle" || /Title$/.test(k)) ? "title" : null;
     return (
       <div className="space-y-4">
         <div>
@@ -271,6 +275,11 @@ export const VoiceoverPanel = () => {
           <div className="border-t border-border pt-3">
             <SectionHeader label="Style" />
             <TextStyleControls slideId={slide.id} field={styleField} />
+          </div>
+        )}
+        {slide.layout === "quadrant" && /^q[1-4](Title|Body)$/.test(k) && (
+          <div className="border-t border-border pt-3">
+            <QuadrantStyleControls slideId={slide.id} />
           </div>
         )}
       </div>

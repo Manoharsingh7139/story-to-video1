@@ -10,7 +10,19 @@ export type LayoutId =
   | "image-left"
   | "image-right"
   | "image-full"
-  | "image-grid";
+  | "image-grid"
+  | "image-bg-overlay"
+  | "image-text-overlay"
+  | "quadrant"
+  | "comparison"
+  | "image-bullets"
+  | "stat-image"
+  | "section-image-bg";
+
+export type OverlayTint = "dark" | "light" | "accent";
+export type OverlayStrength = "soft" | "medium" | "strong";
+export type SideChoice = "left" | "right";
+export type QuadrantPalette = "swot" | "neutral" | "accent";
 
 export type TextSize = "s" | "m" | "l" | "xl";
 export type TextWeight = "regular" | "bold";
@@ -32,6 +44,11 @@ export interface SlideStyle {
   statSize?: StatSize; statColor?: TextColor; statDecoration?: StatDecoration;
   imageShape?: ImageShape; imageTreatment?: ImageTreatment; imageBorder?: ImageBorder;
   captionPosition?: CaptionPosition;
+  overlayTint?: OverlayTint;
+  overlayStrength?: OverlayStrength;
+  textCardSide?: SideChoice;
+  imageSide?: SideChoice;
+  quadrantPalette?: QuadrantPalette;
 }
 
 export interface SlideContent {
@@ -54,6 +71,10 @@ export interface SlideContent {
   caption2?: string;
   caption3?: string;
   caption4?: string;
+  q1Title?: string; q1Body?: string;
+  q2Title?: string; q2Body?: string;
+  q3Title?: string; q3Body?: string;
+  q4Title?: string; q4Body?: string;
 }
 
 export interface Slide {
