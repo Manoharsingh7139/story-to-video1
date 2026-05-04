@@ -92,6 +92,68 @@ export function processChatMessage(message: string, slide: Slide): ChatResult | 
     };
   }
 
+  if (/image.*background|background.*image|bg.*image|hero.*image/.test(m)) {
+    return {
+      after: { ...slide, layout: "image-bg-overlay", content: { ...slide.content, imageUrl: slide.content.imageUrl ?? pickRandomImage() } },
+      label: "Switched to an image-background layout.",
+    };
+  }
+  if (/text.*card|image.*overlay|magazine/.test(m)) {
+    return {
+      after: { ...slide, layout: "image-text-overlay", content: { ...slide.content, imageUrl: slide.content.imageUrl ?? pickRandomImage() } },
+      label: "Switched to an image with a text card.",
+    };
+  }
+  if (/image.*bullet|bullet.*image|photo.*bullet/.test(m)) {
+    return {
+      after: { ...slide, layout: "image-bullets", content: { ...slide.content, imageUrl: slide.content.imageUrl ?? pickRandomImage(), bullets: slide.content.bullets ?? ["First point", "Second point", "Third point"] } },
+      label: "Switched to image + bullets.",
+    };
+  }
+  if (/stat.*image|number.*image|image.*stat/.test(m)) {
+    return {
+      after: { ...slide, layout: "stat-image", content: { ...slide.content, imageUrl: slide.content.imageUrl ?? pickRandomImage(), stat: slide.content.stat ?? "42%", statLabel: slide.content.statLabel ?? "supporting context" } },
+      label: "Switched to stat + image.",
+    };
+  }
+  if (/quadrant|2x2|four.box|swot/.test(m)) {
+    return {
+      after: { ...slide, layout: "quadrant", content: {
+        ...slide.content,
+        q1Title: slide.content.q1Title ?? "Strengths",
+        q2Title: slide.content.q2Title ?? "Weaknesses",
+        q3Title: slide.content.q3Title ?? "Opportunities",
+        q4Title: slide.content.q4Title ?? "Threats",
+      } },
+      label: "Switched to a quadrant (2×2) layout.",
+    };
+  }
+  if (/comparison|helpful.*harmful|before.*after|versus|\bvs\b/.test(m)) {
+    return {
+      after: { ...slide, layout: "comparison", content: {
+        ...slide.content,
+        leftTitle: slide.content.leftTitle ?? "Helpful",
+        leftBody: slide.content.leftBody ?? "What works in our favor.",
+        rightTitle: slide.content.rightTitle ?? "Harmful",
+        rightBody: slide.content.rightBody ?? "What works against us.",
+      } },
+      label: "Switched to a comparison layout.",
+    };
+  }
+  if (/section.*image|chapter.*image|divider.*image/.test(m)) {
+    return {
+      after: { ...slide, layout: "section-image-bg", content: { ...slide.content, imageUrl: slide.content.imageUrl ?? pickRandomImage() } },
+      label: "Switched to a section divider with an image background.",
+    };
+  }
+  if (/swap.*side|flip.*image|other side/.test(m)) {
+    const cur = slide.content.style?.imageSide ?? "left";
+    return {
+      after: { ...slide, content: { ...slide.content, style: { ...(slide.content.style ?? {}), imageSide: cur === "left" ? "right" : "left" } } },
+      label: "Swapped the image to the other side.",
+    };
+  }
+
   if (/\bbullet/.test(m) || /\blist\b/.test(m)) {
     return {
       after: {
