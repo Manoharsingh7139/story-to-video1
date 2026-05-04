@@ -1,130 +1,206 @@
 import type { Slide } from "./types";
 import { STOCK_IMAGES } from "./stockImages";
 
-export const SAMPLE_TEXT = `The shift to remote work has fundamentally changed how teams collaborate. Companies that embrace asynchronous communication report 30% higher productivity and significantly better employee retention. But getting there requires intentional changes to processes, tools, and culture.
+export const SAMPLE_TEXT = `SWOT Analysis is a structured strategic planning tool used to evaluate Strengths, Weaknesses, Opportunities, and Threats. Strengths and Weaknesses are internal — things you control. Opportunities and Threats are external — forces you can anticipate but not control.
 
-The biggest pitfall is treating remote like in-office work over Zoom. Real async means writing things down, trusting people to manage their own time, and measuring outputs instead of hours. Teams that nail this become magnets for top talent worldwide.
+The framework works across business strategy, product development, career planning, and decision-making. Done well, it forces honest, evidence-based thinking. Done poorly, it produces vague lists nobody acts on.
 
-Three principles drive success: write more than you talk, default to public over private, and respect everyone's deep work time. Get these right and your team will outperform colocated competitors.`;
+The five steps are: define the objective, gather data, list factors that are specific and evidence-based, prioritize by impact, and convert the analysis into action using SO, WO, ST, and WT strategies.
+
+The real value of a SWOT isn't the matrix itself. It's the decisions that come out of it. A weak SWOT with strong execution beats a perfect SWOT with no action.`;
 
 export const SAMPLE_DECK: Slide[] = [
   {
     id: "s1",
     layout: "title",
     content: {
-      title: "The Async Advantage",
-      subtitle: "How modern teams outperform with remote-first work",
+      title: "SWOT Analysis",
+      subtitle: "A practical guide to strategic thinking",
     },
     script:
-      "The way we work has changed forever. Today we'll explore why async-first teams are pulling ahead — and what it takes to build one.",
+      "Let's talk about SWOT — a deceptively simple framework that, used well, sharpens almost any strategic decision.",
   },
   {
     id: "s2",
-    layout: "stat",
+    layout: "image-bg-overlay",
     content: {
-      stat: "30%",
-      statLabel: "higher productivity in async-first teams",
+      title: "What is SWOT?",
+      body: "A structured tool to evaluate Strengths, Weaknesses, Opportunities, and Threats — across business, product, and career decisions.",
+      imageUrl: STOCK_IMAGES[5].url,
+      style: { overlayTint: "dark", overlayStrength: "strong" },
     },
     script:
-      "Companies that fully embrace asynchronous communication report a thirty percent jump in productivity. That's not a small optimization — it's a structural advantage.",
+      "SWOT is a structured tool for evaluating four things — strengths, weaknesses, opportunities, and threats. It works for businesses, products, and even career decisions.",
   },
   {
     id: "s3",
-    layout: "title-body",
+    layout: "quadrant",
     content: {
-      title: "Why it matters",
-      body: "Remote work isn't just a perk anymore. It's the operating system of the most resilient companies in the world. Those who treat it as a real discipline win on talent, output, and retention.",
+      title: "The four boxes — internal vs external",
+      style: { quadrantPalette: "swot" },
+      q1Title: "Strengths",
+      q1Body: "Internal advantages — strong brand, skilled team, proprietary tech, customer loyalty.",
+      q2Title: "Weaknesses",
+      q2Body: "Internal limitations — limited capital, weak distribution, skill gaps, poor brand presence.",
+      q3Title: "Opportunities",
+      q3Body: "External tailwinds — market expansion, new tech, regulatory shifts, competitor weaknesses.",
+      q4Title: "Threats",
+      q4Body: "External risks — new entrants, regulation changes, downturns, substitute products.",
     },
     script:
-      "Why should you care? Because remote-first isn't a perk anymore. It's the operating system of the most resilient companies in the world.",
+      "Picture a 2 by 2. The top row is internal — things you control. The bottom row is external — things you can only anticipate. Strengths and weaknesses live inside. Opportunities and threats live outside.",
   },
   {
     id: "s4",
-    layout: "bullets",
+    layout: "image-text-overlay",
     content: {
-      title: "Three principles that work",
-      style: { bulletVariant: "process" },
-      bullets: [
-        "Write more than you talk",
-        "Default to public over private",
-        "Respect deep work time",
-      ],
+      title: "Strengths",
+      body: "Positive internal attributes that give you an edge. Key test: what do we do better than anyone else?",
+      imageUrl: STOCK_IMAGES[9].url,
+      style: { textCardSide: "left" },
     },
     script:
-      "Three principles separate the winners from the also-rans. Write more than you talk. Default to public over private. And fiercely protect deep work time.",
+      "Strengths are the positive internal attributes that give you an edge. The test is simple — what do you do better than anyone else?",
   },
   {
     id: "s5",
-    layout: "two-column",
+    layout: "image-bullets",
     content: {
-      leftTitle: "The trap",
-      leftBody:
-        "Treating remote like in-office work over Zoom. Endless meetings, real-time pressure, and surveillance disguised as collaboration.",
-      rightTitle: "The shift",
-      rightBody:
-        "Write things down. Trust people to manage their time. Measure outcomes, not hours. Build a culture where thinking has space to happen.",
+      title: "Weaknesses — where you underperform",
+      bullets: [
+        "Limited capital",
+        "Poor distribution network",
+        "Weak brand presence",
+        "Skill gaps in key areas",
+      ],
+      imageUrl: STOCK_IMAGES[3].url,
+      style: { imageSide: "left", bulletVariant: "checklist" },
     },
     script:
-      "Most teams fall into the same trap — they just move office habits onto Zoom. The shift that actually works is deeper. It's about what you measure and what you value.",
+      "Weaknesses are the internal factors holding you back. Be honest. Ask where you're consistently underperforming compared to peers.",
   },
   {
     id: "s6",
-    layout: "divider",
+    layout: "image-right",
     content: {
-      title: "Putting it into practice",
-      subtitle: "What to do on Monday morning",
+      title: "Opportunities",
+      body: "External conditions you can ride for growth — market expansion, emerging technology, regulatory shifts, even competitor missteps. The test: what trends can we exploit?",
+      imageUrl: STOCK_IMAGES[7].url,
     },
     script:
-      "Enough theory. Let's talk about what to actually change next week.",
+      "Opportunities are the external conditions you can ride. New markets, new tech, new regulation, or even a competitor stumbling. Ask what trends you can exploit.",
   },
   {
     id: "s7",
-    layout: "bullets",
+    layout: "image-bullets",
     content: {
-      title: "Start here",
+      title: "Threats — what could disrupt you",
       bullets: [
-        "Cancel one recurring meeting this week",
-        "Move a decision into a written doc",
-        "Block four hours of no-meeting time",
-        "Make one Slack channel public",
+        "New competitors entering",
+        "Changing regulations",
+        "Economic downturn",
+        "Substitute products",
       ],
+      imageUrl: STOCK_IMAGES[1].url,
+      style: { imageSide: "right", bulletVariant: "cards" },
     },
     script:
-      "Start small. Cancel one meeting. Move one decision to a doc. Block four hours of focus time. Open up one private channel. That's it for week one.",
+      "Threats are the external forces that can disrupt you. New competitors, regulation, downturns, substitutes. The test — what external forces could hurt us?",
   },
   {
     id: "s8",
-    layout: "image-right",
+    layout: "comparison",
     content: {
-      title: "Trust is the multiplier",
-      body: "When people are trusted to manage their time, they show up with their best work. Surveillance kills the very thing it's trying to measure.",
-      imageUrl: STOCK_IMAGES[0].url,
+      title: "Helpful vs Harmful",
+      leftTitle: "Helpful",
+      leftBody: "Strengths (internal) and Opportunities (external) — the engines of growth. Lean into them deliberately.",
+      rightTitle: "Harmful",
+      rightBody: "Weaknesses (internal) and Threats (external) — the risks to manage. Plan around them, don't ignore them.",
     },
     script:
-      "Trust is the real multiplier. When people own their time, they bring their best work — and they stay.",
+      "Step back and you'll see two halves of the same story. Strengths and opportunities are helpful. Weaknesses and threats are harmful. Both deserve real attention.",
   },
   {
     id: "s9",
-    layout: "image-grid",
+    layout: "section-image-bg",
     content: {
-      title: "What it looks like in practice",
-      imageUrl: STOCK_IMAGES[5].url, caption: "Written decisions",
-      imageUrl2: STOCK_IMAGES[7].url, caption2: "Outcome reviews",
-      imageUrl3: STOCK_IMAGES[11].url, caption3: "Deep work blocks",
-      imageUrl4: STOCK_IMAGES[2].url, caption4: "Async standups",
+      title: "How to conduct a SWOT",
+      subtitle: "Five steps from blank page to strategy",
+      imageUrl: STOCK_IMAGES[10].url,
+      style: { overlayTint: "accent", overlayStrength: "strong" },
     },
     script:
-      "Here's what it looks like in practice — written decisions, outcome reviews, deep work blocks, and async standups.",
+      "So how do you actually do one? Five steps — from blank page to a strategy you can act on.",
   },
   {
     id: "s10",
-    layout: "title",
+    layout: "bullets",
     content: {
-      title: "The teams who get this right win.",
-      subtitle: "Be one of them.",
+      title: "The five steps",
+      style: { bulletVariant: "numbered" },
+      bullets: [
+        "Define the objective — business, product, project, or career",
+        "Gather data from reports, research, and customer feedback",
+        "List factors that are specific and evidence-based",
+        "Prioritize by impact, urgency, and how much you control",
+        "Convert analysis into action with SO, WO, ST, WT strategies",
+      ],
     },
     script:
-      "The teams who get this right become magnets for the best talent in the world. Be one of them. Thanks for watching.",
+      "Define what you're analyzing. Gather real data. List specific, evidence-backed factors. Prioritize them. Then turn the analysis into action.",
+  },
+  {
+    id: "s11",
+    layout: "quadrant",
+    content: {
+      title: "Strategy combinations — turn the matrix into moves",
+      style: { quadrantPalette: "accent" },
+      q1Title: "SO — attack",
+      q1Body: "Use strengths to capture opportunities. Strong tech team plus AI trend equals build an AI product.",
+      q2Title: "WO — fix",
+      q2Body: "Address weaknesses to unlock opportunities. Weak distribution plus growing demand equals build partnerships.",
+      q3Title: "ST — defend",
+      q3Body: "Use strengths to blunt threats. Strong brand plus new competitors equals invest in brand spend.",
+      q4Title: "WT — survive",
+      q4Body: "Minimize weaknesses against threats. Thin margins plus a price war equals aggressive cost optimization.",
+    },
+    script:
+      "Pair the boxes and you get four real strategies. SO is attack. WO is fix. ST is defend. WT is survive. Each one is a concrete move, not a list.",
+  },
+  {
+    id: "s12",
+    layout: "stat-image",
+    content: {
+      stat: "3x",
+      statLabel: "better strategic alignment when SWOT is tied to specific actions, not just analysis",
+      imageUrl: STOCK_IMAGES[6].url,
+      style: { imageSide: "right", statSize: "display", statDecoration: "gradient" },
+    },
+    script:
+      "Teams that link their SWOT to specific actions report roughly three times better strategic alignment than those who treat it as an exercise.",
+  },
+  {
+    id: "s13",
+    layout: "two-column",
+    content: {
+      leftTitle: "Advantages",
+      leftBody: "Simple and structured. Works across domains. Encourages holistic thinking. Helps with strategic alignment.",
+      rightTitle: "Limitations",
+      rightBody: "Inputs can be subjective. It's a static snapshot. Becomes generic if poorly executed. Doesn't provide direct solutions.",
+    },
+    script:
+      "SWOT has clear advantages — it's simple, structured, and works almost anywhere. But it's also subjective, static, and easy to do badly. Know both sides.",
+  },
+  {
+    id: "s14",
+    layout: "image-full",
+    content: {
+      title: "SWOT is not the output.",
+      subtitle: "The value lies in the decisions you make from it.",
+      imageUrl: STOCK_IMAGES[6].url,
+    },
+    script:
+      "Remember — the matrix isn't the point. The decisions you make from it are. A weak SWOT with strong execution beats a perfect SWOT with none.",
   },
 ];
 
