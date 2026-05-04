@@ -37,6 +37,8 @@ export const VoiceoverPanel = () => {
   const setSlideScript = usePrototypeStore((s) => s.setSlideScript);
   const setSlideContent = usePrototypeStore((s) => s.setSlideContent);
   const setSlideBullet = usePrototypeStore((s) => s.setSlideBullet);
+  const addBullet = usePrototypeStore((s) => s.addBullet);
+  const removeBullet = usePrototypeStore((s) => s.removeBullet);
   const voice = usePrototypeStore((s) => s.voice);
   const setVoice = usePrototypeStore((s) => s.setVoice);
   const selectedElementKey = usePrototypeStore((s) => s.selectedElementKey);
