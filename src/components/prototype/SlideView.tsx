@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { Slide, Theme, ElementKey } from "@/lib/prototype/types";
+import type { Slide, Theme, ElementKey, SlideStyle, TextSize, TextAlign, TextColor, TextWeight, BulletVariant } from "@/lib/prototype/types";
 
 interface SlideViewProps {
   slide: Slide;
@@ -51,17 +51,9 @@ const Selectable = ({ elKey, selectedKey, onSelect, editable, children, style, c
 };
 
 const EditableText = ({
-  value,
-  onChange,
-  style,
-  multiline = false,
-  active,
+  value, onChange, style, multiline = false, active,
 }: {
-  value: string;
-  onChange?: (v: string) => void;
-  style?: React.CSSProperties;
-  multiline?: boolean;
-  active?: boolean;
+  value: string; onChange?: (v: string) => void; style?: React.CSSProperties; multiline?: boolean; active?: boolean;
 }) => {
   if (!onChange || !active) {
     return <div style={style} className={multiline ? "whitespace-pre-wrap" : ""}>{value}</div>;
@@ -82,16 +74,41 @@ const EditableText = ({
 const PLACEHOLDER_IMG =
   "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'><rect width='16' height='9' fill='%23e5e7eb'/></svg>";
 
+// ----- style resolvers -----
+const NEUTRAL: Record<TextColor, string | null> = {
+  text: null, muted: null, accent: null,
+  neutral1: "#111827", neutral2: "#6b7280", neutral3: "#f59e0b",
+};
+const resolveColor = (c: TextColor | undefined, theme: Theme, fallback: string) => {
+  if (!c) return fallback;
+  if (c === "text") return theme.text;
+  if (c === "muted") return theme.muted;
+  if (c === "accent") return theme.accent;
+  return NEUTRAL[c] ?? fallback;
+};
+const sizeMul = (s: TextSize | undefined): number => ({ s: 0.75, m: 1, l: 1.25, xl: 1.55 }[s ?? "m"]);
+const weightVal = (w: TextWeight | undefined, fallback: number): number => (w === "bold" ? 700 : w === "regular" ? 400 : fallback);
+const alignVal = (a: TextAlign | undefined): React.CSSProperties["textAlign"] => a ?? "left";
+
+const imageShapeRadius = (shape: string | undefined): string => {
+  switch (shape) {
+    case "rounded": return "16px";
+    case "circle": return "50%";
+    case "blob": return "62% 38% 55% 45% / 48% 60% 40% 52%";
+    default: return "0px";
+  }
+};
+const imageFilter = (t: string | undefined): string => {
+  switch (t) {
+    case "grayscale": return "grayscale(1)";
+    case "blur": return "blur(2px) brightness(1.05)";
+    default: return "none";
+  }
+};
+
 export const SlideView = ({
-  slide,
-  theme,
-  editable = false,
-  selectedKey = null,
-  onSelectElement,
-  onEdit,
-  onEditBullet,
-  scale = "auto",
-  className = "",
+  slide, theme, editable = false, selectedKey = null, onSelectElement,
+  onEdit, onEditBullet, scale = "auto", className = "",
 }: SlideViewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [autoScale, setAutoScale] = useState(1);
@@ -111,10 +128,35 @@ export const SlideView = ({
   }, [scale]);
 
   const s = scale === "auto" ? autoScale : scale;
+  const st: SlideStyle = slide.content.style ?? {};
 
-  const titleStyle = { fontFamily: theme.fontHead, color: theme.text, fontWeight: 700 };
-  const bodyStyle = { fontFamily: theme.fontBody, color: theme.text };
-  const mutedStyle = { fontFamily: theme.fontBody, color: theme.muted };
+  const headFont = theme.fontHead;
+  const bodyFont = theme.fontBody;
+
+  const titleStyle = (baseSize: number): React.CSSProperties => ({
+    fontFamily: headFont,
+    color: resolveColor(st.titleColor, theme, theme.text),
+    fontWeight: weightVal(st.titleWeight, 700),
+    fontSize: baseSize * sizeMul(st.titleSize),
+    textAlign: alignVal(st.titleAlign),
+    lineHeight: 1.1,
+  });
+  const subtitleStyle = (baseSize: number): React.CSSProperties => ({
+    fontFamily: bodyFont,
+    color: resolveColor(st.subtitleColor, theme, theme.muted),
+    fontWeight: weightVal(st.subtitleWeight, 400),
+    fontSize: baseSize * sizeMul(st.subtitleSize),
+    textAlign: alignVal(st.subtitleAlign),
+  });
+  const bodyStyle = (baseSize: number): React.CSSProperties => ({
+    fontFamily: bodyFont,
+    color: resolveColor(st.bodyColor, theme, theme.text),
+    fontWeight: weightVal(st.bodyWeight, 400),
+    fontSize: baseSize * sizeMul(st.bodySize),
+    textAlign: alignVal(st.bodyAlign),
+    lineHeight: 1.5,
+  });
+  const mutedStyle = { fontFamily: bodyFont, color: theme.muted };
 
   const renderText = (key: string, value: string, style: React.CSSProperties, multiline = false) => (
     <Selectable elKey={key} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
@@ -128,16 +170,187 @@ export const SlideView = ({
     </Selectable>
   );
 
-  const renderImage = (key: string, url: string | undefined, style: React.CSSProperties) => (
-    <Selectable elKey={key} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable} style={style}>
-      <img
-        src={url || PLACEHOLDER_IMG}
-        alt=""
-        style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-        draggable={false}
-      />
-    </Selectable>
-  );
+  const accentBar = (color: string) => st.titleAccentBar === false ? null : null;
+
+  // image renderer with style
+  const renderImage = (key: string, url: string | undefined, style: React.CSSProperties) => {
+    const radius = imageShapeRadius(st.imageShape);
+    const filter = imageFilter(st.imageTreatment);
+    const borderW = st.imageBorder === "thick" ? 6 : st.imageBorder === "thin" ? 2 : 0;
+    const isDuotone = st.imageTreatment === "duotone";
+    return (
+      <Selectable elKey={key} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable} style={style}>
+        <div style={{ position: "relative", width: "100%", height: "100%", borderRadius: radius, overflow: "hidden", border: borderW ? `${borderW}px solid ${theme.accent}` : "none" }}>
+          <img
+            src={url || PLACEHOLDER_IMG}
+            alt=""
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", filter: isDuotone ? "grayscale(1) contrast(1.1)" : filter }}
+            draggable={false}
+          />
+          {isDuotone && (
+            <div style={{ position: "absolute", inset: 0, background: theme.accent, mixBlendMode: "multiply", opacity: 0.55 }} />
+          )}
+        </div>
+      </Selectable>
+    );
+  };
+
+  // bullets
+  const renderBullets = () => {
+    const c = slide.content;
+    const variant: BulletVariant = st.bulletVariant ?? "list";
+    const items = c.bullets ?? [];
+    const renderItem = (b: string, i: number, inner: React.ReactNode) => {
+      const k = `bullet:${i}`;
+      const active = editable && selectedKey === k;
+      return (
+        <Selectable key={i} elKey={k} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
+          <EditableText
+            value={b}
+            onChange={onEditBullet ? (v) => onEditBullet(i, v) : undefined}
+            style={{ fontFamily: bodyFont, color: theme.text, fontSize: 28, lineHeight: 1.35 }}
+            active={active}
+          />
+        </Selectable>
+      );
+    };
+
+    if (variant === "list") {
+      return (
+        <ul className="flex flex-col gap-7">
+          {items.map((b, i) => (
+            <li key={i} className="flex gap-6 items-start">
+              <span style={{ width: 14, height: 14, borderRadius: 999, background: theme.accent, marginTop: 16, flexShrink: 0 }} />
+              <Selectable elKey={`bullet:${i}`} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
+                <EditableText
+                  value={b}
+                  onChange={onEditBullet ? (v) => onEditBullet(i, v) : undefined}
+                  style={{ fontFamily: bodyFont, color: theme.text, fontSize: 36, lineHeight: 1.4 }}
+                  active={editable && selectedKey === `bullet:${i}`}
+                />
+              </Selectable>
+            </li>
+          ))}
+        </ul>
+      );
+    }
+    if (variant === "numbered") {
+      return (
+        <ol className="flex flex-col gap-6">
+          {items.map((b, i) => (
+            <li key={i} className="flex gap-6 items-center">
+              <span style={{ width: 56, height: 56, borderRadius: 999, background: theme.accent, color: theme.accentText, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: theme.fontHead, fontWeight: 700, fontSize: 28, flexShrink: 0 }}>{i + 1}</span>
+              <Selectable elKey={`bullet:${i}`} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
+                <EditableText value={b} onChange={onEditBullet ? (v) => onEditBullet(i, v) : undefined} style={{ fontFamily: bodyFont, color: theme.text, fontSize: 32, lineHeight: 1.3 }} active={editable && selectedKey === `bullet:${i}`} />
+              </Selectable>
+            </li>
+          ))}
+        </ol>
+      );
+    }
+    if (variant === "process") {
+      return (
+        <div className="flex items-center gap-2 flex-wrap">
+          {items.map((b, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <Selectable elKey={`bullet:${i}`} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
+                <div style={{ background: theme.accent, color: theme.accentText, padding: "16px 22px", borderRadius: 999, fontFamily: bodyFont, fontWeight: 600, fontSize: 22, minWidth: 140, textAlign: "center" }}>
+                  <EditableText value={b} onChange={onEditBullet ? (v) => onEditBullet(i, v) : undefined} active={editable && selectedKey === `bullet:${i}`} style={{ color: theme.accentText, fontSize: 22 }} />
+                </div>
+              </Selectable>
+              {i < items.length - 1 && <span style={{ color: theme.accent, fontSize: 40, fontWeight: 700 }}>›</span>}
+            </div>
+          ))}
+        </div>
+      );
+    }
+    if (variant === "cards") {
+      const cols = Math.min(items.length || 1, 4);
+      return (
+        <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
+          {items.map((b, i) => (
+            <Selectable key={i} elKey={`bullet:${i}`} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
+              <div style={{ border: `2px solid ${theme.accent}33`, borderRadius: 12, padding: 24, background: theme.surface, minHeight: 160, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <div style={{ color: theme.accent, fontWeight: 700, fontFamily: theme.fontHead, fontSize: 18, marginBottom: 8 }}>0{i + 1}</div>
+                <EditableText value={b} onChange={onEditBullet ? (v) => onEditBullet(i, v) : undefined} active={editable && selectedKey === `bullet:${i}`} style={{ fontFamily: bodyFont, color: theme.text, fontSize: 22, lineHeight: 1.35 }} />
+              </div>
+            </Selectable>
+          ))}
+        </div>
+      );
+    }
+    if (variant === "pillars") {
+      const cols = Math.min(items.length || 1, 4);
+      return (
+        <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
+          {items.map((b, i) => (
+            <Selectable key={i} elKey={`bullet:${i}`} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
+              <div style={{ borderRadius: 6, overflow: "hidden", background: theme.surface, minHeight: 200 }}>
+                <div style={{ height: 8, background: theme.accent }} />
+                <div style={{ padding: 24 }}>
+                  <EditableText value={b} onChange={onEditBullet ? (v) => onEditBullet(i, v) : undefined} active={editable && selectedKey === `bullet:${i}`} style={{ fontFamily: bodyFont, color: theme.text, fontSize: 22, lineHeight: 1.4 }} />
+                </div>
+              </div>
+            </Selectable>
+          ))}
+        </div>
+      );
+    }
+    if (variant === "checklist") {
+      return (
+        <ul className="flex flex-col gap-5">
+          {items.map((b, i) => (
+            <li key={i} className="flex gap-5 items-center">
+              <span style={{ width: 36, height: 36, borderRadius: 8, background: theme.accent, color: theme.accentText, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 22, flexShrink: 0 }}>✓</span>
+              <Selectable elKey={`bullet:${i}`} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
+                <EditableText value={b} onChange={onEditBullet ? (v) => onEditBullet(i, v) : undefined} active={editable && selectedKey === `bullet:${i}`} style={{ fontFamily: bodyFont, color: theme.text, fontSize: 30, lineHeight: 1.35 }} />
+              </Selectable>
+            </li>
+          ))}
+        </ul>
+      );
+    }
+    return null;
+  };
+
+  // stat decoration
+  const renderStatBlock = (statValue: string, labelValue: string) => {
+    const sizePx = ({ m: 140, l: 200, xl: 240, display: 320 } as const)[st.statSize ?? "xl"];
+    const color = resolveColor(st.statColor, theme, theme.accent);
+    const dec = st.statDecoration ?? "none";
+    const inner = (
+      <div style={{ position: "relative", display: "inline-flex", flexDirection: "column", alignItems: "center", padding: dec === "circle" ? 64 : 0, background: dec === "circle" ? `${color}1A` : "transparent", borderRadius: dec === "circle" ? 999 : 0 }}>
+        <div
+          style={{
+            fontFamily: theme.fontHead,
+            color: dec === "gradient" ? "transparent" : color,
+            background: dec === "gradient" ? `linear-gradient(135deg, ${color}, ${theme.text})` : "transparent",
+            WebkitBackgroundClip: dec === "gradient" ? "text" : undefined,
+            backgroundClip: dec === "gradient" ? ("text" as any) : undefined,
+            fontSize: sizePx,
+            lineHeight: 1,
+            letterSpacing: "-0.04em",
+            fontWeight: 700,
+          }}
+        >
+          {statValue}
+        </div>
+        {dec === "underline" && <div style={{ width: "60%", height: 6, background: color, marginTop: 12 }} />}
+      </div>
+    );
+    return (
+      <div className="h-full w-full flex flex-col items-center justify-center px-32 text-center gap-8">
+        <Selectable elKey="stat" selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
+          {editable && selectedKey === "stat" ? (
+            <EditableText value={statValue} onChange={onEdit ? (v) => onEdit("stat", v) : undefined} style={{ fontFamily: theme.fontHead, color, fontSize: sizePx, lineHeight: 1, letterSpacing: "-0.04em", fontWeight: 700 }} active />
+          ) : (
+            inner
+          )}
+        </Selectable>
+        {renderText("statLabel", labelValue, { fontFamily: theme.fontBody, color: theme.text, fontSize: 40, maxWidth: 900 })}
+      </div>
+    );
+  };
 
   const renderLayout = () => {
     const c = slide.content;
@@ -145,16 +358,17 @@ export const SlideView = ({
       case "title":
         return (
           <div className="h-full w-full flex flex-col justify-center px-32 gap-8">
-            {renderText("title", c.title ?? "", { ...titleStyle, fontSize: 96, lineHeight: 1.05, letterSpacing: "-0.02em" })}
-            {renderText("subtitle", c.subtitle ?? "", { ...mutedStyle, fontSize: 36 })}
-            <div style={{ width: 80, height: 6, background: theme.accent }} />
+            {renderText("title", c.title ?? "", { ...titleStyle(96), letterSpacing: "-0.02em" })}
+            {renderText("subtitle", c.subtitle ?? "", subtitleStyle(36))}
+            {st.titleAccentBar !== false && <div style={{ width: 80, height: 6, background: theme.accent }} />}
           </div>
         );
       case "title-body":
         return (
           <div className="h-full w-full flex flex-col justify-center px-32 gap-10">
-            {renderText("title", c.title ?? "", { ...titleStyle, fontSize: 72, lineHeight: 1.1 })}
-            {renderText("body", c.body ?? "", { ...bodyStyle, fontSize: 32, lineHeight: 1.5, maxWidth: 900 }, true)}
+            {renderText("title", c.title ?? "", titleStyle(72))}
+            {st.titleAccentBar && <div style={{ width: 60, height: 5, background: theme.accent }} />}
+            {renderText("body", c.body ?? "", { ...bodyStyle(32), maxWidth: 900 }, true)}
           </div>
         );
       case "two-column":
@@ -162,48 +376,33 @@ export const SlideView = ({
           <div className="h-full w-full flex flex-col px-24 py-20">
             <div className="grid grid-cols-2 gap-16 flex-1">
               <div className="flex flex-col gap-6 justify-center" style={{ borderLeft: `4px solid ${theme.accent}`, paddingLeft: 32 }}>
-                {renderText("leftTitle", c.leftTitle ?? "", { ...titleStyle, fontSize: 44 })}
-                {renderText("leftBody", c.leftBody ?? "", { ...bodyStyle, fontSize: 26, lineHeight: 1.5 }, true)}
+                {renderText("leftTitle", c.leftTitle ?? "", { fontFamily: theme.fontHead, color: theme.text, fontWeight: 700, fontSize: 44 })}
+                {renderText("leftBody", c.leftBody ?? "", { fontFamily: theme.fontBody, color: theme.text, fontSize: 26, lineHeight: 1.5 }, true)}
               </div>
               <div className="flex flex-col gap-6 justify-center" style={{ borderLeft: `4px solid ${theme.accent}`, paddingLeft: 32 }}>
-                {renderText("rightTitle", c.rightTitle ?? "", { ...titleStyle, fontSize: 44 })}
-                {renderText("rightBody", c.rightBody ?? "", { ...bodyStyle, fontSize: 26, lineHeight: 1.5 }, true)}
+                {renderText("rightTitle", c.rightTitle ?? "", { fontFamily: theme.fontHead, color: theme.text, fontWeight: 700, fontSize: 44 })}
+                {renderText("rightBody", c.rightBody ?? "", { fontFamily: theme.fontBody, color: theme.text, fontSize: 26, lineHeight: 1.5 }, true)}
               </div>
             </div>
           </div>
         );
       case "bullets":
         return (
-          <div className="h-full w-full flex flex-col px-32 py-24 gap-12">
-            {renderText("title", c.title ?? "", { ...titleStyle, fontSize: 64 })}
-            <ul className="flex flex-col gap-7">
-              {(c.bullets ?? []).map((b, i) => {
-                const k = `bullet:${i}`;
-                const active = editable && selectedKey === k;
-                return (
-                  <li key={i} className="flex gap-6 items-start">
-                    <span style={{ width: 14, height: 14, borderRadius: 999, background: theme.accent, marginTop: 18, flexShrink: 0 }} />
-                    <Selectable elKey={k} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
-                      <EditableText
-                        value={b}
-                        onChange={onEditBullet ? (v) => onEditBullet(i, v) : undefined}
-                        style={{ ...bodyStyle, fontSize: 36, lineHeight: 1.4 }}
-                        active={active}
-                      />
-                    </Selectable>
-                  </li>
-                );
-              })}
-            </ul>
+          <div
+            className="h-full w-full flex flex-col px-32 py-24 gap-10"
+            onClick={(e) => {
+              if (!editable) return;
+              e.stopPropagation();
+              onSelectElement?.("bullets");
+            }}
+          >
+            {renderText("title", c.title ?? "", titleStyle(64))}
+            {st.titleAccentBar && <div style={{ width: 60, height: 5, background: theme.accent }} />}
+            <div onClick={(e) => e.stopPropagation()}>{renderBullets()}</div>
           </div>
         );
       case "stat":
-        return (
-          <div className="h-full w-full flex flex-col items-center justify-center px-32 text-center gap-10">
-            {renderText("stat", c.stat ?? "", { ...titleStyle, color: theme.accent, fontSize: 240, lineHeight: 1, letterSpacing: "-0.04em" })}
-            {renderText("statLabel", c.statLabel ?? "", { ...bodyStyle, fontSize: 40, maxWidth: 900 })}
-          </div>
-        );
+        return renderStatBlock(c.stat ?? "", c.statLabel ?? "");
       case "divider":
         return (
           <div className="h-full w-full flex flex-col items-center justify-center px-32 text-center gap-8" style={{ background: theme.accent }}>
@@ -213,20 +412,20 @@ export const SlideView = ({
         );
       case "image-left":
         return (
-          <div className="h-full w-full grid grid-cols-2">
+          <div className="h-full w-full grid grid-cols-2 gap-8 p-8">
             {renderImage("image", c.imageUrl, { height: "100%" })}
-            <div className="flex flex-col justify-center px-16 gap-8">
-              {renderText("title", c.title ?? "", { ...titleStyle, fontSize: 56, lineHeight: 1.1 })}
-              {renderText("body", c.body ?? "", { ...bodyStyle, fontSize: 26, lineHeight: 1.5 }, true)}
+            <div className="flex flex-col justify-center px-8 gap-8">
+              {renderText("title", c.title ?? "", titleStyle(56))}
+              {renderText("body", c.body ?? "", bodyStyle(26), true)}
             </div>
           </div>
         );
       case "image-right":
         return (
-          <div className="h-full w-full grid grid-cols-2">
-            <div className="flex flex-col justify-center px-16 gap-8">
-              {renderText("title", c.title ?? "", { ...titleStyle, fontSize: 56, lineHeight: 1.1 })}
-              {renderText("body", c.body ?? "", { ...bodyStyle, fontSize: 26, lineHeight: 1.5 }, true)}
+          <div className="h-full w-full grid grid-cols-2 gap-8 p-8">
+            <div className="flex flex-col justify-center px-8 gap-8">
+              {renderText("title", c.title ?? "", titleStyle(56))}
+              {renderText("body", c.body ?? "", bodyStyle(26), true)}
             </div>
             {renderImage("image", c.imageUrl, { height: "100%" })}
           </div>
@@ -245,24 +444,29 @@ export const SlideView = ({
             </div>
           </div>
         );
-      case "image-grid":
+      case "image-grid": {
+        const capPos = st.captionPosition ?? "below";
         return (
           <div className="h-full w-full flex flex-col px-16 py-12 gap-6">
-            {renderText("title", c.title ?? "", { ...titleStyle, fontSize: 48 })}
+            {renderText("title", c.title ?? "", titleStyle(48))}
             <div className="grid grid-cols-2 grid-rows-2 gap-4 flex-1">
               {[1, 2, 3, 4].map((n) => {
                 const url = (c as any)[n === 1 ? "imageUrl" : `imageUrl${n}`] as string | undefined;
                 const cap = (c as any)[n === 1 ? "caption" : `caption${n}`] as string | undefined;
                 return (
-                  <div key={n} className="flex flex-col gap-2 min-h-0">
-                    {renderImage(`image:${n}`, url, { flex: 1, minHeight: 0, borderRadius: 6, overflow: "hidden" })}
-                    {renderText(`caption:${n}`, cap ?? "", { ...mutedStyle, fontSize: 20, textAlign: "center" })}
+                  <div key={n} className="flex flex-col gap-2 min-h-0 relative">
+                    {renderImage(`image:${n}`, url, { flex: 1, minHeight: 0, overflow: "hidden" })}
+                    {capPos === "below" && renderText(`caption:${n}`, cap ?? "", { fontFamily: theme.fontBody, color: theme.muted, fontSize: 20, textAlign: "center" })}
+                    {capPos === "overlay" && cap && (
+                      <div className="absolute left-2 right-2 bottom-2 px-3 py-1.5 rounded text-center" style={{ background: "rgba(0,0,0,0.55)", color: "#fff", fontFamily: theme.fontBody, fontSize: 18 }}>{cap}</div>
+                    )}
                   </div>
                 );
               })}
             </div>
           </div>
         );
+      }
     }
   };
 
