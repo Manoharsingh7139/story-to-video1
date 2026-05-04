@@ -44,6 +44,11 @@ export interface SlideStyle {
   statSize?: StatSize; statColor?: TextColor; statDecoration?: StatDecoration;
   imageShape?: ImageShape; imageTreatment?: ImageTreatment; imageBorder?: ImageBorder;
   captionPosition?: CaptionPosition;
+  overlayTint?: OverlayTint;
+  overlayStrength?: OverlayStrength;
+  textCardSide?: SideChoice;
+  imageSide?: SideChoice;
+  quadrantPalette?: QuadrantPalette;
 }
 
 export interface SlideContent {
