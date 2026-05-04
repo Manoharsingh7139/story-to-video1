@@ -114,6 +114,12 @@ export default function EditorScreen() {
                       <SelectItem key={l.id} value={l.id} className="text-xs">{l.name}</SelectItem>
                     ))}
                   </SelectGroup>
+                  <SelectGroup>
+                    <SelectLabel className="text-[10px] uppercase tracking-wider">Frameworks</SelectLabel>
+                    {FRAMEWORK_LAYOUTS.map((l) => (
+                      <SelectItem key={l.id} value={l.id} className="text-xs">{l.name}</SelectItem>
+                    ))}
+                  </SelectGroup>
                 </SelectContent>
               </Select>
             </div>
