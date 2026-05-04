@@ -1,102 +1,78 @@
-# Element editor: style & visual variants (not just text)
 
-Right now selecting an element on a slide only lets you change its text. This makes the Element panel a real design tool: each element type gets its own style controls, and bullet lists can transform into SmartArt-style visuals (numbered steps, process arrows, pillars, checklist cards, etc.).
+# More image-rich slides + SWOT sample deck
 
-## What the user gets
+Two parts:
+1. Add new layouts that combine images and text in different ways (right now only `image-left/right/full/grid` exist and the deck barely uses them).
+2. Replace the sample deck with a SWOT Analysis deck built from the provided learning content, using a healthy mix of text, image, and image+text layouts.
 
-**Bullets → SmartArt picker** (the headline change)
-When you select any bullet (or a new "Group: Bullets" header at the top of the bullet element), the Element panel shows a visual gallery of 6 ways to render the same list:
+## Part 1 — New slide layouts
 
-```
-[ • List ]   [ ① Numbered ]   [ → Process ]
-[ ▦ Cards ]  [ ⏃ Pillars ]    [ ✓ Checklist ]
-```
+Add these layout IDs to `LayoutId` in `types.ts` and render them in `SlideView.tsx`:
 
-Click one and the slide swaps to that visual instantly. The underlying bullet text stays — only the rendering changes. Each variant has its own look:
-- **List** — current dot bullets
-- **Numbered** — large circled numbers beside each item
-- **Process** — horizontal arrow chain with short labels
-- **Cards** — equal-width tiles in a row, item text inside
-- **Pillars** — vertical columns with accent top-bar
-- **Checklist** — checkmarks in accent color
+- **`image-bg-overlay`** — Full-bleed image background with a translucent dark/accent overlay; centered title + body on top. Different from `image-full` (which puts text bottom-left over a gradient) — this one is a true centered hero card with adjustable overlay tint.
+- **`image-text-overlay`** — Full-bleed image with a solid color text card (≈45% width) docked on the left or right, like a magazine pull-quote. Holds title + body.
+- **`quadrant`** — 2×2 colored cells, each with a small icon/label and short body. Designed for SWOT (S/W/O/T) but reusable for any 4-box framework. Per-cell: `q1Title/q1Body … q4Title/q4Body`, with theme-tinted cell backgrounds (accent, accent-soft, neutral, etc.).
+- **`comparison`** — Two stacked or side-by-side panels with a header strip ("Helpful" vs "Harmful", or "Before" vs "After"). Uses `leftTitle/leftBody/rightTitle/rightBody` plus a top `title`. Visually distinct from `two-column` (which is plain divider columns) — this one has colored header bars.
+- **`image-bullets`** — Image on one side (left or right via style), bullets on the other. Bullets honor the existing `bulletVariant`. Fields: `title`, `bullets`, `imageUrl`.
+- **`stat-image`** — Big stat on one side, supporting image on the other. Fields: `stat`, `statLabel`, `imageUrl`.
+- **`section-image-bg`** — Section divider with a background image and a tinted accent overlay (replaces flat-color `divider` for chapter breaks).
 
-**Text elements (title, subtitle, body, etc.) get a Style section** below the text input:
-- Size: S / M / L / XL toggle
-- Weight: Regular / Bold
-- Align: Left / Center / Right
-- Color: swatch row (theme text, muted, accent, +3 neutrals)
-- Emphasis: optional accent underline bar (on/off)
+New optional content fields in `SlideContent` (`types.ts`):
+`q1Title, q1Body, q2Title, q2Body, q3Title, q3Body, q4Title, q4Body` (quadrant), and reuse existing `title/body/bullets/imageUrl/leftTitle/...`.
 
-**Image elements get a Style section**:
-- Shape: Square / Rounded / Circle / Soft-blob
-- Treatment: None / Grayscale / Duotone (accent) / Subtle blur backdrop
-- Border: None / Thin / Thick accent
-- Caption position (image-grid only): Below / Overlay / Hidden
+New optional style fields in `SlideStyle`:
+- `overlayTint?: "dark" | "light" | "accent"` and `overlayStrength?: "soft" | "medium" | "strong"` (for `image-bg-overlay` / `section-image-bg`).
+- `textCardSide?: "left" | "right"` (for `image-text-overlay`).
+- `imageSide?: "left" | "right"` (for `image-bullets` / `stat-image`).
+- `quadrantPalette?: "swot" | "neutral" | "accent"` (for `quadrant`).
 
-**Stat element gets**:
-- Size: M / L / XL / Display
-- Color: theme accent / text / custom swatch
-- Decoration: None / Underline bar / Circle backdrop / Gradient fill
+Element selection keys for the new layouts: `q1Title, q1Body, q2Title, q2Body, q3Title, q3Body, q4Title, q4Body`, plus existing `image`, `title`, `body`, `bullets`, `stat`, `statLabel`, `leftTitle`, etc., so they slot into the existing `VoiceoverPanel` element editor with no panel changes (the panel already routes by key prefix).
 
-## How it looks in the panel
+Layout dropdown in `EditorScreen.tsx`: append the 7 new layouts so users can switch any slide to them.
 
-The Element tab gets two stacked sections separated by a thin divider:
+`slideVariants.ts`: add a couple of `TEXT_VARIANTS` entries for each new layout so "Regenerate slide" can emit them. `ALL_LAYOUTS` extended.
+
+`StyleControls.tsx`: add minimal controls for the new style fields when the relevant element is selected — overlay tint/strength chips on `image` (only when layout is bg-overlay-ish), card-side toggle on `image` for `image-text-overlay`, palette chips when layout is `quadrant` (shown on any quadrant cell selection).
+
+## Part 2 — SWOT sample deck
+
+Replace `SAMPLE_DECK` and `SAMPLE_TEXT` in `sampleDeck.ts` with a ~14-slide SWOT Analysis deck using the supplied learning content. Layout mix is intentionally varied:
 
 ```
-┌────────────────────────────┐
-│ CONTENT                    │
-│ [text input / image well]  │
-├────────────────────────────┤
-│ STYLE                      │
-│ [variant gallery / chips]  │
-└────────────────────────────┘
+ 1. title                  — "SWOT Analysis" + "A practical guide to strategic thinking"
+ 2. image-bg-overlay       — "What is SWOT?" definition over a strategy/whiteboard image
+ 3. quadrant (swot palette)— S / W / O / T four-box, internal vs external
+ 4. image-text-overlay     — "Strengths" with internal-advantages body, photo on right
+ 5. image-bullets          — "Weaknesses" with examples list (variant: checklist), image left
+ 6. image-right            — "Opportunities" with body + market-growth image
+ 7. image-bullets          — "Threats" examples (variant: cards), image right
+ 8. comparison             — "Helpful vs Harmful" matrix recap
+ 9. section-image-bg       — "How to conduct a SWOT" chapter break, image background
+10. bullets (numbered)     — 5 steps: Define / Gather / List / Prioritize / Build strategy
+11. quadrant (accent palette)— SO / WO / ST / WT strategy combinations
+12. stat-image             — "2.4x" higher strategic alignment, supporting photo
+13. two-column             — Advantages vs Limitations
+14. image-full             — Closing: "SWOT is not the output. The value is in the decisions."
 ```
 
-For bullets, "Content" lists every bullet inline (compact rows with drag handle, edit, delete, + Add bullet). "Style" is the SmartArt gallery. This means selecting any single bullet OR the bullet group shows the same gallery — the user can restyle the whole list from one bullet click.
+Each slide gets a script line drawn from the source material (concise, narration-friendly). All quadrant cells, bullets, and bodies are filled with the actual SWOT content from the user's brief (definitions, the four key tests, the SO/WO/ST/WT examples, the online-education example for the stat slide context).
 
-## Technical plan
-
-### New types & store (`src/lib/prototype/types.ts`, `store.ts`)
-- Add `style?: SlideStyle` to `SlideContent` — optional bag, missing = defaults.
-- `SlideStyle` fields: `bulletVariant?: "list" | "numbered" | "process" | "cards" | "pillars" | "checklist"`, `titleSize`, `titleWeight`, `titleAlign`, `titleColor`, `titleAccentBar`, similar `body*`/`subtitle*` keys, `statSize`, `statColor`, `statDecoration`, `imageShape`, `imageTreatment`, `imageBorder`, `captionPosition`.
-- Store action: `setSlideStyle(id, patch: Partial<SlideStyle>)` — shallow-merges into `content.style`.
-
-### Slide rendering (`src/components/prototype/SlideView.tsx`)
-- Read `c.style` once per slide; compute resolved values with defaults.
-- Title/subtitle/body/stat: apply size (font-size scale), weight, align, color (resolve `"accent" | "text" | "muted" | hex`), and render the optional accent bar div.
-- Image renderer: apply `borderRadius` for shape (`circle` = 50%, `blob` = irregular `border-radius` string), CSS filter for treatment (`grayscale(1)`, duotone via `mix-blend-mode` overlay, blur backdrop), border style/width.
-- Bullets: switch on `bulletVariant`:
-  - `list` — current.
-  - `numbered` — circle with index, larger gap.
-  - `process` — flex row, each item in pill, arrow `→` between (use `›` glyph styled with accent).
-  - `cards` — `grid-cols-{n}` of bordered cards, item text inside.
-  - `pillars` — same grid but each card has a 6px accent top bar.
-  - `checklist` — `✓` in accent circle instead of dot.
-
-### Element panel (`VoiceoverPanel.tsx`)
-- Restructure `renderElementEditor` into `<ContentSection>` + `<StyleSection>` per element type.
-- New file `src/components/prototype/StyleControls.tsx` exporting:
-  - `<TextStyleControls keyPrefix="title" />` — size toggle, weight, align, color swatches, accent bar switch. Reads/writes through `setSlideStyle`.
-  - `<ImageStyleControls />`
-  - `<StatStyleControls />`
-  - `<BulletSmartArtPicker />` — 2×3 grid of variant cards with tiny SVG previews + label; selected variant has accent ring.
-- For bullets: also add a "Bullets" group header so the panel can be opened from either a single bullet or a new "bullet-group" element key. Add element key `bullets` (whole group) — `SlideView` triggers it when the user clicks the empty area between bullets, and a small "Style list" button appears next to the layout dropdown when the layout is `bullets`.
-- Auto-switch to Element tab logic stays.
-
-### AI chat hooks (`src/lib/prototype/aiChat.ts`)
-- Add intent matching for: "make bullets numbered/process/cards/pillars/checklist", "bigger title", "center the title", "make the image a circle", "grayscale the photo", "accent color stat". Each maps to a `setSlideStyle` mutation surfaced as a chat-applied edit (undoable like existing ones).
-
-### Sample deck (`sampleDeck.ts`)
-- Set one of the bullet sample slides to `bulletVariant: "process"` so the feature is discoverable on first load.
-
-## Out of scope
-- Free font picker (themes still own typography family).
-- Per-bullet individual styling (style applies to the group).
-- Animated transitions between variants (instant swap).
-- Real duotone color picker (preset accent only).
+`SAMPLE_TEXT` becomes a condensed prose version of the SWOT learning material so the input screen still has a meaningful seed.
 
 ## Files touched
-- New: `src/components/prototype/StyleControls.tsx`
-- Edit: `types.ts`, `store.ts`, `SlideView.tsx`, `VoiceoverPanel.tsx`, `aiChat.ts`, `sampleDeck.ts`, `EditorScreen.tsx` (add the "Style list" affordance for bullet layouts).
+
+- Edit: `src/lib/prototype/types.ts` (new layout IDs, new content + style fields)
+- Edit: `src/components/prototype/SlideView.tsx` (render the 7 new layouts, overlay/card-side/quadrant logic)
+- Edit: `src/lib/prototype/sampleDeck.ts` (full SWOT deck + new SAMPLE_TEXT)
+- Edit: `src/lib/prototype/slideVariants.ts` (variants for new layouts, extend ALL_LAYOUTS)
+- Edit: `src/components/prototype/StyleControls.tsx` (new chips for overlay, card side, quadrant palette)
+- Edit: `src/pages/prototype/EditorScreen.tsx` (layout dropdown options)
+- Edit: `src/lib/prototype/aiChat.ts` (recognize "make it a quadrant", "image background", "swap image side" intents → mutate layout/style)
 
 No new dependencies. No backend.
+
+## Out of scope
+
+- Real icon library inside quadrant cells (use simple letter badges S/W/O/T).
+- Drag-to-reposition of the text card in `image-text-overlay` (toggle only).
+- Per-quadrant individual color pickers (palette presets only).
