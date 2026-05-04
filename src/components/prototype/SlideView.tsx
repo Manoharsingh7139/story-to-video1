@@ -510,6 +510,133 @@ export const SlideView = ({
           </div>
         );
       }
+      case "image-bg-overlay": {
+        const tint = st.overlayTint ?? "dark";
+        return (
+          <div className="h-full w-full relative">
+            {renderImage("image", c.imageUrl, { position: "absolute", inset: 0 })}
+            <div className="absolute inset-0 pointer-events-none" style={{ background: overlayBg(tint, st.overlayStrength, theme) }} />
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-32 gap-6">
+              {renderText("title", c.title ?? "", { fontFamily: theme.fontHead, fontWeight: 700, fontSize: 88 * sizeMul(st.titleSize), color: tint === "light" ? theme.text : "#fff", lineHeight: 1.1, textAlign: "center", maxWidth: 1000 })}
+              {c.body && renderText("body", c.body, { fontFamily: theme.fontBody, fontSize: 28, color: tint === "light" ? theme.text : "#fff", opacity: 0.95, textAlign: "center", maxWidth: 900, lineHeight: 1.5 }, true)}
+              {c.subtitle && renderText("subtitle", c.subtitle, { fontFamily: theme.fontBody, fontSize: 28, color: tint === "light" ? theme.muted : "#fff", opacity: 0.9, textAlign: "center" })}
+            </div>
+          </div>
+        );
+      }
+      case "image-text-overlay": {
+        const side = st.textCardSide ?? "left";
+        const cardStyle: React.CSSProperties = {
+          position: "absolute", top: 80, bottom: 80, width: "45%",
+          [side]: 80, background: theme.surface, padding: 56,
+          display: "flex", flexDirection: "column", justifyContent: "center", gap: 20,
+          borderRadius: 8, boxShadow: "0 12px 40px rgba(0,0,0,0.25)",
+        };
+        return (
+          <div className="h-full w-full relative">
+            {renderImage("image", c.imageUrl, { position: "absolute", inset: 0 })}
+            <div style={cardStyle}>
+              <div style={{ width: 50, height: 5, background: theme.accent }} />
+              {renderText("title", c.title ?? "", { fontFamily: theme.fontHead, fontWeight: 700, fontSize: 56 * sizeMul(st.titleSize), color: theme.text, lineHeight: 1.15 })}
+              {renderText("body", c.body ?? "", { fontFamily: theme.fontBody, fontSize: 24, color: theme.text, lineHeight: 1.55 }, true)}
+            </div>
+          </div>
+        );
+      }
+      case "quadrant": {
+        const cells = quadrantColors(st.quadrantPalette, theme);
+        const data = [
+          { key: "q1", title: c.q1Title ?? "Strengths",     body: c.q1Body ?? "", badge: "S" },
+          { key: "q2", title: c.q2Title ?? "Weaknesses",    body: c.q2Body ?? "", badge: "W" },
+          { key: "q3", title: c.q3Title ?? "Opportunities", body: c.q3Body ?? "", badge: "O" },
+          { key: "q4", title: c.q4Title ?? "Threats",       body: c.q4Body ?? "", badge: "T" },
+        ];
+        return (
+          <div className="h-full w-full flex flex-col px-16 py-10 gap-5">
+            {c.title && renderText("title", c.title, titleStyle(44))}
+            <div className="grid grid-cols-2 grid-rows-2 gap-4 flex-1">
+              {data.map((d, i) => {
+                const col = cells[i];
+                return (
+                  <div key={d.key} className="flex flex-col gap-3 p-7 rounded-lg" style={{ background: col.bg }}>
+                    <div className="flex items-center gap-3">
+                      <span style={{ width: 40, height: 40, borderRadius: 8, background: col.badge, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: theme.fontHead, fontWeight: 800, fontSize: 22 }}>{d.badge}</span>
+                      {renderText(`${d.key}Title`, d.title, { fontFamily: theme.fontHead, fontWeight: 700, fontSize: 28, color: col.fg })}
+                    </div>
+                    {renderText(`${d.key}Body`, d.body, { fontFamily: theme.fontBody, fontSize: 18, color: col.fg, lineHeight: 1.5, opacity: 0.9 }, true)}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      }
+      case "comparison": {
+        const panels = [
+          { key: "left", title: c.leftTitle ?? "Helpful", body: c.leftBody ?? "", color: "#16a34a" },
+          { key: "right", title: c.rightTitle ?? "Harmful", body: c.rightBody ?? "", color: "#dc2626" },
+        ];
+        return (
+          <div className="h-full w-full flex flex-col px-20 py-14 gap-6">
+            {c.title && renderText("title", c.title, titleStyle(48))}
+            <div className="grid grid-cols-2 gap-6 flex-1">
+              {panels.map((p) => (
+                <div key={p.key} className="flex flex-col rounded-lg overflow-hidden" style={{ background: theme.surface, border: `1px solid ${theme.muted}33` }}>
+                  <div style={{ background: p.color, color: "#fff", padding: "16px 24px", fontFamily: theme.fontHead, fontWeight: 700, fontSize: 22 }}>
+                    {renderText(`${p.key}Title`, p.title, { color: "#fff", fontFamily: theme.fontHead, fontWeight: 700, fontSize: 26 })}
+                  </div>
+                  <div className="p-7 flex-1">
+                    {renderText(`${p.key}Body`, p.body, { fontFamily: theme.fontBody, fontSize: 22, color: theme.text, lineHeight: 1.55 }, true)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
+      case "image-bullets": {
+        const side = st.imageSide ?? "left";
+        const ImageCol = <div className="h-full">{renderImage("image", c.imageUrl, { height: "100%" })}</div>;
+        const TextCol = (
+          <div className="flex flex-col justify-center px-8 gap-8 min-w-0">
+            {c.title && renderText("title", c.title, titleStyle(48))}
+            <div onClick={(e) => e.stopPropagation()}>{renderBullets()}</div>
+          </div>
+        );
+        return (
+          <div className="h-full w-full grid grid-cols-2 gap-8 p-8">
+            {side === "left" ? ImageCol : TextCol}
+            {side === "left" ? TextCol : ImageCol}
+          </div>
+        );
+      }
+      case "stat-image": {
+        const side = st.imageSide ?? "right";
+        const ImageCol = <div className="h-full">{renderImage("image", c.imageUrl, { height: "100%" })}</div>;
+        const StatCol = (
+          <div className="flex items-center justify-center p-12">
+            {renderStatBlock(c.stat ?? "", c.statLabel ?? "")}
+          </div>
+        );
+        return (
+          <div className="h-full w-full grid grid-cols-2 gap-8 p-8">
+            {side === "left" ? ImageCol : StatCol}
+            {side === "left" ? StatCol : ImageCol}
+          </div>
+        );
+      }
+      case "section-image-bg": {
+        return (
+          <div className="h-full w-full relative">
+            {renderImage("image", c.imageUrl, { position: "absolute", inset: 0 })}
+            <div className="absolute inset-0 pointer-events-none" style={{ background: overlayBg(st.overlayTint ?? "accent", st.overlayStrength ?? "strong", theme) }} />
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-32 gap-6">
+              {renderText("title", c.title ?? "", { fontFamily: theme.fontHead, fontWeight: 700, fontSize: 96, color: theme.accentText, lineHeight: 1.05, textAlign: "center" })}
+              {c.subtitle && renderText("subtitle", c.subtitle, { fontFamily: theme.fontBody, fontSize: 32, color: theme.accentText, opacity: 0.9, textAlign: "center" })}
+            </div>
+          </div>
+        );
+      }
     }
   };
 
