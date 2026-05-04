@@ -240,12 +240,12 @@ export const VoiceoverPanel = () => {
 
     // Generic text field — title, subtitle, body, leftTitle, etc.
     const value = (slide.content as any)[k] as string | undefined;
-    const isLong = k === "body" || k === "leftBody" || k === "rightBody";
+    const isLong = k === "body" || k === "leftBody" || k === "rightBody" || /Body$/.test(k);
     const styleField: "title" | "subtitle" | "body" | null =
       k === "title" ? "title" :
       k === "subtitle" ? "subtitle" :
-      (k === "body" || k === "leftBody" || k === "rightBody") ? "body" :
-      (k === "leftTitle" || k === "rightTitle") ? "title" : null;
+      (k === "body" || k === "leftBody" || k === "rightBody" || /Body$/.test(k)) ? "body" :
+      (k === "leftTitle" || k === "rightTitle" || /Title$/.test(k)) ? "title" : null;
     return (
       <div className="space-y-4">
         <div>
