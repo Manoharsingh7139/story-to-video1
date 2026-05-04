@@ -6,9 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { VOICES } from "@/lib/prototype/sampleDeck";
-import { Play, Pause, RefreshCw, Mic, Clock, ImageIcon, Type, Trash2, Sparkles } from "lucide-react";
+import { Play, Pause, RefreshCw, Mic, Clock, ImageIcon, Type, Trash2, Sparkles, Plus, GripVertical, List } from "lucide-react";
 import { toast } from "sonner";
 import { ImageReplaceDialog } from "./ImageReplaceDialog";
+import { TextStyleControls, BulletSmartArtPicker, ImageStyleControls, StatStyleControls } from "./StyleControls";
 
 const ELEMENT_LABELS: Record<string, string> = {
   title: "Title",
@@ -36,6 +37,8 @@ export const VoiceoverPanel = () => {
   const setSlideScript = usePrototypeStore((s) => s.setSlideScript);
   const setSlideContent = usePrototypeStore((s) => s.setSlideContent);
   const setSlideBullet = usePrototypeStore((s) => s.setSlideBullet);
+  const addBullet = usePrototypeStore((s) => s.addBullet);
+  const removeBullet = usePrototypeStore((s) => s.removeBullet);
   const voice = usePrototypeStore((s) => s.voice);
   const setVoice = usePrototypeStore((s) => s.setVoice);
   const selectedElementKey = usePrototypeStore((s) => s.selectedElementKey);
@@ -79,6 +82,10 @@ export const VoiceoverPanel = () => {
     }, 1500);
   };
 
+  const SectionHeader = ({ label }: { label: string }) => (
+    <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2 pt-1">{label}</div>
+  );
+
   const renderElementEditor = () => {
     if (!selectedElementKey) {
       return (
@@ -90,32 +97,47 @@ export const VoiceoverPanel = () => {
 
     const k = selectedElementKey;
 
-    // Bullet
-    if (k.startsWith("bullet:")) {
-      const idx = parseInt(k.split(":")[1], 10);
-      const value = slide.content.bullets?.[idx] ?? "";
+    // Bullet group OR single bullet — both show the same content + smartart picker
+    if (k === "bullets" || k.startsWith("bullet:")) {
+      const bullets = slide.content.bullets ?? [];
       return (
-        <div className="space-y-3">
-          <div className="text-xs uppercase tracking-wider text-muted-foreground font-medium flex items-center gap-1.5">
-            <Type className="h-3 w-3" /> Bullet {idx + 1}
+        <div className="space-y-4">
+          <div>
+            <SectionHeader label="Content — Bullets" />
+            <div className="space-y-1.5">
+              {bullets.map((b, i) => (
+                <div key={i} className="flex items-center gap-1.5 group">
+                  <GripVertical className="h-3.5 w-3.5 text-muted-foreground/50 flex-shrink-0" />
+                  <Input
+                    value={b}
+                    onChange={(e) => setSlideBullet(slide.id, i, e.target.value)}
+                    onFocus={() => selectElement(`bullet:${i}`)}
+                    className="h-8 text-xs"
+                  />
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-7 w-7 p-0 opacity-50 hover:opacity-100"
+                    onClick={() => removeBullet(slide.id, i)}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+              ))}
+              <Button
+                size="sm"
+                variant="outline"
+                className="w-full h-7 text-xs"
+                onClick={() => addBullet(slide.id)}
+              >
+                <Plus className="h-3 w-3 mr-1" /> Add bullet
+              </Button>
+            </div>
           </div>
-          <Textarea
-            value={value}
-            onChange={(e) => setSlideBullet(slide.id, idx, e.target.value)}
-            className="min-h-[80px] text-sm"
-          />
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full text-destructive hover:text-destructive"
-            onClick={() => {
-              const bullets = (slide.content.bullets ?? []).filter((_, i) => i !== idx);
-              setSlideContent(slide.id, "bullets" as any, bullets as any);
-              selectElement(null);
-            }}
-          >
-            <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Delete bullet
-          </Button>
+          <div className="border-t border-border pt-3">
+            <SectionHeader label="Style" />
+            <BulletSmartArtPicker slideId={slide.id} />
+          </div>
         </div>
       );
     }
@@ -126,44 +148,42 @@ export const VoiceoverPanel = () => {
       const capKey = k === "image" ? "caption" : `caption${k.split(":")[1]}`;
       const url = (slide.content as any)[fieldKey] as string | undefined;
       const cap = (slide.content as any)[capKey] as string | undefined;
-      const showCaption = slide.layout === "image-grid";
+      const isGrid = slide.layout === "image-grid";
       return (
-        <div className="space-y-3">
-          <div className="text-xs uppercase tracking-wider text-muted-foreground font-medium flex items-center gap-1.5">
-            <ImageIcon className="h-3 w-3" /> {ELEMENT_LABELS[fieldKey] ?? "Image"}
-          </div>
-          <div className="aspect-video rounded overflow-hidden border border-border bg-muted">
-            {url ? <img src={url} alt="" className="w-full h-full object-cover" /> : (
-              <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">No image</div>
-            )}
-          </div>
-          <Button variant="outline" size="sm" className="w-full" onClick={() => setImgDialogOpen(true)}>
-            <ImageIcon className="h-3.5 w-3.5 mr-1.5" /> Replace image
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full"
-            onClick={() => {
-              setSlideContent(slide.id, fieldKey, "");
-              toast.success("Image removed");
-            }}
-          >
-            <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Remove
-          </Button>
-          {showCaption && (
-            <div>
-              <label className="text-xs font-medium text-muted-foreground mb-1.5 block uppercase tracking-wider">
-                Caption
-              </label>
-              <Input
-                value={cap ?? ""}
-                onChange={(e) => setSlideContent(slide.id, capKey, e.target.value)}
-                placeholder="Optional caption"
-                className="h-8 text-sm"
-              />
+        <div className="space-y-4">
+          <div>
+            <SectionHeader label="Content — Image" />
+            <div className="space-y-2">
+              <div className="aspect-video rounded overflow-hidden border border-border bg-muted">
+                {url ? <img src={url} alt="" className="w-full h-full object-cover" /> : (
+                  <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">No image</div>
+                )}
+              </div>
+              <div className="grid grid-cols-2 gap-1.5">
+                <Button variant="outline" size="sm" className="text-xs" onClick={() => setImgDialogOpen(true)}>
+                  <ImageIcon className="h-3 w-3 mr-1" /> Replace
+                </Button>
+                <Button
+                  variant="outline" size="sm" className="text-xs"
+                  onClick={() => { setSlideContent(slide.id, fieldKey, ""); toast.success("Image removed"); }}
+                >
+                  <Trash2 className="h-3 w-3 mr-1" /> Remove
+                </Button>
+              </div>
+              {isGrid && (
+                <Input
+                  value={cap ?? ""}
+                  onChange={(e) => setSlideContent(slide.id, capKey, e.target.value)}
+                  placeholder="Caption"
+                  className="h-8 text-xs"
+                />
+              )}
             </div>
-          )}
+          </div>
+          <div className="border-t border-border pt-3">
+            <SectionHeader label="Style" />
+            <ImageStyleControls slideId={slide.id} isGrid={isGrid} />
+          </div>
           <ImageReplaceDialog
             open={imgDialogOpen}
             onOpenChange={setImgDialogOpen}
@@ -181,9 +201,7 @@ export const VoiceoverPanel = () => {
       const value = (slide.content as any)[fieldKey] as string | undefined;
       return (
         <div className="space-y-3">
-          <div className="text-xs uppercase tracking-wider text-muted-foreground font-medium flex items-center gap-1.5">
-            <Type className="h-3 w-3" /> Caption {n}
-          </div>
+          <SectionHeader label={`Content — Caption ${n}`} />
           <Input
             value={value ?? ""}
             onChange={(e) => setSlideContent(slide.id, fieldKey, e.target.value)}
@@ -193,37 +211,68 @@ export const VoiceoverPanel = () => {
       );
     }
 
-    // Generic text field
+    // Stat
+    if (k === "stat" || k === "statLabel") {
+      const value = (slide.content as any)[k] as string | undefined;
+      return (
+        <div className="space-y-4">
+          <div>
+            <SectionHeader label={`Content — ${ELEMENT_LABELS[k]}`} />
+            <Input
+              value={value ?? ""}
+              onChange={(e) => setSlideContent(slide.id, k, e.target.value)}
+              className="h-9 text-sm"
+            />
+          </div>
+          {k === "stat" && (
+            <div className="border-t border-border pt-3">
+              <SectionHeader label="Style" />
+              <StatStyleControls slideId={slide.id} />
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Generic text field — title, subtitle, body, leftTitle, etc.
     const value = (slide.content as any)[k] as string | undefined;
     const isLong = k === "body" || k === "leftBody" || k === "rightBody";
+    const styleField: "title" | "subtitle" | "body" | null =
+      k === "title" ? "title" :
+      k === "subtitle" ? "subtitle" :
+      (k === "body" || k === "leftBody" || k === "rightBody") ? "body" :
+      (k === "leftTitle" || k === "rightTitle") ? "title" : null;
     return (
-      <div className="space-y-3">
-        <div className="text-xs uppercase tracking-wider text-muted-foreground font-medium flex items-center gap-1.5">
-          <Type className="h-3 w-3" /> {ELEMENT_LABELS[k] ?? k}
+      <div className="space-y-4">
+        <div>
+          <SectionHeader label={`Content — ${ELEMENT_LABELS[k] ?? k}`} />
+          {isLong ? (
+            <Textarea
+              value={value ?? ""}
+              onChange={(e) => setSlideContent(slide.id, k, e.target.value)}
+              className="min-h-[120px] text-sm"
+            />
+          ) : (
+            <Input
+              value={value ?? ""}
+              onChange={(e) => setSlideContent(slide.id, k, e.target.value)}
+              className="h-9 text-sm"
+            />
+          )}
+          <Button
+            variant="ghost" size="sm"
+            className="w-full mt-1.5 h-7 text-xs text-muted-foreground hover:text-destructive"
+            onClick={() => setSlideContent(slide.id, k, "")}
+          >
+            <Trash2 className="h-3 w-3 mr-1" /> Clear text
+          </Button>
         </div>
-        {isLong ? (
-          <Textarea
-            value={value ?? ""}
-            onChange={(e) => setSlideContent(slide.id, k, e.target.value)}
-            className="min-h-[160px] text-sm"
-          />
-        ) : (
-          <Input
-            value={value ?? ""}
-            onChange={(e) => setSlideContent(slide.id, k, e.target.value)}
-            className="h-9 text-sm"
-          />
+        {styleField && (
+          <div className="border-t border-border pt-3">
+            <SectionHeader label="Style" />
+            <TextStyleControls slideId={slide.id} field={styleField} />
+          </div>
         )}
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-full text-destructive hover:text-destructive"
-          onClick={() => {
-            setSlideContent(slide.id, k, "");
-          }}
-        >
-          <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Clear
-        </Button>
       </div>
     );
   };

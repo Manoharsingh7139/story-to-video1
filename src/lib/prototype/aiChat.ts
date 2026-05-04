@@ -168,6 +168,35 @@ export function processChatMessage(message: string, slide: Slide): ChatResult | 
     };
   }
 
+  // ===== STYLE INTENTS =====
+  const setStyle = (patch: Record<string, any>, label: string): ChatResult => ({
+    after: { ...slide, content: { ...slide.content, style: { ...(slide.content.style ?? {}), ...patch } } },
+    label,
+  });
+  if (/numbered|number.*bullet|bullets.*number/.test(m)) return setStyle({ bulletVariant: "numbered" }, "Switched bullets to numbered style.");
+  if (/process|arrow.*bullet|step.*bullet/.test(m)) return setStyle({ bulletVariant: "process" }, "Turned bullets into a process flow.");
+  if (/cards?\b.*bullet|bullets.*cards?/.test(m)) return setStyle({ bulletVariant: "cards" }, "Turned bullets into cards.");
+  if (/pillar/.test(m)) return setStyle({ bulletVariant: "pillars" }, "Turned bullets into pillars.");
+  if (/checklist|check.*list|tick/.test(m)) return setStyle({ bulletVariant: "checklist" }, "Turned bullets into a checklist.");
+  if (/plain.*list|simple.*list|reset.*bullet/.test(m)) return setStyle({ bulletVariant: "list" }, "Reset bullets to a plain list.");
+
+  if (/bigger title|larger title|huge title/.test(m)) return setStyle({ titleSize: "xl" }, "Made the title much bigger.");
+  if (/smaller title/.test(m)) return setStyle({ titleSize: "s" }, "Made the title smaller.");
+  if (/center.*title|centered title/.test(m)) return setStyle({ titleAlign: "center" }, "Centered the title.");
+  if (/right.*title/.test(m)) return setStyle({ titleAlign: "right" }, "Right-aligned the title.");
+  if (/accent.*title|colored title|color the title/.test(m)) return setStyle({ titleColor: "accent" }, "Colored the title with the accent color.");
+
+  if (/circle.*image|round.*image|image.*circle/.test(m)) return setStyle({ imageShape: "circle" }, "Made the image circular.");
+  if (/blob.*image|image.*blob/.test(m)) return setStyle({ imageShape: "blob" }, "Gave the image a soft-blob shape.");
+  if (/rounded.*image|image.*rounded/.test(m)) return setStyle({ imageShape: "rounded" }, "Rounded the image corners.");
+  if (/grayscale|black.*white|b\&w|desaturate/.test(m)) return setStyle({ imageTreatment: "grayscale" }, "Applied grayscale to the image.");
+  if (/duotone/.test(m)) return setStyle({ imageTreatment: "duotone" }, "Applied a duotone treatment.");
+
+  if (/bigger stat|huge stat|stat.*big/.test(m)) return setStyle({ statSize: "display" }, "Made the stat display-sized.");
+  if (/circle.*stat|stat.*circle/.test(m)) return setStyle({ statDecoration: "circle" }, "Wrapped the stat in a circle.");
+  if (/underline.*stat|stat.*underline/.test(m)) return setStyle({ statDecoration: "underline" }, "Underlined the stat.");
+  if (/gradient.*stat|stat.*gradient/.test(m)) return setStyle({ statDecoration: "gradient" }, "Gave the stat a gradient fill.");
+
   // Fallback: subtle script tweak so something visible happens
   return {
     after: {

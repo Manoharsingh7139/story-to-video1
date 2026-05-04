@@ -12,8 +12,31 @@ export type LayoutId =
   | "image-full"
   | "image-grid";
 
+export type TextSize = "s" | "m" | "l" | "xl";
+export type TextWeight = "regular" | "bold";
+export type TextAlign = "left" | "center" | "right";
+export type TextColor = "text" | "muted" | "accent" | "neutral1" | "neutral2" | "neutral3";
+export type BulletVariant = "list" | "numbered" | "process" | "cards" | "pillars" | "checklist";
+export type ImageShape = "square" | "rounded" | "circle" | "blob";
+export type ImageTreatment = "none" | "grayscale" | "duotone" | "blur";
+export type ImageBorder = "none" | "thin" | "thick";
+export type CaptionPosition = "below" | "overlay" | "hidden";
+export type StatSize = "m" | "l" | "xl" | "display";
+export type StatDecoration = "none" | "underline" | "circle" | "gradient";
+
+export interface SlideStyle {
+  bulletVariant?: BulletVariant;
+  titleSize?: TextSize; titleWeight?: TextWeight; titleAlign?: TextAlign; titleColor?: TextColor; titleAccentBar?: boolean;
+  subtitleSize?: TextSize; subtitleWeight?: TextWeight; subtitleAlign?: TextAlign; subtitleColor?: TextColor;
+  bodySize?: TextSize; bodyWeight?: TextWeight; bodyAlign?: TextAlign; bodyColor?: TextColor;
+  statSize?: StatSize; statColor?: TextColor; statDecoration?: StatDecoration;
+  imageShape?: ImageShape; imageTreatment?: ImageTreatment; imageBorder?: ImageBorder;
+  captionPosition?: CaptionPosition;
+}
+
 export interface SlideContent {
   title?: string;
+  style?: SlideStyle;
   subtitle?: string;
   body?: string;
   bullets?: string[];
