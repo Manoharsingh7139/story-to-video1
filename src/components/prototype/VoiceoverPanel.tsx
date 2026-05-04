@@ -277,6 +277,11 @@ export const VoiceoverPanel = () => {
             <TextStyleControls slideId={slide.id} field={styleField} />
           </div>
         )}
+        {slide.layout === "quadrant" && /^q[1-4](Title|Body)$/.test(k) && (
+          <div className="border-t border-border pt-3">
+            <QuadrantStyleControls slideId={slide.id} />
+          </div>
+        )}
       </div>
     );
   };
