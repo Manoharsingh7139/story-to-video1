@@ -43,6 +43,37 @@ const TEXT_VARIANTS: Record<string, { content: SlideContent; script: string }[]>
         imageUrl4: STOCK_IMAGES[11].url, caption4: "Deep work blocks",
       }, script: "Here's what it looks like in practice — async standups, written decisions, outcome reviews, and protected focus." },
   ],
+  "image-bg-overlay": [
+    { content: { title: "Strategy starts with seeing clearly", body: "Before you can act, you have to look honestly at where you stand and where the market is going.", imageUrl: pickRandomImage() }, script: "Strategy always starts with seeing clearly — what you've got, and where the world is heading." },
+  ],
+  "image-text-overlay": [
+    { content: { title: "Make it concrete", body: "Vague inputs lead to vague strategy. Pin every factor to evidence you could defend in a meeting.", imageUrl: pickRandomImage() }, script: "Make every factor concrete. Vague inputs always lead to vague strategy." },
+  ],
+  "image-bullets": [
+    { content: { title: "Spot the pattern", bullets: ["Specific, not generic", "Backed by data", "Comparable to peers", "Tied to a decision"], imageUrl: pickRandomImage() }, script: "Good factors share four traits — specific, data-backed, comparable, and tied to a real decision." },
+  ],
+  "stat-image": [
+    { content: { stat: "3x", statLabel: "better strategic decisions when teams use a structured framework", imageUrl: pickRandomImage() }, script: "Teams that use a structured framework make roughly three times better strategic decisions." },
+  ],
+  "section-image-bg": [
+    { content: { title: "From insight to action", subtitle: "Where most SWOTs go to die", imageUrl: pickRandomImage() }, script: "From insight to action — this is the step where most SWOT analyses quietly die." },
+  ],
+  quadrant: [
+    { content: {
+        title: "The four boxes",
+        q1Title: "Strengths", q1Body: "What we do better than anyone else.",
+        q2Title: "Weaknesses", q2Body: "Where we consistently underperform.",
+        q3Title: "Opportunities", q3Body: "External trends we can ride.",
+        q4Title: "Threats", q4Body: "External forces that could hurt us.",
+      }, script: "The four boxes — strengths, weaknesses, opportunities, threats. Two internal, two external." },
+  ],
+  comparison: [
+    { content: {
+        title: "Helpful vs Harmful",
+        leftTitle: "Helpful", leftBody: "Strengths and opportunities — fuel for growth.",
+        rightTitle: "Harmful", rightBody: "Weaknesses and threats — risks to manage.",
+      }, script: "On one side, what helps you — strengths and opportunities. On the other, what hurts you — weaknesses and threats." },
+  ],
 };
 
 const ALL_LAYOUTS: LayoutId[] = [
