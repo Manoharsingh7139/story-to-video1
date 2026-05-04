@@ -3,6 +3,7 @@ import { THEMES } from "@/lib/prototype/themes";
 import type {
   SlideStyle, BulletVariant, TextSize, TextWeight, TextAlign, TextColor,
   ImageShape, ImageTreatment, ImageBorder, CaptionPosition, StatSize, StatDecoration,
+  LayoutId, OverlayTint, OverlayStrength, SideChoice, QuadrantPalette,
 } from "@/lib/prototype/types";
 import { cn } from "@/lib/utils";
 
