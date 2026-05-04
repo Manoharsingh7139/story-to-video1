@@ -1,53 +1,102 @@
-## Goal
-Add image-based layouts, per-element editing, slide regeneration, and shrink the chat panel.
+# Element editor: style & visual variants (not just text)
 
-## 1. New layouts (with image placeholders)
-Add 4 new layouts to `LayoutId` and `SlideContent` (extend with `imageUrl`, `imageUrl2`, `imageUrl3`, `imageUrl4`, `caption`):
+Right now selecting an element on a slide only lets you change its text. This makes the Element panel a real design tool: each element type gets its own style controls, and bullet lists can transform into SmartArt-style visuals (numbered steps, process arrows, pillars, checklist cards, etc.).
 
-- **image-left** — Image left half, title + body right half
-- **image-right** — Title + body left half, image right half
-- **image-full** — Full-bleed image with overlaid title + subtitle (gradient scrim)
-- **image-grid** — Title at top, 2x2 grid of 4 images each with optional caption
+## What the user gets
 
-Images use Unsplash placeholder URLs (e.g. `https://images.unsplash.com/...?w=1280`) seeded per slide. Add 2 sample image-based slides to `SAMPLE_DECK` so they're discoverable.
+**Bullets → SmartArt picker** (the headline change)
+When you select any bullet (or a new "Group: Bullets" header at the top of the bullet element), the Element panel shows a visual gallery of 6 ways to render the same list:
 
-Update layout dropdown in `EditorScreen` to list all 10 layouts (group: Text / Image).
+```
+[ • List ]   [ ① Numbered ]   [ → Process ]
+[ ▦ Cards ]  [ ⏃ Pillars ]    [ ✓ Checklist ]
+```
 
-## 2. Element-level selection & editing
-Currently the whole canvas is editable inline. Switch to a "selected element" model like PPT:
+Click one and the slide swaps to that visual instantly. The underlying bullet text stays — only the rendering changes. Each variant has its own look:
+- **List** — current dot bullets
+- **Numbered** — large circled numbers beside each item
+- **Process** — horizontal arrow chain with short labels
+- **Cards** — equal-width tiles in a row, item text inside
+- **Pillars** — vertical columns with accent top-bar
+- **Checklist** — checkmarks in accent color
 
-- Add `selectedElementKey` to the store (e.g. `"title"`, `"body"`, `"image"`, `"bullet:2"`, `"image:1"` for grid).
-- In `SlideView`, wrap each element (title, subtitle, body, each bullet, each image, stat, etc.) in a clickable container. Clicking selects it; selected element gets a blue outline + small floating toolbar.
-- Floating toolbar actions per element type:
-  - **Text**: edit inline (contentEditable as today), delete, "Ask AI" shortcut that prefills chat scoped to that element.
-  - **Image**: "Replace image" (opens small dialog with: paste URL, pick from 6 stock thumbnails, "Generate with AI" mock button that swaps in a different Unsplash URL after a 1s spinner), "Remove".
-- Right panel ("Properties") becomes context-aware: shows the selected element's editable fields (text content, font size hint, image URL, caption). Falls back to the existing voiceover view when nothing is selected — add a small tab toggle: **Voiceover | Element**.
+**Text elements (title, subtitle, body, etc.) get a Style section** below the text input:
+- Size: S / M / L / XL toggle
+- Weight: Regular / Bold
+- Align: Left / Center / Right
+- Color: swatch row (theme text, muted, accent, +3 neutrals)
+- Emphasis: optional accent underline bar (on/off)
 
-## 3. Regenerate entire slide
-- Add a "Regenerate slide" button on the canvas toolbar (next to layout/theme selectors) and in the thumbnail rail's per-slide menu.
-- Clicking shows a small popover with 3 options:
-  - Regenerate (keep layout)
-  - Regenerate (try a different layout)
-  - Regenerate from custom prompt (text input)
-- Behavior is mocked: 1.2s shimmer overlay on the canvas, then swap content with a variant pulled from a small `slideVariants.ts` lookup keyed by layout (3 canned variants per layout). Voiceover script also gets rewritten. Recorded as an undoable entry in the chat history.
+**Image elements get a Style section**:
+- Shape: Square / Rounded / Circle / Soft-blob
+- Treatment: None / Grayscale / Duotone (accent) / Subtle blur backdrop
+- Border: None / Thin / Thick accent
+- Caption position (image-grid only): Below / Overlay / Hidden
 
-## 4. Reduce chat height
-- Change chat panel container in `EditorScreen` from `h-72` (288px) to `h-44` (176px).
-- Make it collapsible: header gets a chevron that toggles to a 36px collapsed bar showing only "AI assistant • slide N" + input. Default = collapsed when viewport height < 800px.
-- Inside `ChatPanel`, drop suggestion chips when collapsed; reduce message vertical padding from `py-3` to `py-2`, gap from `space-y-3` to `space-y-2`.
+**Stat element gets**:
+- Size: M / L / XL / Display
+- Color: theme accent / text / custom swatch
+- Decoration: None / Underline bar / Circle backdrop / Gradient fill
 
-## 5. AI chat additions
-Extend `processChatMessage` with patterns:
-- "image left/right/full/grid" → switch to corresponding layout
-- "replace image" / "new image" → swap `imageUrl` to a different stock URL
-- "regenerate" / "redo this slide" → trigger the regeneration flow
+## How it looks in the panel
 
-## Technical notes
-- Files touched: `types.ts`, `themes.ts` (no change), `sampleDeck.ts`, `store.ts` (add `selectedElementKey`, `setSelectedElement`, `regenerateSlide`), `aiChat.ts`, `SlideView.tsx` (big refactor — element wrappers, image rendering), `EditorScreen.tsx` (layout list, regenerate button, chat height, properties tab), `ChatPanel.tsx` (collapsible, denser), `VoiceoverPanel.tsx` (add Element tab), new `ImageReplaceDialog.tsx`, new `slideVariants.ts`.
-- Stock image pool: 12 curated Unsplash URLs in a constant.
-- No backend; all mocked. No new deps.
+The Element tab gets two stacked sections separated by a thin divider:
+
+```
+┌────────────────────────────┐
+│ CONTENT                    │
+│ [text input / image well]  │
+├────────────────────────────┤
+│ STYLE                      │
+│ [variant gallery / chips]  │
+└────────────────────────────┘
+```
+
+For bullets, "Content" lists every bullet inline (compact rows with drag handle, edit, delete, + Add bullet). "Style" is the SmartArt gallery. This means selecting any single bullet OR the bullet group shows the same gallery — the user can restyle the whole list from one bullet click.
+
+## Technical plan
+
+### New types & store (`src/lib/prototype/types.ts`, `store.ts`)
+- Add `style?: SlideStyle` to `SlideContent` — optional bag, missing = defaults.
+- `SlideStyle` fields: `bulletVariant?: "list" | "numbered" | "process" | "cards" | "pillars" | "checklist"`, `titleSize`, `titleWeight`, `titleAlign`, `titleColor`, `titleAccentBar`, similar `body*`/`subtitle*` keys, `statSize`, `statColor`, `statDecoration`, `imageShape`, `imageTreatment`, `imageBorder`, `captionPosition`.
+- Store action: `setSlideStyle(id, patch: Partial<SlideStyle>)` — shallow-merges into `content.style`.
+
+### Slide rendering (`src/components/prototype/SlideView.tsx`)
+- Read `c.style` once per slide; compute resolved values with defaults.
+- Title/subtitle/body/stat: apply size (font-size scale), weight, align, color (resolve `"accent" | "text" | "muted" | hex`), and render the optional accent bar div.
+- Image renderer: apply `borderRadius` for shape (`circle` = 50%, `blob` = irregular `border-radius` string), CSS filter for treatment (`grayscale(1)`, duotone via `mix-blend-mode` overlay, blur backdrop), border style/width.
+- Bullets: switch on `bulletVariant`:
+  - `list` — current.
+  - `numbered` — circle with index, larger gap.
+  - `process` — flex row, each item in pill, arrow `→` between (use `›` glyph styled with accent).
+  - `cards` — `grid-cols-{n}` of bordered cards, item text inside.
+  - `pillars` — same grid but each card has a 6px accent top bar.
+  - `checklist` — `✓` in accent circle instead of dot.
+
+### Element panel (`VoiceoverPanel.tsx`)
+- Restructure `renderElementEditor` into `<ContentSection>` + `<StyleSection>` per element type.
+- New file `src/components/prototype/StyleControls.tsx` exporting:
+  - `<TextStyleControls keyPrefix="title" />` — size toggle, weight, align, color swatches, accent bar switch. Reads/writes through `setSlideStyle`.
+  - `<ImageStyleControls />`
+  - `<StatStyleControls />`
+  - `<BulletSmartArtPicker />` — 2×3 grid of variant cards with tiny SVG previews + label; selected variant has accent ring.
+- For bullets: also add a "Bullets" group header so the panel can be opened from either a single bullet or a new "bullet-group" element key. Add element key `bullets` (whole group) — `SlideView` triggers it when the user clicks the empty area between bullets, and a small "Style list" button appears next to the layout dropdown when the layout is `bullets`.
+- Auto-switch to Element tab logic stays.
+
+### AI chat hooks (`src/lib/prototype/aiChat.ts`)
+- Add intent matching for: "make bullets numbered/process/cards/pillars/checklist", "bigger title", "center the title", "make the image a circle", "grayscale the photo", "accent color stat". Each maps to a `setSlideStyle` mutation surfaced as a chat-applied edit (undoable like existing ones).
+
+### Sample deck (`sampleDeck.ts`)
+- Set one of the bullet sample slides to `bulletVariant: "process"` so the feature is discoverable on first load.
 
 ## Out of scope
-- Real image upload from disk (would need Lovable Cloud storage)
-- Real AI image generation
-- Free drag-to-position elements (still layout-based)
+- Free font picker (themes still own typography family).
+- Per-bullet individual styling (style applies to the group).
+- Animated transitions between variants (instant swap).
+- Real duotone color picker (preset accent only).
+
+## Files touched
+- New: `src/components/prototype/StyleControls.tsx`
+- Edit: `types.ts`, `store.ts`, `SlideView.tsx`, `VoiceoverPanel.tsx`, `aiChat.ts`, `sampleDeck.ts`, `EditorScreen.tsx` (add the "Style list" affordance for bullet layouts).
+
+No new dependencies. No backend.
