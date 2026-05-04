@@ -29,6 +29,15 @@ const IMAGE_LAYOUTS: { id: LayoutId; name: string }[] = [
   { id: "image-right", name: "Image right" },
   { id: "image-full", name: "Full-bleed image" },
   { id: "image-grid", name: "Image grid (2×2)" },
+  { id: "image-bg-overlay", name: "Image background" },
+  { id: "image-text-overlay", name: "Image + text card" },
+  { id: "image-bullets", name: "Image + bullets" },
+  { id: "stat-image", name: "Stat + image" },
+  { id: "section-image-bg", name: "Section (image bg)" },
+];
+const FRAMEWORK_LAYOUTS: { id: LayoutId; name: string }[] = [
+  { id: "quadrant", name: "Quadrant (2×2)" },
+  { id: "comparison", name: "Comparison" },
 ];
 
 export default function EditorScreen() {
