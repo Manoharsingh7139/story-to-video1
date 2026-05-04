@@ -124,6 +124,16 @@ export default function EditorScreen() {
             </div>
             <div className="w-px h-5 bg-border mx-1" />
             <RegenerateButton slideId={slide.id} />
+            {slide.layout === "bullets" && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 text-xs ml-1"
+                onClick={() => selectElement("bullets")}
+              >
+                Style list
+              </Button>
+            )}
             <div className="ml-auto text-xs text-muted-foreground">
               Slide {slides.findIndex((s) => s.id === slide.id) + 1} of {slides.length}
               {selectedElementKey && (
