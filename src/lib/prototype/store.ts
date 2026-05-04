@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { SAMPLE_DECK, VOICES } from "./sampleDeck";
 import { regenerateVariant } from "./slideVariants";
-import type { ChatMessage, ElementKey, Slide, ThemeId, LayoutId } from "./types";
+import type { ChatMessage, ElementKey, Slide, ThemeId, LayoutId, SlideStyle } from "./types";
 
 interface PrototypeState {
   sourceText: string;
@@ -26,6 +26,9 @@ interface PrototypeState {
   setSlideScript: (id: string, script: string) => void;
   setSlideContent: (id: string, key: string, value: string) => void;
   setSlideBullet: (id: string, index: number, value: string) => void;
+  setSlideStyle: (id: string, patch: Partial<SlideStyle>) => void;
+  addBullet: (id: string) => void;
+  removeBullet: (id: string, index: number) => void;
   reorderSlides: (fromId: string, toId: string) => void;
   addSlide: () => void;
   duplicateSlide: (id: string) => void;
