@@ -43,6 +43,7 @@ export const SAMPLE_DECK: Slide[] = [
     layout: "bullets",
     content: {
       title: "Three principles that work",
+      style: { bulletVariant: "process" },
       bullets: [
         "Write more than you talk",
         "Default to public over private",
