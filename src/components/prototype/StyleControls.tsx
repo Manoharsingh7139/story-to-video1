@@ -234,15 +234,59 @@ export const BulletSmartArtPicker = ({ slideId }: { slideId: string }) => {
 };
 
 // ============ IMAGE ============
-export const ImageStyleControls = ({ slideId, isGrid }: { slideId: string; isGrid?: boolean }) => {
+export const ImageStyleControls = ({ slideId, isGrid, layout }: { slideId: string; isGrid?: boolean; layout?: LayoutId }) => {
   const setSlideStyle = usePrototypeStore((s) => s.setSlideStyle);
   const style = useStyle(slideId);
   const shape = style.imageShape ?? "square";
   const treatment = style.imageTreatment ?? "none";
   const border = style.imageBorder ?? "none";
   const cap = style.captionPosition ?? "below";
+  const isOverlay = layout === "image-bg-overlay" || layout === "section-image-bg";
+  const isTextCard = layout === "image-text-overlay";
+  const isSideLayout = layout === "image-bullets" || layout === "stat-image";
+  const tint = style.overlayTint ?? (layout === "section-image-bg" ? "accent" : "dark");
+  const strength = style.overlayStrength ?? (layout === "section-image-bg" ? "strong" : "medium");
+  const cardSide = style.textCardSide ?? "left";
+  const imgSide = style.imageSide ?? (layout === "stat-image" ? "right" : "left");
+
   return (
     <div className="space-y-3">
+      {isOverlay && (
+        <>
+          <Section label="Overlay tint">
+            <ChipRow>
+              {(["dark", "light", "accent"] as OverlayTint[]).map((t) => (
+                <Chip key={t} active={tint === t} onClick={() => setSlideStyle(slideId, { overlayTint: t })}>{t[0].toUpperCase() + t.slice(1)}</Chip>
+              ))}
+            </ChipRow>
+          </Section>
+          <Section label="Overlay strength">
+            <ChipRow>
+              {(["soft", "medium", "strong"] as OverlayStrength[]).map((s) => (
+                <Chip key={s} active={strength === s} onClick={() => setSlideStyle(slideId, { overlayStrength: s })}>{s[0].toUpperCase() + s.slice(1)}</Chip>
+              ))}
+            </ChipRow>
+          </Section>
+        </>
+      )}
+      {isTextCard && (
+        <Section label="Text card side">
+          <ChipRow>
+            {(["left", "right"] as SideChoice[]).map((s) => (
+              <Chip key={s} active={cardSide === s} onClick={() => setSlideStyle(slideId, { textCardSide: s })}>{s[0].toUpperCase() + s.slice(1)}</Chip>
+            ))}
+          </ChipRow>
+        </Section>
+      )}
+      {isSideLayout && (
+        <Section label="Image side">
+          <ChipRow>
+            {(["left", "right"] as SideChoice[]).map((s) => (
+              <Chip key={s} active={imgSide === s} onClick={() => setSlideStyle(slideId, { imageSide: s })}>{s[0].toUpperCase() + s.slice(1)}</Chip>
+            ))}
+          </ChipRow>
+        </Section>
+      )}
       <Section label="Shape">
         <ChipRow>
           {(["square", "rounded", "circle", "blob"] as ImageShape[]).map((s) => (
@@ -282,6 +326,21 @@ export const ImageStyleControls = ({ slideId, isGrid }: { slideId: string; isGri
         </Section>
       )}
     </div>
+  );
+};
+
+export const QuadrantStyleControls = ({ slideId }: { slideId: string }) => {
+  const setSlideStyle = usePrototypeStore((s) => s.setSlideStyle);
+  const style = useStyle(slideId);
+  const palette = style.quadrantPalette ?? "swot";
+  return (
+    <Section label="Quadrant palette">
+      <ChipRow>
+        {(["swot", "neutral", "accent"] as QuadrantPalette[]).map((p) => (
+          <Chip key={p} active={palette === p} onClick={() => setSlideStyle(slideId, { quadrantPalette: p })}>{p[0].toUpperCase() + p.slice(1)}</Chip>
+        ))}
+      </ChipRow>
+    </Section>
   );
 };
 
