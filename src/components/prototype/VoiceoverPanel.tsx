@@ -186,7 +186,7 @@ export const VoiceoverPanel = () => {
           </div>
           <div className="border-t border-border pt-3">
             <SectionHeader label="Style" />
-            <ImageStyleControls slideId={slide.id} isGrid={isGrid} />
+            <ImageStyleControls slideId={slide.id} isGrid={isGrid} layout={slide.layout} />
           </div>
           <ImageReplaceDialog
             open={imgDialogOpen}
