@@ -106,6 +106,49 @@ const imageFilter = (t: string | undefined): string => {
   }
 };
 
+const overlayBg = (tint: OverlayTint | undefined, strength: OverlayStrength | undefined, theme: Theme): string => {
+  const base =
+    tint === "light" ? "255,255,255" :
+    tint === "accent" ? hexToRgb(theme.accent) :
+    "0,0,0";
+  const alpha = strength === "soft" ? 0.3 : strength === "strong" ? 0.75 : 0.55;
+  return `rgba(${base}, ${alpha})`;
+};
+
+function hexToRgb(hex: string): string {
+  const h = hex.replace("#", "");
+  const full = h.length === 3 ? h.split("").map((c) => c + c).join("") : h;
+  const num = parseInt(full, 16);
+  return `${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}`;
+}
+
+const quadrantColors = (palette: QuadrantPalette | undefined, theme: Theme): { bg: string; fg: string; badge: string }[] => {
+  if (palette === "neutral") {
+    return [
+      { bg: theme.surface, fg: theme.text, badge: theme.accent },
+      { bg: theme.surface, fg: theme.text, badge: theme.accent },
+      { bg: theme.surface, fg: theme.text, badge: theme.accent },
+      { bg: theme.surface, fg: theme.text, badge: theme.accent },
+    ];
+  }
+  if (palette === "accent") {
+    const a = theme.accent;
+    return [
+      { bg: `rgba(${hexToRgb(a)}, 0.10)`, fg: theme.text, badge: a },
+      { bg: `rgba(${hexToRgb(a)}, 0.18)`, fg: theme.text, badge: a },
+      { bg: `rgba(${hexToRgb(a)}, 0.26)`, fg: theme.text, badge: a },
+      { bg: `rgba(${hexToRgb(a)}, 0.34)`, fg: theme.text, badge: a },
+    ];
+  }
+  // SWOT default — green / red / blue / amber soft tints
+  return [
+    { bg: "rgba(34,197,94,0.14)",  fg: theme.text, badge: "#16a34a" },
+    { bg: "rgba(239,68,68,0.14)",  fg: theme.text, badge: "#dc2626" },
+    { bg: "rgba(59,130,246,0.14)", fg: theme.text, badge: "#2563eb" },
+    { bg: "rgba(245,158,11,0.16)", fg: theme.text, badge: "#d97706" },
+  ];
+};
+
 export const SlideView = ({
   slide, theme, editable = false, selectedKey = null, onSelectElement,
   onEdit, onEditBullet, scale = "auto", className = "",
