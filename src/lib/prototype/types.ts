@@ -71,6 +71,10 @@ export interface SlideContent {
   caption2?: string;
   caption3?: string;
   caption4?: string;
+  q1Title?: string; q1Body?: string;
+  q2Title?: string; q2Body?: string;
+  q3Title?: string; q3Body?: string;
+  q4Title?: string; q4Body?: string;
 }
 
 export interface Slide {
