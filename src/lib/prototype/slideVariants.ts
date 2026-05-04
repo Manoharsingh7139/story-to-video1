@@ -79,6 +79,8 @@ const TEXT_VARIANTS: Record<string, { content: SlideContent; script: string }[]>
 const ALL_LAYOUTS: LayoutId[] = [
   "title", "title-body", "two-column", "bullets", "stat", "divider",
   "image-left", "image-right", "image-full", "image-grid",
+  "image-bg-overlay", "image-text-overlay", "image-bullets", "stat-image", "section-image-bg",
+  "quadrant", "comparison",
 ];
 
 export function regenerateVariant(slide: Slide, opts: { keepLayout?: boolean; prompt?: string } = {}): Slide {
