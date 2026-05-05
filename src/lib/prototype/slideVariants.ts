@@ -74,6 +74,51 @@ const TEXT_VARIANTS: Record<string, { content: SlideContent; script: string }[]>
         rightTitle: "Harmful", rightBody: "Weaknesses and threats — risks to manage.",
       }, script: "On one side, what helps you — strengths and opportunities. On the other, what hurts you — weaknesses and threats." },
   ],
+  "definition-card": [
+    { content: { term: "Opportunity Cost", body: "The value of the next-best alternative foregone when a choice is made.", caption: "Microeconomics — Mankiw, 2020" }, script: "Opportunity cost is the value of the next-best option you give up when you make a choice." },
+  ],
+  formula: [
+    { content: { title: "Compound Interest", formula: "A = P (1 + r/n)^(nt)", body: "Where A is the future amount, P the principal, r the annual rate, n the compounding frequency, and t the time in years." }, script: "Here's the compound interest formula — A equals P times one plus r over n, raised to n times t." },
+  ],
+  "worked-example": [
+    { content: { title: "Find the EMI for a 5-lakh loan at 12% over 3 years", bullets: ["Convert rate: r = 12% / 12 = 1% per month", "Months: n = 36", "Apply EMI formula: P × r × (1+r)^n / ((1+r)^n − 1)", "Plug in: 500000 × 0.01 × 1.4308 / 0.4308"], body: "EMI ≈ ₹16,607 per month" }, script: "Let's solve this step by step — convert the rate, plug into the EMI formula, and compute." },
+  ],
+  "learning-objectives": [
+    { content: { title: "By the end of this lesson, you'll be able to…", bullets: ["Define key marketing terms", "Compare 4Ps and 4Cs frameworks", "Apply STP to a real product", "Critique a marketing campaign"] }, script: "By the end of this lesson, you'll be able to define the key terms, compare two major frameworks, and critique a real campaign." },
+  ],
+  "key-terms": [
+    { content: { title: "Key Terms — Macroeconomics", bullets: ["GDP — The total monetary value of goods and services produced.", "Inflation — A sustained rise in the general price level.", "Fiscal Policy — Government use of spending and taxation.", "Monetary Policy — Central bank control of money supply and rates."] }, script: "Quick glossary — GDP, inflation, fiscal policy, and monetary policy." },
+  ],
+  "process-flow": [
+    { content: { title: "The Strategic Planning Process", bullets: ["Analyse", "Plan", "Execute", "Review"] }, script: "Strategy is a four-step loop — analyse, plan, execute, then review and start again." },
+  ],
+  timeline: [
+    { content: { title: "Evolution of Management Thought", bullets: ["1911 | Scientific | Taylor's time studies", "1916 | Administrative | Fayol's principles", "1930s | Human Relations | Hawthorne studies", "1960s | Systems | Holistic view of orgs", "2000s | Agile | Iterative and adaptive"] }, script: "Management theory has evolved across more than a century — from scientific to agile." },
+  ],
+  pyramid: [
+    { content: { title: "Maslow's Hierarchy of Needs", bullets: ["Self-Actualization", "Esteem", "Belonging", "Safety", "Physiological"] }, script: "Maslow proposed five layers of human need, with physiological needs at the base." },
+  ],
+  cycle: [
+    { content: { title: "The PDCA Cycle", body: "Continuous Improvement", bullets: ["Plan", "Do", "Check", "Act"] }, script: "PDCA — plan, do, check, act — the engine of continuous improvement." },
+  ],
+  "case-study": [
+    { content: { title: "How Zomato turned profitable", body: "Through unit-economics discipline, premium subscriptions, and a quick-commerce bet that surprised analysts.", caption: "Case Study", bullets: ["Revenue +71%", "₹253 Cr profit", "FY24"], imageUrl: pickRandomImage() }, script: "Let's look at how Zomato finally turned the corner to profitability." },
+  ],
+  "question-prompt": [
+    { content: { title: "Would you launch this product?", bullets: ["What does the market want?", "Can we deliver it profitably?", "How will competitors respond?"] }, script: "Pause for a moment and ask yourself — would you actually launch this product?" },
+  ],
+  "qa-recap": [
+    { content: { title: "Quick Recap", bullets: ["What is GDP?", "The total monetary value of goods and services produced in a country in a given period.", "What's the difference between fiscal and monetary policy?", "Fiscal is government spending and taxation; monetary is central bank rate and money supply control."] }, script: "Let's recap with two quick Q-and-A pairs." },
+  ],
+  "pros-cons": [
+    { content: { title: "Working from a Single Office", leftTitle: "Advantages", leftBody: "Faster collaboration\nStronger culture\nEasier mentoring\nClearer accountability", rightTitle: "Disadvantages", rightBody: "Limited talent pool\nCommute fatigue\nHigher real-estate cost\nLess flexibility" }, script: "There are real pros and cons to colocated work — let's look at both sides." },
+  ],
+  "chart-explainer": [
+    { content: { title: "Quarterly Revenue Growth", chartType: "bar", chartData: [{ label: "Q1", value: 30 }, { label: "Q2", value: 55 }, { label: "Q3", value: 70 }, { label: "Q4", value: 90 }], bullets: ["Steady quarter-on-quarter growth", "Q4 driven by festive demand", "Margins improved by 4pp"] }, script: "Revenue grew steadily across all four quarters, with the festive season driving a strong Q4." },
+  ],
+  "citation-quote": [
+    { content: { body: "The best way to predict the future is to create it.", caption: "— Peter Drucker, Management Consultant" }, script: "As Peter Drucker said — the best way to predict the future is to create it." },
+  ],
 };
 
 const ALL_LAYOUTS: LayoutId[] = [
@@ -81,6 +126,9 @@ const ALL_LAYOUTS: LayoutId[] = [
   "image-left", "image-right", "image-full", "image-grid",
   "image-bg-overlay", "image-text-overlay", "image-bullets", "stat-image", "section-image-bg",
   "quadrant", "comparison",
+  "definition-card", "formula", "worked-example", "learning-objectives", "key-terms",
+  "process-flow", "timeline", "pyramid", "cycle", "case-study",
+  "question-prompt", "qa-recap", "pros-cons", "chart-explainer", "citation-quote",
 ];
 
 export function regenerateVariant(slide: Slide, opts: { keepLayout?: boolean; prompt?: string } = {}): Slide {
