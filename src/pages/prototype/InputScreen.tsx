@@ -81,12 +81,21 @@ export default function InputScreen() {
   const wordCount = sourceText.trim().split(/\s+/).filter(Boolean).length;
   const slideEstimate = Math.max(1, Math.round(wordCount / 80));
   const minutes = Math.max(1, Math.round((wordCount / 150) * 1.1));
-  const canGenerate = sourceText.trim().length > 20 || !!uploadedDoc;
+  const canGenerate = sourceText.trim().length > 20 || !!uploadedDoc || !!uploadedAudioScript;
 
   const handleDocUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setUploadedDoc(file.name);
+      setSourceText(SAMPLE_TEXT);
+    }
+  };
+
+  const handleAudioScriptUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setUploadedAudioScript(file.name);
+      // Prototype: pretend we transcribed the audio into the source text.
       setSourceText(SAMPLE_TEXT);
     }
   };
