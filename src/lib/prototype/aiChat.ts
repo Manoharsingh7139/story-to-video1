@@ -245,6 +245,8 @@ export function processChatMessage(message: string, slide: Slide): ChatResult | 
       label: "Switched to a citation/quote layout.",
     };
   }
+
+  if (/\bbullet/.test(m) || /\blist\b/.test(m)) {
     return {
       after: {
         ...slide,
