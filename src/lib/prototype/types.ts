@@ -17,7 +17,22 @@ export type LayoutId =
   | "comparison"
   | "image-bullets"
   | "stat-image"
-  | "section-image-bg";
+  | "section-image-bg"
+  | "definition-card"
+  | "formula"
+  | "worked-example"
+  | "learning-objectives"
+  | "key-terms"
+  | "process-flow"
+  | "timeline"
+  | "pyramid"
+  | "cycle"
+  | "case-study"
+  | "question-prompt"
+  | "qa-recap"
+  | "pros-cons"
+  | "chart-explainer"
+  | "citation-quote";
 
 export type OverlayTint = "dark" | "light" | "accent";
 export type OverlayStrength = "soft" | "medium" | "strong";
@@ -75,6 +90,10 @@ export interface SlideContent {
   q2Title?: string; q2Body?: string;
   q3Title?: string; q3Body?: string;
   q4Title?: string; q4Body?: string;
+  term?: string;
+  formula?: string;
+  chartType?: "bar" | "line";
+  chartData?: { label: string; value: number }[];
 }
 
 export interface Slide {
