@@ -18,7 +18,6 @@ import {
   ArrowRight,
   Play,
   Pause,
-  Link as LinkIcon,
   AudioLines,
 } from "lucide-react";
 
