@@ -1,13 +1,89 @@
 import type { Slide } from "./types";
 import { STOCK_IMAGES } from "./stockImages";
 
-export const SAMPLE_TEXT = `SWOT Analysis is a structured strategic planning tool used to evaluate Strengths, Weaknesses, Opportunities, and Threats. Strengths and Weaknesses are internal — things you control. Opportunities and Threats are external — forces you can anticipate but not control.
+export const SAMPLE_TEXT = `SWOT Analysis — Learning Material
 
-The framework works across business strategy, product development, career planning, and decision-making. Done well, it forces honest, evidence-based thinking. Done poorly, it produces vague lists nobody acts on.
+1. Definition
 
-The five steps are: define the objective, gather data, list factors that are specific and evidence-based, prioritize by impact, and convert the analysis into action using SO, WO, ST, and WT strategies.
+SWOT Analysis is a structured strategic planning tool used to evaluate:
+- Strengths (S) — Internal advantages
+- Weaknesses (W) — Internal limitations
+- Opportunities (O) — External favorable factors
+- Threats (T) — External risks or challenges
 
-The real value of a SWOT isn't the matrix itself. It's the decisions that come out of it. A weak SWOT with strong execution beats a perfect SWOT with no action.`;
+It is used across business strategy, product development, career planning, and decision-making.
+
+2. Core Framework
+
+Internal factors are controllable. External factors are uncontrollable but predictable.
+- Internal: Strengths, Weaknesses
+- External: Opportunities, Threats
+
+3. Components Explained
+
+Strengths — Positive internal attributes that provide an advantage.
+Examples: Strong brand recognition, skilled workforce, proprietary technology, high customer loyalty.
+Key test: "What do we do better than others?"
+
+Weaknesses — Internal factors that limit performance.
+Examples: Limited capital, poor distribution network, weak brand presence, skill gaps.
+Key test: "Where are we consistently underperforming?"
+
+Opportunities — External conditions that can be leveraged for growth.
+Examples: Market expansion, new technology adoption, regulatory benefits, competitor weaknesses.
+Key test: "What trends can we exploit?"
+
+Threats — External risks that can harm performance.
+Examples: New competitors, changing regulations, economic downturn, substitute products.
+Key test: "What external forces can disrupt us?"
+
+4. SWOT Matrix
+
+A typical SWOT matrix maps Helpful vs Harmful against Internal vs External:
+- Internal + Helpful: Strengths
+- Internal + Harmful: Weaknesses
+- External + Helpful: Opportunities
+- External + Harmful: Threats
+
+5. How to Conduct a SWOT Analysis
+
+Step 1 — Define Objective: Clearly specify what is being analyzed (business, product, career, project).
+Step 2 — Gather Data: Use internal reports, market research, customer feedback, competitive analysis.
+Step 3 — List Factors: Each point must be specific, evidence-based, and comparable. Bad: "Good brand". Better: "Top 3 brand recall in Tier-1 cities".
+Step 4 — Prioritize: Not all factors matter equally. Rank based on impact, urgency, and control.
+Step 5 — Build Strategy: Convert analysis into action using:
+- SO Strategy (Strengths + Opportunities): Use strengths to exploit opportunities. Example: Strong tech team + AI trend → Build AI product.
+- WO Strategy (Weaknesses + Opportunities): Fix weaknesses to capture opportunities. Example: Weak distribution + growing demand → Build partnerships.
+- ST Strategy (Strengths + Threats): Use strengths to defend against threats. Example: Strong brand + new competitors → Increase brand spend.
+- WT Strategy (Weaknesses + Threats): Minimize risks and weaknesses. Example: Weak margins + price war → Cost optimization.
+
+6. Example — Online Education Platform
+
+Strengths: Strong content quality, recognized instructors.
+Weaknesses: Poor mobile experience, high customer acquisition cost.
+Opportunities: Growing demand for online learning, corporate upskilling market.
+Threats: Free content platforms, aggressive competitors.
+
+7. Advantages
+
+Simple and structured. Works across domains. Encourages holistic thinking. Helps in strategic alignment.
+
+8. Limitations
+
+Subjective inputs. Static snapshot — not dynamic. Can become generic if poorly executed. Does not provide direct solutions.
+
+9. Best Practices
+
+Use data, not opinions. Keep factors concise. Avoid overlap between categories. Update regularly. Link directly to action plans.
+
+10. Applications
+
+Business strategy. Product roadmap planning. Career planning. Startup validation. Competitive analysis.
+
+11. Key Insight
+
+SWOT is not the output. The value lies in the decisions derived from it.
+A weak SWOT with strong execution beats a perfect SWOT with no action.`;
 
 export const SAMPLE_DECK: Slide[] = [
   {
