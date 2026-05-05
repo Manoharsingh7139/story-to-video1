@@ -1,105 +1,32 @@
 
-# 15 New Education-Focused Slide Layouts
+# Fix broken layouts on slides 17–20
 
-The deck currently has 17 layouts (title, bullets, quadrant, comparison, image-bg-overlay, etc.) but they skew toward generic business slides. For teaching MBA/MCA/BBA/BCom/MCom/MA/BA video content we need layouts that handle definitions, formulas, processes, case studies, Q&A, citations, examples — and that look visually distinct from each other so a long lecture doesn't feel monotonous.
+Slides 17–20 use the new `process-flow`, `timeline`, `pyramid`, and `cycle` layouts. Each has a layout bug that breaks the visual.
 
-## The 15 new layouts
+## Bugs
 
-Each is a new `LayoutId` rendered in `SlideView.tsx`, with sample variants in `slideVariants.ts` and a chat trigger in `aiChat.ts`.
+1. **`process-flow` (slide 17)** — Each step is a flex row containing a centered column AND a `flex: 1` connector line. Because the column is vertically centered and the connector sits at row-mid height, the connector line ends up vertically misaligned with the circles, and the `›` chevron floats. Items also size unevenly when text wraps differently.
 
-1. **`definition-card`** — "Term + Definition" hero card. Big term on left in a colored block, definition + etymology/source on right. For "What is Opportunity Cost?", "Define Marginal Utility".
-   Fields: `term`, `body`, `caption` (source).
+2. **`timeline` (slide 18)** — Items use `min-width: 140` inside `flex justify-between`, with above/below labels having `min-height: 100`. The dot ends up at different vertical positions per item because the item heights vary with body length. Result: dots don't sit on the line.
 
-2. **`formula`** — Centered LaTeX-style formula in a framed card with a label above ("Compound Interest") and a one-line plain-language explanation below. Supports `formula` (string), `title`, `body`.
-   Fields: `title`, `formula`, `body`.
+3. **`pyramid` (slide 19)** — Bands have `min-width: 280px`, which forces every band to be at least 280px wide. With small widthPct values (30%) and a narrow container, all top bands collapse to the same `minWidth`, destroying the pyramid shape (rectangular blocks instead of tapering).
 
-3. **`worked-example`** — Three numbered steps stacked vertically with a "Problem" header strip and "Answer" footer strip. Each step: short label + line of math/text. For solving a problem on stage.
-   Fields: `title` (problem), `bullets` (steps), `body` (final answer).
+4. **`cycle` (slide 20)** — The biggest break. Nodes are positioned in absolute pixels (`left: cx + cos*r - 70`, with cx=360, r=220) inside an HTML div, while the SVG circle behind them uses a `viewBox="0 0 720 560"` that scales to fit. The HTML pixel coords don't scale with the SVG, so on any container size other than exactly 720×560 the nodes float far away from the dashed circle.
 
-4. **`learning-objectives`** — "By the end of this lesson you'll be able to…" header with 3–5 checklist items in pill rows, each with a small numbered badge. Distinct from regular bullets — uses pills + accent.
-   Fields: `title`, `bullets`.
+## Fixes
 
-5. **`key-terms`** — Glossary grid: 4–6 small cards each with `term` (bold) and short definition. Two-column responsive grid. For vocabulary recap slides.
-   Fields: `title`, `bullets` (each item parsed `term — definition`), or dedicated `terms` array (we'll reuse bullets with a separator).
+Rewrite the four layout branches in `src/components/prototype/SlideView.tsx`:
 
-6. **`process-flow`** — Horizontal arrow flow with 3–5 numbered nodes (circle + label + 1-line body underneath). Bigger and more visual than the existing bullet "process" variant — this is a full-slide diagram, not a list.
-   Fields: `title`, `bullets`.
+- **process-flow** — Replace the per-item flex+connector pattern with a CSS grid of N equal columns + a single absolutely-positioned connector line spanning between the first and last circle centers. Circles get `position: relative; z-index: 1` so they overlay the line cleanly.
 
-7. **`timeline`** — Horizontal timeline with 4–6 dated events (year/era + label + short body below the line). For history slides (Renaissance → Industrial Revolution → Information Age) or course roadmaps.
-   Fields: `title`, `bullets` (each `year | label | body`).
+- **timeline** — Same grid approach: N equal columns, dot pinned to vertical center of each column with `position: absolute; top: 50%`, year/label/body text absolutely positioned above or below the dot via `bottom: calc(50% + 28px)` / `top: calc(50% + 28px)`. Removes the variable-height alignment problem.
 
-8. **`pyramid`** — Stacked horizontal bands forming a pyramid (base widest). 3–5 levels, each with label inside and optional small body to the side. For Maslow, Bloom's Taxonomy, AIDA.
-   Fields: `title`, `bullets` (top→bottom).
+- **pyramid** — Drop `minWidth: 280`. Use proportional widths only (top 30% → base 90%) capped by `maxWidth: 900`. Add `clipPath: polygon(...)` so each band actually tapers like a pyramid slice rather than rendering as plain rectangles. Slight per-band brightness variation keeps the bands distinguishable on dark themes.
 
-9. **`cycle`** — Circular flow with 4–6 nodes around a circle, arrows between them, central label in the middle. For PDCA, accounting cycle, marketing funnel loop.
-   Fields: `title`, `bullets`, `body` (center label).
+- **cycle** — Use a square container with `aspect-ratio: 1/1` and percentage-based positioning. Both the SVG (viewBox 0–100) and the HTML node divs (`left: ${50 + cos*38}%`) use the same percent coordinate space, so circle and nodes always line up regardless of container size. Each node uses `transform: translate(-50%, -50%)` so its center sits on the orbit.
 
-10. **`case-study`** — Magazine-style: large image on the left (full-height), right side has "CASE STUDY" eyebrow, company/scenario title, 3 short stat chips (e.g. "Revenue +42%", "12 months", "₹120 Cr"), and a body paragraph.
-    Fields: `title`, `body`, `imageUrl`, `bullets` (used as stat chips), `caption` (eyebrow).
+No changes to types, sample deck content, or chat/intent code. Only the four `case` branches in `SlideView.tsx` are touched.
 
-11. **`question-prompt`** — Centered large "?" iconography with a thought-provoking question in oversized type and 2–3 prompt sub-questions below. For sparking discussion or pause-points in video.
-    Fields: `title` (main question), `bullets` (sub-prompts).
+## File touched
 
-12. **`qa-recap`** — Q/A pairs (2–4) styled as alternating left/right speech-style blocks with "Q" and "A" badges. For revision slides.
-    Fields: `title`, `bullets` (alternating Q and A lines).
-
-13. **`pros-cons`** — Two columns with green "Pros / Advantages" header and red "Cons / Disadvantages" header, check/cross icons on each row. Distinct from `comparison` (which is neutral helpful/harmful headers and bodies, not lists).
-    Fields: `title`, `leftBody` (pros, newline-separated) or `bullets` split, `rightBody` (cons).
-
-14. **`chart-explainer`** — Left side: a simple SVG bar/line chart (data baked into content — `chartType: "bar"|"line"`, `chartData: [{label, value}]`). Right side: title + 2–3 takeaway bullets. For showing GDP trends, market share, survey results.
-    Fields: `title`, `bullets`, `chartType`, `chartData`.
-
-15. **`citation-quote`** — Large pull-quote with quotation mark glyph, attribution block below (name, role, source). For citing Drucker, Kotler, Keynes etc. Distinct from `divider` — this is a full content slide with author photo (optional).
-    Fields: `body` (quote), `caption` (author + source), `imageUrl` (optional author photo).
-
-## Type system additions
-
-In `types.ts`:
-- Extend `LayoutId` union with the 15 new IDs.
-- Add to `SlideContent`:
-  - `term?: string` (definition-card)
-  - `formula?: string` (formula)
-  - `chartType?: "bar" | "line"`
-  - `chartData?: { label: string; value: number }[]`
-- No new `SlideStyle` fields needed — existing color/align/size controls are reused.
-
-## Rendering (`SlideView.tsx`)
-
-Add one rendering branch per layout. Visual distinctness is the goal — use:
-- Different background treatments (gradient strips for `learning-objectives`, framed card for `formula`, full-bleed image for `case-study`).
-- Theme accent color used differently per layout (left bar in `definition-card`, node fills in `process-flow`, pyramid bands).
-- All elements remain `Selectable` with stable `elKey`s so the existing `VoiceoverPanel` editor works without changes (keys: `term`, `formula`, `bullet:N`, `body`, `caption`, `image`).
-
-For `process-flow`, `timeline`, `pyramid`, `cycle`, `chart-explainer`: render with inline SVG (no new deps). The `cycle` uses `transform: rotate` to position nodes around a circle. The chart is a small custom SVG (no recharts) sized to its panel.
-
-## Sample data
-
-Update `sampleDeck.ts`: keep the SWOT deck but append 3–4 demo slides showing the new layouts (e.g. one `formula` for compound interest, one `timeline` for management theory eras, one `case-study`, one `learning-objectives`) so users can see them on first load. Also extend `SAMPLE_TEXT` slightly.
-
-Add education-themed seed content to `slideVariants.ts` so "Regenerate slide" can produce these layouts. Each new layout gets 1–2 variant entries with MBA/teaching content (e.g. `formula` → Compound Interest, NPV; `pyramid` → Maslow's Hierarchy, Bloom's Taxonomy).
-
-Extend `ALL_LAYOUTS` array in `slideVariants.ts` with the 15 new IDs.
-
-## Editor integration
-
-- `EditorScreen.tsx`: append the 15 new layouts to the Layout dropdown, grouped under an "Education" subheading (visual separator only).
-- `StyleControls.tsx`: no new controls needed — existing text size/align/color, image shape/treatment, bullet variants all still apply.
-- `aiChat.ts`: add intent matchers so commands like "make this a formula slide", "show as timeline", "convert to pyramid", "turn into case study", "show pros and cons", "make a learning objectives slide" switch the slide layout (and seed sensible defaults if fields are empty).
-
-## Files touched
-
-- Edit `src/lib/prototype/types.ts` — 15 new layout IDs, 4 new content fields.
-- Edit `src/components/prototype/SlideView.tsx` — 15 new render branches (~400 lines).
-- Edit `src/lib/prototype/slideVariants.ts` — variants + extend ALL_LAYOUTS.
-- Edit `src/lib/prototype/sampleDeck.ts` — append demo slides + small SAMPLE_TEXT update.
-- Edit `src/pages/prototype/EditorScreen.tsx` — extend layout dropdown.
-- Edit `src/lib/prototype/aiChat.ts` — new intent triggers.
-
-No new dependencies. No backend.
-
-## Out of scope
-
-- LaTeX rendering engine (KaTeX/MathJax) — formulas use plain text in a styled monospace frame. Can be added later.
-- Interactive chart editing — `chart-explainer` data is edited as JSON via a small textarea in the element editor (or via chat). No drag handles.
-- Animated transitions between cycle/timeline nodes.
-- Per-pyramid-band individual color pickers (uses theme accent gradient).
+- `src/components/prototype/SlideView.tsx` — rewrite four layout branches (~130 lines).
