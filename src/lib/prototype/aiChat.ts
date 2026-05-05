@@ -154,7 +154,97 @@ export function processChatMessage(message: string, slide: Slide): ChatResult | 
     };
   }
 
-  if (/\bbullet/.test(m) || /\blist\b/.test(m)) {
+  // ===== EDUCATION LAYOUT INTENTS =====
+  if (/definition|define\b|term card/.test(m)) {
+    return {
+      after: { ...slide, layout: "definition-card", content: { ...slide.content, term: slide.content.term ?? slide.content.title ?? "Term", body: slide.content.body ?? "Definition goes here." } },
+      label: "Switched to a definition card.",
+    };
+  }
+  if (/formula|equation|math\b/.test(m)) {
+    return {
+      after: { ...slide, layout: "formula", content: { ...slide.content, formula: slide.content.formula ?? "y = mx + c", body: slide.content.body ?? "Where m is slope and c is the y-intercept." } },
+      label: "Switched to a formula slide.",
+    };
+  }
+  if (/worked.*example|step.*solution|solve.*step/.test(m)) {
+    return {
+      after: { ...slide, layout: "worked-example", content: { ...slide.content, bullets: slide.content.bullets ?? ["Step 1", "Step 2", "Step 3"], body: slide.content.body ?? "Final answer" } },
+      label: "Switched to a worked example.",
+    };
+  }
+  if (/learning.*objective|objectives.*lesson|lesson.*goal/.test(m)) {
+    return {
+      after: { ...slide, layout: "learning-objectives", content: { ...slide.content, bullets: slide.content.bullets ?? ["Define key terms", "Compare frameworks", "Apply to a case"] } },
+      label: "Switched to learning objectives.",
+    };
+  }
+  if (/key terms?|glossary|vocabulary/.test(m)) {
+    return {
+      after: { ...slide, layout: "key-terms", content: { ...slide.content, bullets: slide.content.bullets ?? ["Term A — short definition.", "Term B — short definition.", "Term C — short definition."] } },
+      label: "Switched to a key-terms glossary.",
+    };
+  }
+  if (/process.*flow|flowchart|workflow diagram/.test(m)) {
+    return {
+      after: { ...slide, layout: "process-flow", content: { ...slide.content, bullets: slide.content.bullets ?? ["Analyse", "Plan", "Execute", "Review"] } },
+      label: "Switched to a process flow.",
+    };
+  }
+  if (/timeline|history|chronolog/.test(m)) {
+    return {
+      after: { ...slide, layout: "timeline", content: { ...slide.content, bullets: slide.content.bullets ?? ["1900 | Era one | Short note", "1950 | Era two | Short note", "2000 | Era three | Short note"] } },
+      label: "Switched to a timeline.",
+    };
+  }
+  if (/pyramid|hierarchy|maslow|bloom/.test(m)) {
+    return {
+      after: { ...slide, layout: "pyramid", content: { ...slide.content, bullets: slide.content.bullets ?? ["Top level", "Middle level", "Base level"] } },
+      label: "Switched to a pyramid layout.",
+    };
+  }
+  if (/cycle|circular|pdca|loop/.test(m)) {
+    return {
+      after: { ...slide, layout: "cycle", content: { ...slide.content, bullets: slide.content.bullets ?? ["Plan", "Do", "Check", "Act"], body: slide.content.body ?? "Continuous Improvement" } },
+      label: "Switched to a cycle diagram.",
+    };
+  }
+  if (/case study|case-study/.test(m)) {
+    return {
+      after: { ...slide, layout: "case-study", content: { ...slide.content, imageUrl: slide.content.imageUrl ?? pickRandomImage(), caption: slide.content.caption ?? "Case Study", bullets: slide.content.bullets ?? ["Stat 1", "Stat 2", "Stat 3"], body: slide.content.body ?? "Brief case description." } },
+      label: "Switched to a case-study layout.",
+    };
+  }
+  if (/question.*prompt|discussion|ask the class|pause.*think/.test(m)) {
+    return {
+      after: { ...slide, layout: "question-prompt", content: { ...slide.content, title: slide.content.title ?? "What do you think?", bullets: slide.content.bullets ?? ["Sub-question 1", "Sub-question 2"] } },
+      label: "Switched to a question prompt.",
+    };
+  }
+  if (/q.*a.*recap|qa recap|review questions/.test(m)) {
+    return {
+      after: { ...slide, layout: "qa-recap", content: { ...slide.content, bullets: slide.content.bullets ?? ["Question one?", "Answer one.", "Question two?", "Answer two."] } },
+      label: "Switched to a Q&A recap.",
+    };
+  }
+  if (/pros.*cons|advantages.*disadvantages/.test(m)) {
+    return {
+      after: { ...slide, layout: "pros-cons", content: { ...slide.content, leftTitle: "Advantages", rightTitle: "Disadvantages", leftBody: slide.content.leftBody ?? "Pro one\nPro two\nPro three", rightBody: slide.content.rightBody ?? "Con one\nCon two\nCon three" } },
+      label: "Switched to a pros & cons layout.",
+    };
+  }
+  if (/chart|bar.*graph|line.*graph|graph\b/.test(m)) {
+    return {
+      after: { ...slide, layout: "chart-explainer", content: { ...slide.content, chartType: slide.content.chartType ?? (m.includes("line") ? "line" : "bar"), chartData: slide.content.chartData ?? [{ label: "Q1", value: 30 }, { label: "Q2", value: 55 }, { label: "Q3", value: 70 }, { label: "Q4", value: 90 }], bullets: slide.content.bullets ?? ["Trend insight one", "Trend insight two"] } },
+      label: "Switched to a chart explainer.",
+    };
+  }
+  if (/quote|citation|pull.?quote/.test(m)) {
+    return {
+      after: { ...slide, layout: "citation-quote", content: { ...slide.content, body: slide.content.body ?? "An inspiring quote.", caption: slide.content.caption ?? "— Author, Source" } },
+      label: "Switched to a citation/quote layout.",
+    };
+  }
     return {
       after: {
         ...slide,
