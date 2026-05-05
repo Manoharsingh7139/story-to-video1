@@ -805,34 +805,32 @@ export const SlideView = ({
         return (
           <div className="h-full w-full flex flex-col px-16 py-12 gap-6">
             {renderText("title", c.title ?? "Pyramid", titleStyle(44))}
-            <div className="flex-1 flex flex-col items-center justify-center gap-1">
+            <div className="flex-1 flex flex-col items-center justify-center gap-2">
               {items.map((b, i) => {
-                // top narrow → base wide
-                const widthPct = n === 1 ? 70 : 30 + (i / (n - 1)) * 60;
-                const clip =
-                  i === 0
-                    ? "polygon(15% 0, 85% 0, 100% 100%, 0% 100%)"
-                    : i === n - 1
-                      ? "polygon(5% 0, 95% 0, 100% 100%, 0% 100%)"
-                      : "polygon(8% 0, 92% 0, 100% 100%, 0% 100%)";
+                // top narrow → base wide; ensure top band is wide enough for ~16-char labels
+                const widthPct = n === 1 ? 70 : 38 + (i / (n - 1)) * 55;
                 return (
                   <Selectable key={i} elKey={`bullet:${i}`} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
                     <div style={{
                       width: `${widthPct}%`,
+                      minWidth: 240,
                       maxWidth: 900,
                       background: theme.accent,
                       color: theme.accentText,
-                      padding: "18px 48px",
-                      clipPath: clip,
-                      WebkitClipPath: clip,
+                      padding: "16px 24px",
+                      borderRadius: 4,
                       textAlign: "center",
                       fontFamily: theme.fontHead,
                       fontWeight: 700,
-                      fontSize: 26,
+                      fontSize: 24,
                       lineHeight: 1.2,
-                      filter: `brightness(${1 + (n - 1 - i) * 0.04})`,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      filter: `brightness(${1 + (n - 1 - i) * 0.05})`,
+                      boxShadow: `0 2px 0 ${theme.bg}`,
                     }}>
-                      <EditableText value={b} onChange={onEditBullet ? (v) => onEditBullet(i, v) : undefined} active={editable && selectedKey === `bullet:${i}`} style={{ color: theme.accentText, fontFamily: theme.fontHead, fontWeight: 700, fontSize: 26 }} />
+                      <EditableText value={b} onChange={onEditBullet ? (v) => onEditBullet(i, v) : undefined} active={editable && selectedKey === `bullet:${i}`} style={{ color: theme.accentText, fontFamily: theme.fontHead, fontWeight: 700, fontSize: 24 }} />
                     </div>
                   </Selectable>
                 );
