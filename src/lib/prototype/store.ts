@@ -8,6 +8,7 @@ interface PrototypeState {
   projectTitle: string;
   themeId: ThemeId;
   voice: string;
+  voiceMode: "ai" | "upload";
   slides: Slide[];
   selectedSlideId: string;
   selectedElementKey: ElementKey | null;
@@ -17,6 +18,7 @@ interface PrototypeState {
   setProjectTitle: (t: string) => void;
   setThemeId: (id: ThemeId) => void;
   setVoice: (v: string) => void;
+  setVoiceMode: (m: "ai" | "upload") => void;
 
   loadSampleDeck: () => void;
   selectSlide: (id: string) => void;
@@ -53,6 +55,7 @@ export const usePrototypeStore = create<PrototypeState>((set, get) => ({
   projectTitle: "Untitled video",
   themeId: "minimal",
   voice: VOICES[0],
+  voiceMode: "ai",
   slides: [],
   selectedSlideId: "",
   selectedElementKey: null,
@@ -62,6 +65,7 @@ export const usePrototypeStore = create<PrototypeState>((set, get) => ({
   setProjectTitle: (t) => set({ projectTitle: t }),
   setThemeId: (id) => set({ themeId: id }),
   setVoice: (v) => set({ voice: v }),
+  setVoiceMode: (m) => set({ voiceMode: m }),
 
   loadSampleDeck: () => {
     const slides = SAMPLE_DECK.map((s) => ({ ...s, content: { ...s.content } }));
