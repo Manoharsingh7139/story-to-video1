@@ -202,6 +202,194 @@ export const SAMPLE_DECK: Slide[] = [
     script:
       "Remember — the matrix isn't the point. The decisions you make from it are. A weak SWOT with strong execution beats a perfect SWOT with none.",
   },
+  {
+    id: "s15",
+    layout: "learning-objectives",
+    content: {
+      title: "By the end of this lesson, you will be able to…",
+      bullets: [
+        "Define SWOT and its four components",
+        "Distinguish internal vs external factors",
+        "Build SO, WO, ST, and WT strategies",
+        "Critique a real SWOT analysis",
+      ],
+    },
+    script: "By the end of this lesson, you'll be able to define SWOT, distinguish internal from external factors, build all four strategy combinations, and critically evaluate a real example.",
+  },
+  {
+    id: "s16",
+    layout: "definition-card",
+    content: {
+      term: "SWOT",
+      body: "An acronym for Strengths, Weaknesses, Opportunities, and Threats — a structured framework for evaluating strategic position across internal capabilities and external conditions.",
+      caption: "Source: Andrews, Business Policy (1971)",
+    },
+    script: "SWOT stands for Strengths, Weaknesses, Opportunities, and Threats — first formalized as a strategy tool in the 1970s.",
+  },
+  {
+    id: "s17",
+    layout: "process-flow",
+    content: {
+      title: "How a SWOT comes together",
+      bullets: ["Define", "Gather", "List", "Prioritize", "Act"],
+    },
+    script: "A real SWOT moves through five stages — define the question, gather evidence, list factors, prioritize them, and act.",
+  },
+  {
+    id: "s18",
+    layout: "timeline",
+    content: {
+      title: "Evolution of strategic thought",
+      bullets: [
+        "1960s | SWOT | Andrews & Harvard",
+        "1980 | Five Forces | Porter",
+        "1990 | Core Competence | Hamel & Prahalad",
+        "2005 | Blue Ocean | Kim & Mauborgne",
+        "2010s | Lean Strategy | Ries",
+      ],
+    },
+    script: "Strategic thinking has evolved across decades — SWOT in the sixties, Porter's Five Forces in the eighties, then core competence, blue ocean, and lean strategy.",
+  },
+  {
+    id: "s19",
+    layout: "pyramid",
+    content: {
+      title: "Maslow's Hierarchy of Needs",
+      bullets: ["Self-Actualization", "Esteem", "Belonging", "Safety", "Physiological"],
+    },
+    script: "A classic example of hierarchical thinking — Maslow's five layers of human need, with physiological needs forming the base.",
+  },
+  {
+    id: "s20",
+    layout: "cycle",
+    content: {
+      title: "PDCA — The improvement cycle",
+      body: "Continuous Improvement",
+      bullets: ["Plan", "Do", "Check", "Act"],
+    },
+    script: "Continuous improvement runs on a four-step loop — plan, do, check, act — and then start again.",
+  },
+  {
+    id: "s21",
+    layout: "formula",
+    content: {
+      title: "Compound Interest",
+      formula: "A = P (1 + r/n)^(nt)",
+      body: "A is the future amount, P is the principal, r the annual rate, n the compounding frequency, t the time in years.",
+    },
+    script: "Compound interest — A equals P times one plus r over n, all raised to n times t.",
+  },
+  {
+    id: "s22",
+    layout: "worked-example",
+    content: {
+      title: "Find the EMI on a ₹5,00,000 loan at 12% over 3 years",
+      bullets: [
+        "Monthly rate r = 12% / 12 = 1% = 0.01",
+        "Number of months n = 36",
+        "EMI formula: P × r × (1+r)^n / ((1+r)^n − 1)",
+        "Plug in: 500000 × 0.01 × 1.4308 / 0.4308",
+      ],
+      body: "EMI ≈ ₹16,607 per month",
+    },
+    script: "Let's solve it step by step — convert the rate, plug into the EMI formula, and compute.",
+  },
+  {
+    id: "s23",
+    layout: "key-terms",
+    content: {
+      title: "Key Terms — Strategy",
+      bullets: [
+        "Strategy — A plan to achieve long-term goals under uncertainty.",
+        "Tactics — Short-term actions that execute a strategy.",
+        "Vision — A picture of the desired future state.",
+        "Mission — Why an organisation exists today.",
+        "KPI — A measurable indicator of progress.",
+        "OKR — Objectives paired with key results.",
+      ],
+    },
+    script: "A quick glossary — strategy, tactics, vision, mission, KPI, and OKR. The vocabulary you'll use through the course.",
+  },
+  {
+    id: "s24",
+    layout: "case-study",
+    content: {
+      title: "How Zomato turned profitable",
+      caption: "Case Study",
+      body: "Through unit-economics discipline, premium subscriptions, and a quick-commerce bet that surprised analysts. By FY24, the company posted its first full year of profit.",
+      bullets: ["Revenue +71%", "₹253 Cr profit", "FY24"],
+      imageUrl: STOCK_IMAGES[8].url,
+    },
+    script: "Let's look at how Zomato finally turned the corner — a case in unit economics, subscriptions, and a well-timed bet on quick commerce.",
+  },
+  {
+    id: "s25",
+    layout: "chart-explainer",
+    content: {
+      title: "Quarterly revenue growth",
+      chartType: "bar",
+      chartData: [
+        { label: "Q1", value: 30 },
+        { label: "Q2", value: 55 },
+        { label: "Q3", value: 70 },
+        { label: "Q4", value: 90 },
+      ],
+      bullets: [
+        "Steady quarter-on-quarter growth",
+        "Q4 driven by festive demand",
+        "Margins improved by 4 percentage points",
+      ],
+    },
+    script: "Revenue grew steadily across all four quarters, with the festive season driving a strong Q4.",
+  },
+  {
+    id: "s26",
+    layout: "pros-cons",
+    content: {
+      title: "Working from a single office",
+      leftTitle: "Advantages",
+      rightTitle: "Disadvantages",
+      leftBody: "Faster collaboration\nStronger culture\nEasier mentoring\nClearer accountability",
+      rightBody: "Limited talent pool\nCommute fatigue\nHigher real-estate cost\nLess flexibility",
+    },
+    script: "There are real pros and cons to colocated work — let's look at both sides honestly.",
+  },
+  {
+    id: "s27",
+    layout: "question-prompt",
+    content: {
+      title: "Would you launch this product?",
+      bullets: [
+        "What does the market actually want?",
+        "Can we deliver it profitably?",
+        "How will competitors respond?",
+      ],
+    },
+    script: "Pause for a moment. With everything you've learned — would you actually launch this product?",
+  },
+  {
+    id: "s28",
+    layout: "qa-recap",
+    content: {
+      title: "Quick recap",
+      bullets: [
+        "What does SWOT stand for?",
+        "Strengths, Weaknesses, Opportunities, and Threats.",
+        "Which of the four are internal?",
+        "Strengths and Weaknesses — things you control.",
+      ],
+    },
+    script: "A quick recap — what SWOT stands for, and which two of the four are internal.",
+  },
+  {
+    id: "s29",
+    layout: "citation-quote",
+    content: {
+      body: "The best way to predict the future is to create it.",
+      caption: "— Peter Drucker, Management Consultant",
+    },
+    script: "As Peter Drucker put it — the best way to predict the future is to create it.",
+  },
 ];
 
 export const VOICES = [
