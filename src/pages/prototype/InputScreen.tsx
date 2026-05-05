@@ -257,13 +257,63 @@ export default function InputScreen() {
                 </div>
               )}
 
-              {sourceTab === "url" && (
-                <div className="min-h-[280px] rounded-md border border-dashed border-border flex flex-col items-center justify-center gap-2 bg-muted/20 text-center px-8">
-                  <LinkIcon className="h-5 w-5 text-muted-foreground" />
-                  <div className="text-sm font-medium">Import from a web page</div>
-                  <div className="text-xs text-muted-foreground max-w-sm">
-                    Paste any article, blog post, or documentation URL and we'll pull in the text. Coming soon.
-                  </div>
+              {sourceTab === "audio" && (
+                <div
+                  onClick={() => audioScriptInputRef.current?.click()}
+                  className="min-h-[280px] rounded-md border-2 border-dashed border-border hover:border-foreground/40 transition-colors flex flex-col items-center justify-center gap-3 cursor-pointer bg-muted/20 px-6 text-center"
+                >
+                  {uploadedAudioScript ? (
+                    <>
+                      <div className="h-12 w-12 rounded-full bg-background flex items-center justify-center shadow-sm">
+                        <AudioLines className="h-5 w-5" />
+                      </div>
+                      <svg viewBox="0 0 200 28" className="w-full max-w-[280px] h-7" aria-hidden>
+                        {Array.from({ length: 40 }).map((_, i) => {
+                          const h = 4 + Math.abs(Math.sin(i * 0.7)) * 18 + (i % 3) * 2;
+                          return (
+                            <rect
+                              key={i}
+                              x={i * 5}
+                              y={(28 - h) / 2}
+                              width={2.5}
+                              height={h}
+                              rx={1}
+                              className="fill-foreground/70"
+                            />
+                          );
+                        })}
+                      </svg>
+                      <div className="text-sm font-medium">{uploadedAudioScript}</div>
+                      <div className="text-xs text-muted-foreground">Transcribed · ready to generate slides</div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setUploadedAudioScript(null);
+                        }}
+                        className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
+                      >
+                        <X className="h-3 w-3" /> Remove
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="h-12 w-12 rounded-full bg-background flex items-center justify-center shadow-sm">
+                        <AudioLines className="h-5 w-5" />
+                      </div>
+                      <div className="text-sm font-medium">Upload an audio script</div>
+                      <div className="text-xs text-muted-foreground max-w-sm">
+                        Drop a lecture, podcast, or recording. We'll transcribe it and use the text to build your slides.
+                      </div>
+                      <div className="text-[11px] text-muted-foreground">.mp3, .wav, .m4a — up to 50 MB</div>
+                    </>
+                  )}
+                  <input
+                    ref={audioScriptInputRef}
+                    type="file"
+                    accept="audio/mpeg,audio/wav,audio/mp4,audio/x-m4a,.mp3,.wav,.m4a"
+                    className="hidden"
+                    onChange={handleAudioScriptUpload}
+                  />
                 </div>
               )}
 
