@@ -59,12 +59,14 @@ export default function InputScreen() {
   } = usePrototypeStore();
 
   const docInputRef = useRef<HTMLInputElement>(null);
+  const audioScriptInputRef = useRef<HTMLInputElement>(null);
   const voiceInputRef = useRef<HTMLInputElement>(null);
   const templateInputRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const [sourceTab, setSourceTab] = useState<SourceTab>("paste");
   const [uploadedDoc, setUploadedDoc] = useState<string | null>(null);
+  const [uploadedAudioScript, setUploadedAudioScript] = useState<string | null>(null);
   const [uploadedVoice, setUploadedVoice] = useState<string | null>(null);
   const [customTemplate, setCustomTemplate] = useState<string | null>(null);
   const [pace, setPace] = useState<typeof PACE_OPTIONS[number]>("Normal");
