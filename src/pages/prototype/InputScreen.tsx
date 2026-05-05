@@ -22,7 +22,7 @@ import {
   AudioLines,
 } from "lucide-react";
 
-type SourceTab = "paste" | "upload" | "url";
+type SourceTab = "paste" | "upload" | "audio";
 
 const PACE_OPTIONS = ["Slow", "Normal", "Fast"] as const;
 const TONE_OPTIONS = ["Neutral", "Warm", "Energetic"] as const;
