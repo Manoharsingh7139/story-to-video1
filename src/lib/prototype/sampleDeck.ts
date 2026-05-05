@@ -393,14 +393,14 @@ export const SAMPLE_DECK: Slide[] = [
 ];
 
 export const VOICES = [
-  "Sarah — warm female",
-  "James — professional male",
-  "Aria — bright female",
-  "Marcus — deep male",
-  "Lily — young female",
-  "Ethan — calm male",
-  "Nora — neutral female",
-  "Owen — narrator male",
-  "Zoe — energetic female",
-  "Felix — friendly male",
+  "Aanya — Indian female, warm tone",
+  "Arjun — Indian male, soft tone",
+  "Priya — Indian female, bright tone",
+  "Rohan — Indian male, professional tone",
+  "Meera — Indian female, calm tone",
+  "Vikram — Indian male, deep narrator tone",
+  "Diya — Indian female, energetic tone",
+  "Kabir — Indian male, friendly tone",
+  "Isha — Indian female, neutral tone",
+  "Aditya — Indian male, authoritative tone",
 ];
