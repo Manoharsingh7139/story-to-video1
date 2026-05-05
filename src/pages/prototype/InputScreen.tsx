@@ -187,7 +187,7 @@ export default function InputScreen() {
                 {([
                   { id: "paste", label: "Paste text", icon: FileText },
                   { id: "upload", label: "Upload document", icon: FileUp },
-                  { id: "url", label: "From URL", icon: LinkIcon, soon: true },
+                  { id: "audio", label: "Audio script", icon: AudioLines },
                 ] as const).map((t) => {
                   const Icon = t.icon;
                   const active = sourceTab === t.id;
@@ -201,11 +201,6 @@ export default function InputScreen() {
                     >
                       <Icon className="h-3.5 w-3.5" />
                       {t.label}
-                      {"soon" in t && t.soon && (
-                        <span className="ml-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-muted-foreground/10 text-muted-foreground">
-                          soon
-                        </span>
-                      )}
                     </button>
                   );
                 })}
