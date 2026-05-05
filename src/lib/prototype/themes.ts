@@ -81,4 +81,6 @@ export const THEMES: Record<ThemeId, Theme> = {
   },
 };
 
-export const THEME_LIST = Object.values(THEMES);
+// Curated, visually distinct picks shown on the input screen.
+// (All themes remain available via the editor / store typing.)
+export const THEME_LIST = [THEMES.minimal, THEMES.editorial, THEMES.darktech];
