@@ -347,7 +347,7 @@ export default function InputScreen() {
             <div className="p-5">
               <Eyebrow hint="Fonts, colors, and slide style">Look</Eyebrow>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-2">
                 {THEME_LIST.map((t) => {
                   const active = themeId === t.id && !customTemplate;
                   return (
@@ -357,7 +357,7 @@ export default function InputScreen() {
                         setThemeId(t.id);
                         setCustomTemplate(null);
                       }}
-                      className={`relative text-left rounded-lg overflow-hidden border transition-all ${
+                      className={`relative text-left rounded-md overflow-hidden border transition-all ${
                         active
                           ? "border-foreground ring-2 ring-foreground/10"
                           : "border-border hover:border-foreground/30"
@@ -365,39 +365,35 @@ export default function InputScreen() {
                     >
                       {/* Mini slide preview using the theme tokens */}
                       <div
-                        className="aspect-[4/3] p-4 flex flex-col justify-between"
+                        className="aspect-[5/4] p-2.5 flex flex-col justify-between"
                         style={{ background: t.bg, color: t.text }}
                       >
                         <div
                           style={{
                             fontFamily: t.fontHead,
                             fontWeight: 700,
-                            fontSize: 15,
-                            lineHeight: 1.15,
+                            fontSize: 11,
+                            lineHeight: 1.1,
                             letterSpacing: "-0.01em",
                           }}
                         >
-                          A bigger idea,
+                          Big idea,
                           <br />
                           told well.
                         </div>
-                        <div className="space-y-1.5">
-                          <div style={{ width: 28, height: 3, background: t.accent, borderRadius: 2 }} />
-                          <div className="flex items-center gap-1.5" style={{ fontFamily: t.fontBody, fontSize: 9 }}>
+                        <div className="flex items-center justify-between">
+                          <div style={{ width: 18, height: 2.5, background: t.accent, borderRadius: 2 }} />
+                          <div className="flex gap-1">
                             <span style={{ width: 4, height: 4, borderRadius: 999, background: t.accent }} />
-                            <span style={{ color: t.muted }}>Clear, structured slides</span>
-                          </div>
-                          <div className="flex items-center gap-1.5" style={{ fontFamily: t.fontBody, fontSize: 9 }}>
-                            <span style={{ width: 4, height: 4, borderRadius: 999, background: t.accent }} />
-                            <span style={{ color: t.muted }}>Designed for teaching</span>
+                            <span style={{ width: 4, height: 4, borderRadius: 999, background: t.muted, opacity: 0.5 }} />
                           </div>
                         </div>
                       </div>
-                      <div className="px-3 py-2 flex items-center justify-between bg-card border-t border-border/60">
-                        <span className="text-xs font-medium">{t.name}</span>
+                      <div className="px-2 py-1.5 flex items-center justify-between bg-card border-t border-border/60">
+                        <span className="text-[11px] font-medium truncate">{t.name}</span>
                         {active && (
-                          <span className="h-4 w-4 rounded-full bg-foreground text-background flex items-center justify-center">
-                            <Check className="h-2.5 w-2.5" strokeWidth={3} />
+                          <span className="h-3.5 w-3.5 rounded-full bg-foreground text-background flex items-center justify-center shrink-0">
+                            <Check className="h-2 w-2" strokeWidth={3} />
                           </span>
                         )}
                       </div>
