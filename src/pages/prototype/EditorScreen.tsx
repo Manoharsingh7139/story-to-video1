@@ -39,6 +39,23 @@ const FRAMEWORK_LAYOUTS: { id: LayoutId; name: string }[] = [
   { id: "quadrant", name: "Quadrant (2×2)" },
   { id: "comparison", name: "Comparison" },
 ];
+const EDUCATION_LAYOUTS: { id: LayoutId; name: string }[] = [
+  { id: "definition-card", name: "Definition card" },
+  { id: "formula", name: "Formula" },
+  { id: "worked-example", name: "Worked example" },
+  { id: "learning-objectives", name: "Learning objectives" },
+  { id: "key-terms", name: "Key terms (glossary)" },
+  { id: "process-flow", name: "Process flow" },
+  { id: "timeline", name: "Timeline" },
+  { id: "pyramid", name: "Pyramid" },
+  { id: "cycle", name: "Cycle (PDCA)" },
+  { id: "case-study", name: "Case study" },
+  { id: "question-prompt", name: "Question prompt" },
+  { id: "qa-recap", name: "Q&A recap" },
+  { id: "pros-cons", name: "Pros & cons" },
+  { id: "chart-explainer", name: "Chart explainer" },
+  { id: "citation-quote", name: "Citation / quote" },
+];
 
 export default function EditorScreen() {
   const navigate = useNavigate();
@@ -117,6 +134,12 @@ export default function EditorScreen() {
                   <SelectGroup>
                     <SelectLabel className="text-[10px] uppercase tracking-wider">Frameworks</SelectLabel>
                     {FRAMEWORK_LAYOUTS.map((l) => (
+                      <SelectItem key={l.id} value={l.id} className="text-xs">{l.name}</SelectItem>
+                    ))}
+                  </SelectGroup>
+                  <SelectGroup>
+                    <SelectLabel className="text-[10px] uppercase tracking-wider">Education</SelectLabel>
+                    {EDUCATION_LAYOUTS.map((l) => (
                       <SelectItem key={l.id} value={l.id} className="text-xs">{l.name}</SelectItem>
                     ))}
                   </SelectGroup>
