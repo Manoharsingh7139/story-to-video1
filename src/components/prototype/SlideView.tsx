@@ -739,61 +739,59 @@ export const SlideView = ({
       }
       case "process-flow": {
         const items = c.bullets ?? [];
+        const n = Math.max(1, items.length);
         return (
-          <div className="h-full w-full flex flex-col px-16 py-14 gap-10">
+          <div className="h-full w-full flex flex-col px-16 py-14 gap-12">
             {renderText("title", c.title ?? "Process", titleStyle(48))}
-            <div className="flex items-center justify-between flex-1 gap-3">
-              {items.map((b, i) => (
-                <div key={i} className="flex items-center" style={{ flex: 1 }}>
-                  <Selectable elKey={`bullet:${i}`} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
-                    <div className="flex flex-col items-center gap-4 text-center" style={{ minWidth: 0 }}>
-                      <div style={{ width: 96, height: 96, borderRadius: 999, background: theme.accent, color: theme.accentText, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: theme.fontHead, fontWeight: 800, fontSize: 44, boxShadow: `0 8px 24px ${theme.accent}44` }}>{i + 1}</div>
-                      <EditableText value={b} onChange={onEditBullet ? (v) => onEditBullet(i, v) : undefined} active={editable && selectedKey === `bullet:${i}`} style={{ fontFamily: theme.fontBody, color: theme.text, fontSize: 22, lineHeight: 1.3, fontWeight: 600, maxWidth: 200 }} />
+            <div className="flex-1 flex items-center">
+              <div className="relative w-full">
+                {/* connector line behind circles, spanning between first and last circle centers */}
+                <div style={{ position: "absolute", left: `${100 / n / 2}%`, right: `${100 / n / 2}%`, top: 48, height: 4, background: theme.accent, opacity: 0.25 }} />
+                <div className="grid relative" style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }}>
+                  {items.map((b, i) => (
+                    <div key={i} className="flex flex-col items-center text-center px-3 gap-4">
+                      <Selectable elKey={`bullet:${i}`} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
+                        <div style={{ width: 96, height: 96, borderRadius: 999, background: theme.accent, color: theme.accentText, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: theme.fontHead, fontWeight: 800, fontSize: 44, boxShadow: `0 8px 24px ${theme.accent}44`, position: "relative", zIndex: 1 }}>
+                          {i + 1}
+                        </div>
+                      </Selectable>
+                      <Selectable elKey={`bullet:${i}`} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
+                        <EditableText value={b} onChange={onEditBullet ? (v) => onEditBullet(i, v) : undefined} active={editable && selectedKey === `bullet:${i}`} style={{ fontFamily: theme.fontBody, color: theme.text, fontSize: 22, lineHeight: 1.3, fontWeight: 600 }} />
+                      </Selectable>
                     </div>
-                  </Selectable>
-                  {i < items.length - 1 && (
-                    <div style={{ flex: 1, height: 4, background: theme.accent, opacity: 0.3, position: "relative" }}>
-                      <div style={{ position: "absolute", right: -2, top: -10, color: theme.accent, fontSize: 28, fontWeight: 800, lineHeight: 1 }}>›</div>
-                    </div>
-                  )}
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         );
       }
       case "timeline": {
         const items = c.bullets ?? [];
+        const n = Math.max(1, items.length);
         return (
           <div className="h-full w-full flex flex-col px-16 py-14 gap-10">
             {renderText("title", c.title ?? "Timeline", titleStyle(48))}
-            <div className="flex-1 flex items-center relative">
-              <div style={{ position: "absolute", left: 40, right: 40, top: "50%", height: 4, background: theme.accent, opacity: 0.3 }} />
-              <div className="flex justify-between items-center w-full px-4 relative">
+            <div className="flex-1 relative">
+              {/* horizontal line spanning between first and last dots */}
+              <div style={{ position: "absolute", left: `${100 / n / 2}%`, right: `${100 / n / 2}%`, top: "50%", height: 4, background: theme.accent, opacity: 0.3 }} />
+              <div className="grid h-full" style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }}>
                 {items.map((b, i) => {
                   const parts = b.split(" | ");
                   const [year, label, body] = [parts[0] ?? "", parts[1] ?? "", parts[2] ?? ""];
                   const above = i % 2 === 0;
                   return (
-                    <Selectable key={i} elKey={`bullet:${i}`} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
-                      <div className="flex flex-col items-center" style={{ minWidth: 140 }}>
-                        {above && (
-                          <div className="text-center mb-3" style={{ minHeight: 100 }}>
-                            <div style={{ fontFamily: theme.fontHead, fontWeight: 800, fontSize: 22, color: theme.accent }}>{year}</div>
-                            <div style={{ fontFamily: theme.fontBody, fontSize: 18, color: theme.text, fontWeight: 600 }}>{label}</div>
-                            <div style={{ fontFamily: theme.fontBody, fontSize: 14, color: theme.muted, lineHeight: 1.3, maxWidth: 180 }}>{body}</div>
-                          </div>
-                        )}
-                        <div style={{ width: 24, height: 24, borderRadius: 999, background: theme.accent, border: `4px solid ${theme.bg}`, boxShadow: `0 0 0 2px ${theme.accent}` }} />
-                        {!above && (
-                          <div className="text-center mt-3" style={{ minHeight: 100 }}>
-                            <div style={{ fontFamily: theme.fontHead, fontWeight: 800, fontSize: 22, color: theme.accent }}>{year}</div>
-                            <div style={{ fontFamily: theme.fontBody, fontSize: 18, color: theme.text, fontWeight: 600 }}>{label}</div>
-                            <div style={{ fontFamily: theme.fontBody, fontSize: 14, color: theme.muted, lineHeight: 1.3, maxWidth: 180 }}>{body}</div>
-                          </div>
-                        )}
-                      </div>
-                    </Selectable>
+                    <div key={i} className="relative">
+                      {/* dot pinned to vertical center */}
+                      <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 22, height: 22, borderRadius: 999, background: theme.accent, border: `4px solid ${theme.bg}`, boxShadow: `0 0 0 2px ${theme.accent}`, zIndex: 2 }} />
+                      <Selectable elKey={`bullet:${i}`} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
+                        <div style={{ position: "absolute", left: 8, right: 8, [above ? "bottom" : "top"]: "calc(50% + 28px)", textAlign: "center" }}>
+                          <div style={{ fontFamily: theme.fontHead, fontWeight: 800, fontSize: 24, color: theme.accent }}>{year}</div>
+                          <div style={{ fontFamily: theme.fontBody, fontSize: 18, color: theme.text, fontWeight: 600, marginTop: 2 }}>{label}</div>
+                          {body && <div style={{ fontFamily: theme.fontBody, fontSize: 14, color: theme.muted, lineHeight: 1.3, marginTop: 4 }}>{body}</div>}
+                        </div>
+                      </Selectable>
+                    </div>
                   );
                 })}
               </div>
@@ -807,13 +805,33 @@ export const SlideView = ({
         return (
           <div className="h-full w-full flex flex-col px-16 py-12 gap-6">
             {renderText("title", c.title ?? "Pyramid", titleStyle(44))}
-            <div className="flex-1 flex flex-col items-center justify-center gap-2">
+            <div className="flex-1 flex flex-col items-center justify-center gap-1">
               {items.map((b, i) => {
-                const widthPct = 30 + (i / Math.max(1, n - 1)) * 65;
-                const opacity = 1 - i * 0.12;
+                // top narrow → base wide
+                const widthPct = n === 1 ? 70 : 30 + (i / (n - 1)) * 60;
+                const clip =
+                  i === 0
+                    ? "polygon(15% 0, 85% 0, 100% 100%, 0% 100%)"
+                    : i === n - 1
+                      ? "polygon(5% 0, 95% 0, 100% 100%, 0% 100%)"
+                      : "polygon(8% 0, 92% 0, 100% 100%, 0% 100%)";
                 return (
                   <Selectable key={i} elKey={`bullet:${i}`} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
-                    <div style={{ width: `${widthPct}%`, minWidth: 280, background: theme.accent, opacity, color: theme.accentText, padding: "18px 32px", borderRadius: 4, textAlign: "center", fontFamily: theme.fontHead, fontWeight: 700, fontSize: 26 }}>
+                    <div style={{
+                      width: `${widthPct}%`,
+                      maxWidth: 900,
+                      background: theme.accent,
+                      color: theme.accentText,
+                      padding: "18px 48px",
+                      clipPath: clip,
+                      WebkitClipPath: clip,
+                      textAlign: "center",
+                      fontFamily: theme.fontHead,
+                      fontWeight: 700,
+                      fontSize: 26,
+                      lineHeight: 1.2,
+                      filter: `brightness(${1 + (n - 1 - i) * 0.04})`,
+                    }}>
                       <EditableText value={b} onChange={onEditBullet ? (v) => onEditBullet(i, v) : undefined} active={editable && selectedKey === `bullet:${i}`} style={{ color: theme.accentText, fontFamily: theme.fontHead, fontWeight: 700, fontSize: 26 }} />
                     </div>
                   </Selectable>
@@ -826,39 +844,42 @@ export const SlideView = ({
       case "cycle": {
         const items = c.bullets ?? [];
         const n = items.length || 1;
-        const radius = 220;
-        const cx = 360;
-        const cy = 280;
+        // Square diagram: SVG and HTML nodes share a 0–100 percent coordinate space.
         return (
-          <div className="h-full w-full grid grid-cols-2">
-            <div className="relative" style={{ minHeight: 560 }}>
-              <svg width="100%" height="100%" viewBox="0 0 720 560" style={{ position: "absolute", inset: 0 }}>
-                <circle cx={cx} cy={cy} r={radius} fill="none" stroke={theme.accent} strokeWidth="3" strokeDasharray="8 6" opacity="0.4" />
-              </svg>
-              <div style={{ position: "absolute", left: cx - 80, top: cy - 60, width: 160, height: 120, display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
-                {renderText("body", c.body ?? c.title ?? "Cycle", { fontFamily: theme.fontHead, fontWeight: 800, fontSize: 28, color: theme.accent, textAlign: "center", lineHeight: 1.2 })}
+          <div className="h-full w-full grid grid-cols-2 gap-6 p-8">
+            <div className="relative flex items-center justify-center min-h-0">
+              <div className="relative" style={{ width: "min(100%, 520px)", aspectRatio: "1 / 1", maxHeight: "100%" }}>
+                <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
+                  <circle cx="50" cy="50" r="38" fill="none" stroke={theme.accent} strokeWidth="0.6" strokeDasharray="2 1.5" opacity="0.5" />
+                </svg>
+                {/* Center label */}
+                <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", width: "44%", textAlign: "center" }}>
+                  {renderText("body", c.body ?? c.title ?? "Cycle", { fontFamily: theme.fontHead, fontWeight: 800, fontSize: 26, color: theme.accent, textAlign: "center", lineHeight: 1.2 })}
+                </div>
+                {/* Nodes around the orbit */}
+                {items.map((b, i) => {
+                  const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+                  const xPct = 50 + Math.cos(angle) * 38;
+                  const yPct = 50 + Math.sin(angle) * 38;
+                  return (
+                    <div key={i} style={{ position: "absolute", left: `${xPct}%`, top: `${yPct}%`, transform: "translate(-50%, -50%)", width: 130 }}>
+                      <Selectable elKey={`bullet:${i}`} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
+                        <div style={{ background: theme.accent, color: theme.accentText, padding: "12px 14px", borderRadius: 999, textAlign: "center", fontFamily: theme.fontBody, fontWeight: 700, fontSize: 18, boxShadow: `0 6px 16px ${theme.accent}55` }}>
+                          <EditableText value={b} onChange={onEditBullet ? (v) => onEditBullet(i, v) : undefined} active={editable && selectedKey === `bullet:${i}`} style={{ color: theme.accentText, fontFamily: theme.fontBody, fontWeight: 700, fontSize: 18 }} />
+                        </div>
+                      </Selectable>
+                    </div>
+                  );
+                })}
               </div>
-              {items.map((b, i) => {
-                const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
-                const x = cx + Math.cos(angle) * radius - 70;
-                const y = cy + Math.sin(angle) * radius - 35;
-                return (
-                  <div key={i} style={{ position: "absolute", left: x, top: y, width: 140 }}>
-                    <Selectable elKey={`bullet:${i}`} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
-                      <div style={{ background: theme.accent, color: theme.accentText, padding: "12px 14px", borderRadius: 999, textAlign: "center", fontFamily: theme.fontBody, fontWeight: 700, fontSize: 18, boxShadow: `0 6px 16px ${theme.accent}55` }}>
-                        <EditableText value={b} onChange={onEditBullet ? (v) => onEditBullet(i, v) : undefined} active={editable && selectedKey === `bullet:${i}`} style={{ color: theme.accentText, fontFamily: theme.fontBody, fontWeight: 700, fontSize: 18 }} />
-                      </div>
-                    </Selectable>
-                  </div>
-                );
-              })}
             </div>
-            <div className="flex flex-col justify-center px-12 gap-6">
-              {renderText("title", c.title ?? "", titleStyle(48))}
-              <ol className="flex flex-col gap-2">
+            <div className="flex flex-col justify-center px-8 gap-6 min-w-0">
+              {renderText("title", c.title ?? "", titleStyle(44))}
+              <ol className="flex flex-col gap-3">
                 {items.map((b, i) => (
-                  <li key={i} style={{ fontFamily: theme.fontBody, fontSize: 22, color: theme.text }}>
-                    <span style={{ color: theme.accent, fontWeight: 800, marginRight: 12 }}>{i + 1}.</span>{b}
+                  <li key={i} className="flex gap-3 items-baseline" style={{ fontFamily: theme.fontBody, fontSize: 22, color: theme.text }}>
+                    <span style={{ color: theme.accent, fontWeight: 800, fontSize: 22, minWidth: 28 }}>{i + 1}.</span>
+                    <span>{b}</span>
                   </li>
                 ))}
               </ol>
