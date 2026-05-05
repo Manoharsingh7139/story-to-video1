@@ -18,11 +18,10 @@ import {
   ArrowRight,
   Play,
   Pause,
-  Link as LinkIcon,
   AudioLines,
 } from "lucide-react";
 
-type SourceTab = "paste" | "upload" | "url";
+type SourceTab = "paste" | "upload" | "audio";
 
 const PACE_OPTIONS = ["Slow", "Normal", "Fast"] as const;
 const TONE_OPTIONS = ["Neutral", "Warm", "Energetic"] as const;
@@ -59,12 +58,14 @@ export default function InputScreen() {
   } = usePrototypeStore();
 
   const docInputRef = useRef<HTMLInputElement>(null);
+  const audioScriptInputRef = useRef<HTMLInputElement>(null);
   const voiceInputRef = useRef<HTMLInputElement>(null);
   const templateInputRef = useRef<HTMLInputElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const [sourceTab, setSourceTab] = useState<SourceTab>("paste");
   const [uploadedDoc, setUploadedDoc] = useState<string | null>(null);
+  const [uploadedAudioScript, setUploadedAudioScript] = useState<string | null>(null);
   const [uploadedVoice, setUploadedVoice] = useState<string | null>(null);
   const [customTemplate, setCustomTemplate] = useState<string | null>(null);
   const [pace, setPace] = useState<typeof PACE_OPTIONS[number]>("Normal");
@@ -79,12 +80,21 @@ export default function InputScreen() {
   const wordCount = sourceText.trim().split(/\s+/).filter(Boolean).length;
   const slideEstimate = Math.max(1, Math.round(wordCount / 80));
   const minutes = Math.max(1, Math.round((wordCount / 150) * 1.1));
-  const canGenerate = sourceText.trim().length > 20 || !!uploadedDoc;
+  const canGenerate = sourceText.trim().length > 20 || !!uploadedDoc || !!uploadedAudioScript;
 
   const handleDocUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setUploadedDoc(file.name);
+      setSourceText(SAMPLE_TEXT);
+    }
+  };
+
+  const handleAudioScriptUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setUploadedAudioScript(file.name);
+      // Prototype: pretend we transcribed the audio into the source text.
       setSourceText(SAMPLE_TEXT);
     }
   };
@@ -176,7 +186,7 @@ export default function InputScreen() {
                 {([
                   { id: "paste", label: "Paste text", icon: FileText },
                   { id: "upload", label: "Upload document", icon: FileUp },
-                  { id: "url", label: "From URL", icon: LinkIcon, soon: true },
+                  { id: "audio", label: "Audio script", icon: AudioLines },
                 ] as const).map((t) => {
                   const Icon = t.icon;
                   const active = sourceTab === t.id;
@@ -190,11 +200,6 @@ export default function InputScreen() {
                     >
                       <Icon className="h-3.5 w-3.5" />
                       {t.label}
-                      {"soon" in t && t.soon && (
-                        <span className="ml-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-muted-foreground/10 text-muted-foreground">
-                          soon
-                        </span>
-                      )}
                     </button>
                   );
                 })}
@@ -251,13 +256,63 @@ export default function InputScreen() {
                 </div>
               )}
 
-              {sourceTab === "url" && (
-                <div className="min-h-[280px] rounded-md border border-dashed border-border flex flex-col items-center justify-center gap-2 bg-muted/20 text-center px-8">
-                  <LinkIcon className="h-5 w-5 text-muted-foreground" />
-                  <div className="text-sm font-medium">Import from a web page</div>
-                  <div className="text-xs text-muted-foreground max-w-sm">
-                    Paste any article, blog post, or documentation URL and we'll pull in the text. Coming soon.
-                  </div>
+              {sourceTab === "audio" && (
+                <div
+                  onClick={() => audioScriptInputRef.current?.click()}
+                  className="min-h-[280px] rounded-md border-2 border-dashed border-border hover:border-foreground/40 transition-colors flex flex-col items-center justify-center gap-3 cursor-pointer bg-muted/20 px-6 text-center"
+                >
+                  {uploadedAudioScript ? (
+                    <>
+                      <div className="h-12 w-12 rounded-full bg-background flex items-center justify-center shadow-sm">
+                        <AudioLines className="h-5 w-5" />
+                      </div>
+                      <svg viewBox="0 0 200 28" className="w-full max-w-[280px] h-7" aria-hidden>
+                        {Array.from({ length: 40 }).map((_, i) => {
+                          const h = 4 + Math.abs(Math.sin(i * 0.7)) * 18 + (i % 3) * 2;
+                          return (
+                            <rect
+                              key={i}
+                              x={i * 5}
+                              y={(28 - h) / 2}
+                              width={2.5}
+                              height={h}
+                              rx={1}
+                              className="fill-foreground/70"
+                            />
+                          );
+                        })}
+                      </svg>
+                      <div className="text-sm font-medium">{uploadedAudioScript}</div>
+                      <div className="text-xs text-muted-foreground">Transcribed · ready to generate slides</div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setUploadedAudioScript(null);
+                        }}
+                        className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
+                      >
+                        <X className="h-3 w-3" /> Remove
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="h-12 w-12 rounded-full bg-background flex items-center justify-center shadow-sm">
+                        <AudioLines className="h-5 w-5" />
+                      </div>
+                      <div className="text-sm font-medium">Upload an audio script</div>
+                      <div className="text-xs text-muted-foreground max-w-sm">
+                        Drop a lecture, podcast, or recording. We'll transcribe it and use the text to build your slides.
+                      </div>
+                      <div className="text-[11px] text-muted-foreground">.mp3, .wav, .m4a — up to 50 MB</div>
+                    </>
+                  )}
+                  <input
+                    ref={audioScriptInputRef}
+                    type="file"
+                    accept="audio/mpeg,audio/wav,audio/mp4,audio/x-m4a,.mp3,.wav,.m4a"
+                    className="hidden"
+                    onChange={handleAudioScriptUpload}
+                  />
                 </div>
               )}
 
@@ -291,7 +346,7 @@ export default function InputScreen() {
             <div className="p-5">
               <Eyebrow hint="Fonts, colors, and slide style">Look</Eyebrow>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-2">
                 {THEME_LIST.map((t) => {
                   const active = themeId === t.id && !customTemplate;
                   return (
@@ -301,7 +356,7 @@ export default function InputScreen() {
                         setThemeId(t.id);
                         setCustomTemplate(null);
                       }}
-                      className={`relative text-left rounded-lg overflow-hidden border transition-all ${
+                      className={`relative text-left rounded-md overflow-hidden border transition-all ${
                         active
                           ? "border-foreground ring-2 ring-foreground/10"
                           : "border-border hover:border-foreground/30"
@@ -309,39 +364,35 @@ export default function InputScreen() {
                     >
                       {/* Mini slide preview using the theme tokens */}
                       <div
-                        className="aspect-[4/3] p-4 flex flex-col justify-between"
+                        className="aspect-[5/4] p-2.5 flex flex-col justify-between"
                         style={{ background: t.bg, color: t.text }}
                       >
                         <div
                           style={{
                             fontFamily: t.fontHead,
                             fontWeight: 700,
-                            fontSize: 15,
-                            lineHeight: 1.15,
+                            fontSize: 11,
+                            lineHeight: 1.1,
                             letterSpacing: "-0.01em",
                           }}
                         >
-                          A bigger idea,
+                          Big idea,
                           <br />
                           told well.
                         </div>
-                        <div className="space-y-1.5">
-                          <div style={{ width: 28, height: 3, background: t.accent, borderRadius: 2 }} />
-                          <div className="flex items-center gap-1.5" style={{ fontFamily: t.fontBody, fontSize: 9 }}>
+                        <div className="flex items-center justify-between">
+                          <div style={{ width: 18, height: 2.5, background: t.accent, borderRadius: 2 }} />
+                          <div className="flex gap-1">
                             <span style={{ width: 4, height: 4, borderRadius: 999, background: t.accent }} />
-                            <span style={{ color: t.muted }}>Clear, structured slides</span>
-                          </div>
-                          <div className="flex items-center gap-1.5" style={{ fontFamily: t.fontBody, fontSize: 9 }}>
-                            <span style={{ width: 4, height: 4, borderRadius: 999, background: t.accent }} />
-                            <span style={{ color: t.muted }}>Designed for teaching</span>
+                            <span style={{ width: 4, height: 4, borderRadius: 999, background: t.muted, opacity: 0.5 }} />
                           </div>
                         </div>
                       </div>
-                      <div className="px-3 py-2 flex items-center justify-between bg-card border-t border-border/60">
-                        <span className="text-xs font-medium">{t.name}</span>
+                      <div className="px-2 py-1.5 flex items-center justify-between bg-card border-t border-border/60">
+                        <span className="text-[11px] font-medium truncate">{t.name}</span>
                         {active && (
-                          <span className="h-4 w-4 rounded-full bg-foreground text-background flex items-center justify-center">
-                            <Check className="h-2.5 w-2.5" strokeWidth={3} />
+                          <span className="h-3.5 w-3.5 rounded-full bg-foreground text-background flex items-center justify-center shrink-0">
+                            <Check className="h-2 w-2" strokeWidth={3} />
                           </span>
                         )}
                       </div>
