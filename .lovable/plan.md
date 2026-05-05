@@ -1,78 +1,105 @@
 
-# More image-rich slides + SWOT sample deck
+# 15 New Education-Focused Slide Layouts
 
-Two parts:
-1. Add new layouts that combine images and text in different ways (right now only `image-left/right/full/grid` exist and the deck barely uses them).
-2. Replace the sample deck with a SWOT Analysis deck built from the provided learning content, using a healthy mix of text, image, and image+text layouts.
+The deck currently has 17 layouts (title, bullets, quadrant, comparison, image-bg-overlay, etc.) but they skew toward generic business slides. For teaching MBA/MCA/BBA/BCom/MCom/MA/BA video content we need layouts that handle definitions, formulas, processes, case studies, Q&A, citations, examples — and that look visually distinct from each other so a long lecture doesn't feel monotonous.
 
-## Part 1 — New slide layouts
+## The 15 new layouts
 
-Add these layout IDs to `LayoutId` in `types.ts` and render them in `SlideView.tsx`:
+Each is a new `LayoutId` rendered in `SlideView.tsx`, with sample variants in `slideVariants.ts` and a chat trigger in `aiChat.ts`.
 
-- **`image-bg-overlay`** — Full-bleed image background with a translucent dark/accent overlay; centered title + body on top. Different from `image-full` (which puts text bottom-left over a gradient) — this one is a true centered hero card with adjustable overlay tint.
-- **`image-text-overlay`** — Full-bleed image with a solid color text card (≈45% width) docked on the left or right, like a magazine pull-quote. Holds title + body.
-- **`quadrant`** — 2×2 colored cells, each with a small icon/label and short body. Designed for SWOT (S/W/O/T) but reusable for any 4-box framework. Per-cell: `q1Title/q1Body … q4Title/q4Body`, with theme-tinted cell backgrounds (accent, accent-soft, neutral, etc.).
-- **`comparison`** — Two stacked or side-by-side panels with a header strip ("Helpful" vs "Harmful", or "Before" vs "After"). Uses `leftTitle/leftBody/rightTitle/rightBody` plus a top `title`. Visually distinct from `two-column` (which is plain divider columns) — this one has colored header bars.
-- **`image-bullets`** — Image on one side (left or right via style), bullets on the other. Bullets honor the existing `bulletVariant`. Fields: `title`, `bullets`, `imageUrl`.
-- **`stat-image`** — Big stat on one side, supporting image on the other. Fields: `stat`, `statLabel`, `imageUrl`.
-- **`section-image-bg`** — Section divider with a background image and a tinted accent overlay (replaces flat-color `divider` for chapter breaks).
+1. **`definition-card`** — "Term + Definition" hero card. Big term on left in a colored block, definition + etymology/source on right. For "What is Opportunity Cost?", "Define Marginal Utility".
+   Fields: `term`, `body`, `caption` (source).
 
-New optional content fields in `SlideContent` (`types.ts`):
-`q1Title, q1Body, q2Title, q2Body, q3Title, q3Body, q4Title, q4Body` (quadrant), and reuse existing `title/body/bullets/imageUrl/leftTitle/...`.
+2. **`formula`** — Centered LaTeX-style formula in a framed card with a label above ("Compound Interest") and a one-line plain-language explanation below. Supports `formula` (string), `title`, `body`.
+   Fields: `title`, `formula`, `body`.
 
-New optional style fields in `SlideStyle`:
-- `overlayTint?: "dark" | "light" | "accent"` and `overlayStrength?: "soft" | "medium" | "strong"` (for `image-bg-overlay` / `section-image-bg`).
-- `textCardSide?: "left" | "right"` (for `image-text-overlay`).
-- `imageSide?: "left" | "right"` (for `image-bullets` / `stat-image`).
-- `quadrantPalette?: "swot" | "neutral" | "accent"` (for `quadrant`).
+3. **`worked-example`** — Three numbered steps stacked vertically with a "Problem" header strip and "Answer" footer strip. Each step: short label + line of math/text. For solving a problem on stage.
+   Fields: `title` (problem), `bullets` (steps), `body` (final answer).
 
-Element selection keys for the new layouts: `q1Title, q1Body, q2Title, q2Body, q3Title, q3Body, q4Title, q4Body`, plus existing `image`, `title`, `body`, `bullets`, `stat`, `statLabel`, `leftTitle`, etc., so they slot into the existing `VoiceoverPanel` element editor with no panel changes (the panel already routes by key prefix).
+4. **`learning-objectives`** — "By the end of this lesson you'll be able to…" header with 3–5 checklist items in pill rows, each with a small numbered badge. Distinct from regular bullets — uses pills + accent.
+   Fields: `title`, `bullets`.
 
-Layout dropdown in `EditorScreen.tsx`: append the 7 new layouts so users can switch any slide to them.
+5. **`key-terms`** — Glossary grid: 4–6 small cards each with `term` (bold) and short definition. Two-column responsive grid. For vocabulary recap slides.
+   Fields: `title`, `bullets` (each item parsed `term — definition`), or dedicated `terms` array (we'll reuse bullets with a separator).
 
-`slideVariants.ts`: add a couple of `TEXT_VARIANTS` entries for each new layout so "Regenerate slide" can emit them. `ALL_LAYOUTS` extended.
+6. **`process-flow`** — Horizontal arrow flow with 3–5 numbered nodes (circle + label + 1-line body underneath). Bigger and more visual than the existing bullet "process" variant — this is a full-slide diagram, not a list.
+   Fields: `title`, `bullets`.
 
-`StyleControls.tsx`: add minimal controls for the new style fields when the relevant element is selected — overlay tint/strength chips on `image` (only when layout is bg-overlay-ish), card-side toggle on `image` for `image-text-overlay`, palette chips when layout is `quadrant` (shown on any quadrant cell selection).
+7. **`timeline`** — Horizontal timeline with 4–6 dated events (year/era + label + short body below the line). For history slides (Renaissance → Industrial Revolution → Information Age) or course roadmaps.
+   Fields: `title`, `bullets` (each `year | label | body`).
 
-## Part 2 — SWOT sample deck
+8. **`pyramid`** — Stacked horizontal bands forming a pyramid (base widest). 3–5 levels, each with label inside and optional small body to the side. For Maslow, Bloom's Taxonomy, AIDA.
+   Fields: `title`, `bullets` (top→bottom).
 
-Replace `SAMPLE_DECK` and `SAMPLE_TEXT` in `sampleDeck.ts` with a ~14-slide SWOT Analysis deck using the supplied learning content. Layout mix is intentionally varied:
+9. **`cycle`** — Circular flow with 4–6 nodes around a circle, arrows between them, central label in the middle. For PDCA, accounting cycle, marketing funnel loop.
+   Fields: `title`, `bullets`, `body` (center label).
 
-```
- 1. title                  — "SWOT Analysis" + "A practical guide to strategic thinking"
- 2. image-bg-overlay       — "What is SWOT?" definition over a strategy/whiteboard image
- 3. quadrant (swot palette)— S / W / O / T four-box, internal vs external
- 4. image-text-overlay     — "Strengths" with internal-advantages body, photo on right
- 5. image-bullets          — "Weaknesses" with examples list (variant: checklist), image left
- 6. image-right            — "Opportunities" with body + market-growth image
- 7. image-bullets          — "Threats" examples (variant: cards), image right
- 8. comparison             — "Helpful vs Harmful" matrix recap
- 9. section-image-bg       — "How to conduct a SWOT" chapter break, image background
-10. bullets (numbered)     — 5 steps: Define / Gather / List / Prioritize / Build strategy
-11. quadrant (accent palette)— SO / WO / ST / WT strategy combinations
-12. stat-image             — "2.4x" higher strategic alignment, supporting photo
-13. two-column             — Advantages vs Limitations
-14. image-full             — Closing: "SWOT is not the output. The value is in the decisions."
-```
+10. **`case-study`** — Magazine-style: large image on the left (full-height), right side has "CASE STUDY" eyebrow, company/scenario title, 3 short stat chips (e.g. "Revenue +42%", "12 months", "₹120 Cr"), and a body paragraph.
+    Fields: `title`, `body`, `imageUrl`, `bullets` (used as stat chips), `caption` (eyebrow).
 
-Each slide gets a script line drawn from the source material (concise, narration-friendly). All quadrant cells, bullets, and bodies are filled with the actual SWOT content from the user's brief (definitions, the four key tests, the SO/WO/ST/WT examples, the online-education example for the stat slide context).
+11. **`question-prompt`** — Centered large "?" iconography with a thought-provoking question in oversized type and 2–3 prompt sub-questions below. For sparking discussion or pause-points in video.
+    Fields: `title` (main question), `bullets` (sub-prompts).
 
-`SAMPLE_TEXT` becomes a condensed prose version of the SWOT learning material so the input screen still has a meaningful seed.
+12. **`qa-recap`** — Q/A pairs (2–4) styled as alternating left/right speech-style blocks with "Q" and "A" badges. For revision slides.
+    Fields: `title`, `bullets` (alternating Q and A lines).
+
+13. **`pros-cons`** — Two columns with green "Pros / Advantages" header and red "Cons / Disadvantages" header, check/cross icons on each row. Distinct from `comparison` (which is neutral helpful/harmful headers and bodies, not lists).
+    Fields: `title`, `leftBody` (pros, newline-separated) or `bullets` split, `rightBody` (cons).
+
+14. **`chart-explainer`** — Left side: a simple SVG bar/line chart (data baked into content — `chartType: "bar"|"line"`, `chartData: [{label, value}]`). Right side: title + 2–3 takeaway bullets. For showing GDP trends, market share, survey results.
+    Fields: `title`, `bullets`, `chartType`, `chartData`.
+
+15. **`citation-quote`** — Large pull-quote with quotation mark glyph, attribution block below (name, role, source). For citing Drucker, Kotler, Keynes etc. Distinct from `divider` — this is a full content slide with author photo (optional).
+    Fields: `body` (quote), `caption` (author + source), `imageUrl` (optional author photo).
+
+## Type system additions
+
+In `types.ts`:
+- Extend `LayoutId` union with the 15 new IDs.
+- Add to `SlideContent`:
+  - `term?: string` (definition-card)
+  - `formula?: string` (formula)
+  - `chartType?: "bar" | "line"`
+  - `chartData?: { label: string; value: number }[]`
+- No new `SlideStyle` fields needed — existing color/align/size controls are reused.
+
+## Rendering (`SlideView.tsx`)
+
+Add one rendering branch per layout. Visual distinctness is the goal — use:
+- Different background treatments (gradient strips for `learning-objectives`, framed card for `formula`, full-bleed image for `case-study`).
+- Theme accent color used differently per layout (left bar in `definition-card`, node fills in `process-flow`, pyramid bands).
+- All elements remain `Selectable` with stable `elKey`s so the existing `VoiceoverPanel` editor works without changes (keys: `term`, `formula`, `bullet:N`, `body`, `caption`, `image`).
+
+For `process-flow`, `timeline`, `pyramid`, `cycle`, `chart-explainer`: render with inline SVG (no new deps). The `cycle` uses `transform: rotate` to position nodes around a circle. The chart is a small custom SVG (no recharts) sized to its panel.
+
+## Sample data
+
+Update `sampleDeck.ts`: keep the SWOT deck but append 3–4 demo slides showing the new layouts (e.g. one `formula` for compound interest, one `timeline` for management theory eras, one `case-study`, one `learning-objectives`) so users can see them on first load. Also extend `SAMPLE_TEXT` slightly.
+
+Add education-themed seed content to `slideVariants.ts` so "Regenerate slide" can produce these layouts. Each new layout gets 1–2 variant entries with MBA/teaching content (e.g. `formula` → Compound Interest, NPV; `pyramid` → Maslow's Hierarchy, Bloom's Taxonomy).
+
+Extend `ALL_LAYOUTS` array in `slideVariants.ts` with the 15 new IDs.
+
+## Editor integration
+
+- `EditorScreen.tsx`: append the 15 new layouts to the Layout dropdown, grouped under an "Education" subheading (visual separator only).
+- `StyleControls.tsx`: no new controls needed — existing text size/align/color, image shape/treatment, bullet variants all still apply.
+- `aiChat.ts`: add intent matchers so commands like "make this a formula slide", "show as timeline", "convert to pyramid", "turn into case study", "show pros and cons", "make a learning objectives slide" switch the slide layout (and seed sensible defaults if fields are empty).
 
 ## Files touched
 
-- Edit: `src/lib/prototype/types.ts` (new layout IDs, new content + style fields)
-- Edit: `src/components/prototype/SlideView.tsx` (render the 7 new layouts, overlay/card-side/quadrant logic)
-- Edit: `src/lib/prototype/sampleDeck.ts` (full SWOT deck + new SAMPLE_TEXT)
-- Edit: `src/lib/prototype/slideVariants.ts` (variants for new layouts, extend ALL_LAYOUTS)
-- Edit: `src/components/prototype/StyleControls.tsx` (new chips for overlay, card side, quadrant palette)
-- Edit: `src/pages/prototype/EditorScreen.tsx` (layout dropdown options)
-- Edit: `src/lib/prototype/aiChat.ts` (recognize "make it a quadrant", "image background", "swap image side" intents → mutate layout/style)
+- Edit `src/lib/prototype/types.ts` — 15 new layout IDs, 4 new content fields.
+- Edit `src/components/prototype/SlideView.tsx` — 15 new render branches (~400 lines).
+- Edit `src/lib/prototype/slideVariants.ts` — variants + extend ALL_LAYOUTS.
+- Edit `src/lib/prototype/sampleDeck.ts` — append demo slides + small SAMPLE_TEXT update.
+- Edit `src/pages/prototype/EditorScreen.tsx` — extend layout dropdown.
+- Edit `src/lib/prototype/aiChat.ts` — new intent triggers.
 
 No new dependencies. No backend.
 
 ## Out of scope
 
-- Real icon library inside quadrant cells (use simple letter badges S/W/O/T).
-- Drag-to-reposition of the text card in `image-text-overlay` (toggle only).
-- Per-quadrant individual color pickers (palette presets only).
+- LaTeX rendering engine (KaTeX/MathJax) — formulas use plain text in a styled monospace frame. Can be added later.
+- Interactive chart editing — `chart-explainer` data is edited as JSON via a small textarea in the element editor (or via chat). No drag handles.
+- Animated transitions between cycle/timeline nodes.
+- Per-pyramid-band individual color pickers (uses theme accent gradient).
