@@ -1,6 +1,19 @@
 import type { Theme, ThemeId } from "./types";
 
 export const THEMES: Record<ThemeId, Theme> = {
+  studio: {
+    id: "studio",
+    name: "Studio",
+    bg: "#FAF6F0",
+    surface: "#FFFFFF",
+    text: "#221E1A",
+    muted: "#736A60",
+    accent: "#DC5A2A",
+    accentText: "#FAF6F0",
+    fontHead: "'Fraunces', Georgia, serif",
+    fontBody: "'Inter', system-ui, sans-serif",
+    radius: "4px",
+  },
   minimal: {
     id: "minimal",
     name: "Minimal",
@@ -23,7 +36,20 @@ export const THEMES: Record<ThemeId, Theme> = {
     muted: "#7a6a55",
     accent: "#9a3b1f",
     accentText: "#f5efe6",
-    fontHead: "'Playfair Display', Georgia, serif",
+    fontHead: "'Fraunces', Georgia, serif",
+    fontBody: "'Inter', system-ui, sans-serif",
+    radius: "2px",
+  },
+  noir: {
+    id: "noir",
+    name: "Noir",
+    bg: "#161310",
+    surface: "#221E1A",
+    text: "#F5EFE6",
+    muted: "#9A9085",
+    accent: "#E8B86A",
+    accentText: "#161310",
+    fontHead: "'Fraunces', Georgia, serif",
     fontBody: "'Inter', system-ui, sans-serif",
     radius: "2px",
   },
@@ -81,6 +107,5 @@ export const THEMES: Record<ThemeId, Theme> = {
   },
 };
 
-// Curated, visually distinct picks shown on the input screen.
-// (All themes remain available via the editor / store typing.)
-export const THEME_LIST = [THEMES.minimal, THEMES.editorial, THEMES.darktech];
+// Curated picks shown on the input screen.
+export const THEME_LIST = [THEMES.studio, THEMES.editorial, THEMES.noir];
