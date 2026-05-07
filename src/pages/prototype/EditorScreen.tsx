@@ -13,7 +13,8 @@ import { Input } from "@/components/ui/input";
 import {
   Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Sparkles, Download, ArrowLeft, Layout as LayoutIcon, Palette } from "lucide-react";
+import { Download, ArrowLeft, Layout as LayoutIcon, Palette } from "lucide-react";
+import { Wordmark } from "@/components/Wordmark";
 import type { LayoutId } from "@/lib/prototype/types";
 
 const TEXT_LAYOUTS: { id: LayoutId; name: string }[] = [
@@ -90,9 +91,7 @@ export default function EditorScreen() {
           <Link to="/" className="p-1.5 rounded hover:bg-muted">
             <ArrowLeft className="h-4 w-4" />
           </Link>
-          <div className="h-6 w-6 rounded bg-foreground flex items-center justify-center flex-shrink-0">
-            <Sparkles className="h-3.5 w-3.5 text-background" />
-          </div>
+          <Wordmark size="sm" />
           <Input
             value={projectTitle}
             onChange={(e) => setProjectTitle(e.target.value)}

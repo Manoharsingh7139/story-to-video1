@@ -20,6 +20,7 @@ import {
   Pause,
   AudioLines,
 } from "lucide-react";
+import { Wordmark } from "@/components/Wordmark";
 
 type SourceTab = "paste" | "upload" | "audio";
 
@@ -36,7 +37,7 @@ const voiceGradient = (name: string) => {
 const Eyebrow = ({ children, hint }: { children: React.ReactNode; hint?: string }) => (
   <div className="flex items-end justify-between mb-3">
     <div>
-      <div className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground font-semibold">{children}</div>
+      <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{children}</div>
     </div>
     {hint && <div className="text-[11px] text-muted-foreground">{hint}</div>}
   </div>
@@ -141,12 +142,9 @@ export default function InputScreen() {
       <header className="border-b border-border/60 backdrop-blur bg-background/70 sticky top-0 z-30">
         <div className="max-w-6xl mx-auto px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-7 w-7 rounded-md bg-foreground flex items-center justify-center">
-              <Sparkles className="h-4 w-4 text-background" />
-            </div>
-            <span className="font-semibold tracking-tight">Reel</span>
-            <span className="text-muted-foreground/50">·</span>
-            <span className="text-xs text-muted-foreground">Step 1 of 2 — Setup</span>
+            <Wordmark size="md" />
+            <span className="text-muted-foreground/40">·</span>
+            <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-muted-foreground">Step 1 of 2 — Setup</span>
           </div>
           <button
             onClick={() => navigate("/generating")}
@@ -159,13 +157,16 @@ export default function InputScreen() {
 
       {/* Hero / inline title */}
       <section className="max-w-6xl mx-auto px-8 pt-12 pb-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
-        <div className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground font-semibold mb-2">
+        <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-3">
           New presentation
         </div>
+        <h1 className="font-display text-3xl md:text-4xl tracking-tight text-foreground/70 mb-2 leading-[1.05]">
+          Turn your words into watchable stories.
+        </h1>
         <input
           value={projectTitle}
           onChange={(e) => setProjectTitle(e.target.value)}
-          className="w-full bg-transparent border-none outline-none text-4xl md:text-5xl font-semibold tracking-tight placeholder:text-muted-foreground/40 focus:ring-0"
+          className="w-full bg-transparent border-none outline-none font-display text-4xl md:text-5xl font-semibold tracking-tight placeholder:text-muted-foreground/40 focus:ring-0"
           placeholder="Untitled video"
         />
         <p className="text-sm text-muted-foreground mt-2">
@@ -642,7 +643,7 @@ export default function InputScreen() {
               <kbd className="px-1.5 py-0.5 rounded border border-border bg-muted text-[10px] font-mono">↵</kbd>
               to generate
             </span>
-            <Button size="lg" disabled={!canGenerate} onClick={onGenerate} className="h-11 px-5">
+            <Button variant="brand" size="lg" disabled={!canGenerate} onClick={onGenerate} className="h-11 px-5">
               <Sparkles className="h-4 w-4 mr-2" />
               Generate presentation
               <ArrowRight className="h-4 w-4 ml-2" />

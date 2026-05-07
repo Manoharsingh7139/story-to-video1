@@ -1,4 +1,4 @@
-export type ThemeId = "minimal" | "editorial" | "corporate" | "playful" | "darktech" | "warm";
+export type ThemeId = "minimal" | "editorial" | "corporate" | "playful" | "darktech" | "warm" | "studio" | "noir";
 
 export type LayoutId =
   | "title"
