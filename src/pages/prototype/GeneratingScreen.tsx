@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePrototypeStore } from "@/lib/prototype/store";
-import { Sparkles, Check } from "lucide-react";
+import { Check } from "lucide-react";
+import { Wordmark } from "@/components/Wordmark";
 
 const STEPS = [
   "Reading your text…",
