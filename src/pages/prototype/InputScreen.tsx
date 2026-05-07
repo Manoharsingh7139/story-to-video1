@@ -37,7 +37,7 @@ const voiceGradient = (name: string) => {
 const Eyebrow = ({ children, hint }: { children: React.ReactNode; hint?: string }) => (
   <div className="flex items-end justify-between mb-3">
     <div>
-      <div className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground font-semibold">{children}</div>
+      <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{children}</div>
     </div>
     {hint && <div className="text-[11px] text-muted-foreground">{hint}</div>}
   </div>
