@@ -53,7 +53,7 @@ const initialChatFor = (slideId: string): ChatMessage[] => [
 export const usePrototypeStore = create<PrototypeState>((set, get) => ({
   sourceText: "",
   projectTitle: "Untitled video",
-  themeId: "minimal",
+  themeId: "studio",
   voice: VOICES[0],
   voiceMode: "ai",
   slides: [],
