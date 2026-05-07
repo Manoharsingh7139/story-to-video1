@@ -643,7 +643,7 @@ export default function InputScreen() {
               <kbd className="px-1.5 py-0.5 rounded border border-border bg-muted text-[10px] font-mono">↵</kbd>
               to generate
             </span>
-            <Button size="lg" disabled={!canGenerate} onClick={onGenerate} className="h-11 px-5">
+            <Button variant="brand" size="lg" disabled={!canGenerate} onClick={onGenerate} className="h-11 px-5">
               <Sparkles className="h-4 w-4 mr-2" />
               Generate presentation
               <ArrowRight className="h-4 w-4 ml-2" />
