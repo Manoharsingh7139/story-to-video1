@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import {
   Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Sparkles, Download, ArrowLeft, Layout as LayoutIcon, Palette } from "lucide-react";
+import { Download, ArrowLeft, Layout as LayoutIcon, Palette } from "lucide-react";
 import { Wordmark } from "@/components/Wordmark";
 import type { LayoutId } from "@/lib/prototype/types";
 
