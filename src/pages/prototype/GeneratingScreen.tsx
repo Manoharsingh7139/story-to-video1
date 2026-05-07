@@ -40,11 +40,12 @@ export default function GeneratingScreen() {
     <div className="min-h-screen bg-background flex items-center justify-center px-8">
       <div className="max-w-md w-full">
         <div className="flex items-center justify-center mb-10">
-          <div className="h-14 w-14 rounded-2xl bg-foreground flex items-center justify-center animate-pulse">
-            <Sparkles className="h-7 w-7 text-background" />
+          <div className="flex flex-col items-center gap-4">
+            <Wordmark size="lg" />
+            <div className="h-1 w-16 rounded-full bg-brand animate-pulse" />
           </div>
         </div>
-        <h1 className="text-2xl font-semibold text-center mb-2 tracking-tight">Generating your presentation</h1>
+        <h1 className="font-display text-3xl text-center mb-2 tracking-tight">Generating your presentation</h1>
         <p className="text-muted-foreground text-center mb-10 text-sm">This usually takes a few seconds.</p>
 
         <ul className="space-y-3">
