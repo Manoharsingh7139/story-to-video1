@@ -20,6 +20,7 @@ import {
   Pause,
   AudioLines,
 } from "lucide-react";
+import { Wordmark } from "@/components/Wordmark";
 
 type SourceTab = "paste" | "upload" | "audio";
 
