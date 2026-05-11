@@ -14,7 +14,8 @@ export default {
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
         display: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
-        mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+        serif: ["Fraunces", "Iowan Old Style", "Georgia", "serif"],
+        mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -75,6 +76,9 @@ export default {
           "4": "hsl(160 84% 39%)",
           "5": "hsl(45 93% 47%)",
         },
+        ink: "hsl(var(--ink))",
+        surface: "hsl(var(--surface))",
+        hairline: "hsl(var(--hairline))",
       },
       borderRadius: {
         lg: "var(--radius)",
