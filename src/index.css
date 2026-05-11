@@ -8,6 +8,13 @@
   :root {
     --font-sans: 'Inter', system-ui, sans-serif;
     --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --font-serif: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    /* Editorial extras */
+    --ink: 160 20% 10%;
+    --surface: 42 30% 96%;
+    --hairline: 35 14% 82%;
 
     --background: 45 20% 98%;
     --foreground: 160 15% 15%;
@@ -68,6 +75,16 @@
     --shimmer: linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.4), transparent);
     --glow-primary: 0 0 30px hsl(160 35% 25% / 0.4);
     --glow-accent: 0 0 30px hsl(160 35% 25% / 0.25);
+
+    /* Paper-lifted card: hairline + soft drop */
+    --shadow-paper:
+      0 0 0 1px hsl(35 14% 82% / 0.6),
+      0 1px 1px hsl(35 30% 0% / 0.02),
+      0 8px 24px -12px hsl(35 30% 0% / 0.08);
+    --shadow-paper-hover:
+      0 0 0 1px hsl(160 35% 25% / 0.25),
+      0 2px 4px hsl(35 30% 0% / 0.04),
+      0 18px 40px -16px hsl(160 35% 25% / 0.18);
   }
 
   /* Light-only app — dark mirrors light to neutralize toggles. */
@@ -122,5 +139,60 @@
 
   h1, h2, h3, h4, h5, h6, .font-display {
     font-family: var(--font-display);
+  }
+
+  .font-serif {
+    font-family: var(--font-serif);
+    font-feature-settings: "ss01", "ss02", "calt";
+  }
+
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  .tnum {
+    font-variant-numeric: tabular-nums lining-nums;
+    font-feature-settings: "tnum", "lnum";
+  }
+
+  .hairline {
+    border-color: hsl(var(--hairline));
+  }
+
+  .shadow-paper {
+    box-shadow: var(--shadow-paper);
+  }
+  .shadow-paper-hover {
+    box-shadow: var(--shadow-paper-hover);
+  }
+
+  /* Subtle paper-grain texture using inline noise SVG */
+  .bg-paper {
+    background-color: hsl(var(--background));
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.06  0 0 0 0 0.10  0 0 0 0 0.08  0 0 0 0.07 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size: 220px 220px;
+  }
+
+  /* Editorial heading defaults */
+  .editorial-display {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    line-height: 1.04;
+    font-feature-settings: "ss01", "ss02";
+  }
+
+  /* Animated underline on hover */
+  .underline-grow {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 1px;
+    transition: background-size 280ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .group:hover .underline-grow,
+  .underline-grow:hover {
+    background-size: 100% 1px;
   }
 }
