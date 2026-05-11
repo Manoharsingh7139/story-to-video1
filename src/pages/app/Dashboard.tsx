@@ -1,25 +1,24 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { Topbar } from "@/components/app-shell/AppShell";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { useAuth } from "@/lib/auth/useAuth";
 import { useProjects } from "@/lib/data/useProjects";
 import { useHistoryStore } from "@/lib/data/useHistory";
 import { useBrandKit } from "@/lib/data/useBrandKit";
-import { TEMPLATES } from "@/lib/data/seedTemplates";
-import { EmptyState, LeafIllustration } from "@/components/empty/EmptyState";
+import { EmptyState, StudioIllustration } from "@/components/empty/EmptyState";
+import { EditorialHeader } from "@/components/editorial/EditorialHeader";
+import { MetricRow } from "@/components/editorial/MetricRow";
+import { HoverPreviewCard } from "@/components/editorial/HoverPreviewCard";
 import {
   ArrowRight,
+  Plus,
+  Check,
   FileText,
   LayoutTemplate,
-  Plus,
-  Sparkles,
-  Check,
-  Palette,
   Mic,
 } from "lucide-react";
 import { formatDistanceToNow } from "@/lib/format";
-import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 const greet = (name: string) => {
@@ -28,21 +27,27 @@ const greet = (name: string) => {
   return `${part}, ${name.split(" ")[0]}`;
 };
 
+const lede = (count: number) => {
+  if (count === 0) return "A blank page is its own kind of opening.";
+  if (count === 1) return "One draft underway. Where to next?";
+  return `${count} drafts underway. Pick up where you left off.`;
+};
+
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const projects = useProjects((s) => s.projects);
   const entries = useHistoryStore((s) => s.entries);
   const { kit } = useBrandKit();
-  const [dismissed, setDismissed] = useState<boolean>(() =>
-    localStorage.getItem("cs.welcomeDismissed") === "1",
+  const [dismissed, setDismissed] = useState<boolean>(
+    () => localStorage.getItem("cs.welcomeDismissed") === "1",
   );
 
   useEffect(() => {
     if (dismissed) localStorage.setItem("cs.welcomeDismissed", "1");
   }, [dismissed]);
 
-  const recent = projects.slice(0, 4);
+  const recent = projects.slice(0, 6);
   const totalSlides = projects.reduce((n, p) => n + p.slides.length, 0);
   const minutes = Math.max(0, Math.round(totalSlides * 0.4));
 
@@ -56,152 +61,222 @@ export default function Dashboard() {
   return (
     <>
       <Topbar
-        eyebrow="Dashboard"
-        title={greet(user?.name ?? "there")}
+        crumbs={[{ label: "Dashboard" }]}
         actions={
-          <Button onClick={() => navigate("/app/new")}>
+          <Button onClick={() => navigate("/app/new")} size="sm">
             <Plus className="h-4 w-4" />
             New video
           </Button>
         }
       />
-      <div className="flex-1 overflow-auto">
-        <div className="max-w-6xl mx-auto px-6 py-8 space-y-10">
-          {/* Stats */}
-          <section className="grid grid-cols-3 gap-4">
-            {[
-              { label: "Videos", value: projects.length },
-              { label: "Slides", value: totalSlides },
-              { label: "Minutes generated", value: minutes },
-            ].map((s) => (
-              <Card key={s.label} className="p-5 shadow-sm">
-                <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground mb-2">{s.label}</div>
-                <div className="font-display text-3xl tracking-[-0.02em]">{s.value}</div>
-              </Card>
-            ))}
-          </section>
 
+      <div className="flex-1 overflow-auto">
+        <div className="max-w-6xl mx-auto px-8 lg:px-12 py-12 lg:py-16 space-y-16">
+          {/* Editorial hero */}
+          <EditorialHeader
+            eyebrow={
+              <>
+                <span className="h-px w-6 bg-foreground/30 inline-block" />
+                <span>Studio · {new Intl.DateTimeFormat(undefined, { weekday: "long", day: "numeric", month: "short" }).format(new Date())}</span>
+              </>
+            }
+            title={greet(user?.name ?? "there")}
+            lede={lede(projects.length)}
+            meta={
+              <MetricRow
+                metrics={[
+                  { label: "Videos", value: projects.length },
+                  { label: "Slides", value: totalSlides },
+                  { label: "Minutes generated", value: minutes },
+                ]}
+              />
+            }
+          />
+
+          {/* Get started — horizontal numbered card with hairlines */}
           {showChecklist && (
-            <section>
-              <Card className="p-6 border-primary/20 bg-primary/5 relative overflow-hidden">
+            <section className="relative">
+              <div className="flex items-end justify-between mb-5">
+                <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                  Get started
+                </div>
                 <button
                   onClick={() => setDismissed(true)}
-                  className="absolute top-3 right-3 text-xs text-muted-foreground hover:text-foreground"
+                  className="text-[11px] text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Dismiss
                 </button>
-                <div className="flex items-center gap-2 mb-1">
-                  <Sparkles className="h-4 w-4 text-primary" />
-                  <div className="text-[10px] uppercase tracking-[0.18em] text-primary">Get started</div>
-                </div>
-                <h2 className="font-display text-xl mb-4">Three small steps to your first great video</h2>
-                <ul className="space-y-2">
-                  {checklist.map((c, i) => {
-                    const isNext = !c.done && checklist.slice(0, i).every((x) => x.done);
-                    return (
-                      <li key={c.label}>
-                        <Link
-                          to={c.to}
+              </div>
+              <div className="bg-card border hairline shadow-paper grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-hairline">
+                {checklist.map((c, i) => {
+                  const isNext = !c.done && checklist.slice(0, i).every((x) => x.done);
+                  return (
+                    <Link
+                      key={c.label}
+                      to={c.to}
+                      className={cn(
+                        "group relative px-6 py-5 flex items-start gap-4 transition-colors",
+                        c.done ? "text-muted-foreground" : "hover:bg-foreground/[0.02]",
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          "font-serif tnum text-2xl leading-none shrink-0 mt-0.5",
+                          c.done ? "text-muted-foreground/60 line-through" : "text-ink",
+                        )}
+                      >
+                        0{i + 1}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className={cn("text-sm font-medium", c.done && "line-through")}>
+                          {c.label}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground mt-0.5">
+                          {c.done ? "Done" : isNext ? "Up next" : "Later"}
+                        </div>
+                      </div>
+                      {c.done ? (
+                        <Check className="h-4 w-4 text-primary shrink-0" strokeWidth={2} />
+                      ) : (
+                        <ArrowRight
                           className={cn(
-                            "flex items-center gap-3 p-3 rounded-lg border transition-colors",
-                            c.done ? "border-border bg-background/50 text-muted-foreground" : "border-border bg-background hover:border-primary/40",
-                            isNext && "border-primary/50 shadow-sm",
+                            "h-4 w-4 text-muted-foreground shrink-0 transition-transform",
+                            "group-hover:translate-x-1 group-hover:text-foreground",
                           )}
-                        >
-                          <div className={cn(
-                            "h-5 w-5 rounded-full flex items-center justify-center shrink-0",
-                            c.done ? "bg-primary text-primary-foreground" : "border-2 border-primary/40",
-                            isNext && !c.done && "animate-pulse-glow",
-                          )}>
-                            {c.done && <Check className="h-3 w-3" strokeWidth={3} />}
-                          </div>
-                          <span className={cn("text-sm flex-1", c.done && "line-through")}>{c.label}</span>
-                          {!c.done && <ArrowRight className="h-4 w-4 text-muted-foreground" />}
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </Card>
+                        />
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
             </section>
           )}
 
-          {/* Quick start */}
+          {/* Quick start — asymmetric: 1 hero + 2 supporting */}
           <section>
-            <h2 className="font-display text-xl mb-4">Quick start</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <QuickCard icon={FileText} title="From your text" desc="Paste an article or notes." onClick={() => navigate("/app/new")} />
-              <QuickCard icon={LayoutTemplate} title="From a template" desc="Start with a tested structure." onClick={() => navigate("/app/templates")} />
-              <QuickCard icon={Mic} title="From a voice idea" desc="Record or upload script." onClick={() => navigate("/app/new")} />
+            <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground mb-5">
+              Begin a draft
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+              <button
+                onClick={() => navigate("/app/new")}
+                className="md:col-span-8 text-left bg-card border hairline shadow-paper hover:shadow-paper-hover transition-shadow group p-7 lg:p-9 relative overflow-hidden"
+              >
+                <div className="text-[10px] uppercase tracking-[0.2em] text-primary mb-3">
+                  From your text
+                </div>
+                <div className="editorial-display text-2xl md:text-[28px] text-ink mb-2">
+                  Paste your writing.
+                </div>
+                <div className="font-serif italic text-muted-foreground text-base mb-6">
+                  An essay, a doc, a transcript — turned into slides with voice.
+                </div>
+                {/* faux text field with caret */}
+                <div className="bg-background border hairline rounded-md px-3 py-2 text-sm text-muted-foreground/80 max-w-md flex items-center gap-1">
+                  <span>Start typing or paste here</span>
+                  <span className="inline-block w-px h-4 bg-foreground animate-pulse" />
+                </div>
+                <div className="mt-6 inline-flex items-center gap-1.5 text-sm text-primary font-medium">
+                  Open editor
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                </div>
+              </button>
+
+              <div className="md:col-span-4 grid grid-cols-1 gap-4">
+                <SmallStartCard
+                  icon={LayoutTemplate}
+                  title="From a template"
+                  desc="Pitches, courses, recaps."
+                  onClick={() => navigate("/app/templates")}
+                />
+                <SmallStartCard
+                  icon={Mic}
+                  title="From a voice idea"
+                  desc="Describe it, we draft it."
+                  onClick={() => navigate("/app/new")}
+                />
+              </div>
             </div>
           </section>
 
-          {/* Recent */}
+          {/* Continue editing */}
           <section>
-            <div className="flex items-end justify-between mb-4">
-              <h2 className="font-display text-xl">Continue editing</h2>
+            <div className="flex items-end justify-between mb-5">
+              <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                Continue editing
+              </div>
               {recent.length > 0 && (
-                <Link to="/app/library" className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1">
+                <Link
+                  to="/app/library"
+                  className="text-[12px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors"
+                >
                   All projects <ArrowRight className="h-3 w-3" />
                 </Link>
               )}
             </div>
             {recent.length === 0 ? (
-              <Card className="p-0">
+              <div className="bg-card border hairline shadow-paper">
                 <EmptyState
-                  illustration={<LeafIllustration />}
+                  illustration={<StudioIllustration />}
                   eyebrow="Your studio is quiet"
-                  title="Let's make your first video."
+                  title={<>Let's make your <em className="not-italic font-serif italic">first</em> video.</>}
                   description="Paste any writing — an essay, a doc, a transcript — and we'll turn it into slides with voiceover."
                   actions={
                     <>
-                      <Button onClick={() => navigate("/app/new")}><Plus className="h-4 w-4" /> Start from text</Button>
-                      <Button variant="outline" onClick={() => navigate("/app/templates")}>Browse templates</Button>
+                      <Button onClick={() => navigate("/app/new")}>
+                        <Plus className="h-4 w-4" /> Start from text
+                      </Button>
+                      <Button variant="outline" onClick={() => navigate("/app/templates")}>
+                        Browse templates
+                      </Button>
                     </>
                   }
                 />
-              </Card>
+              </div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {recent.map((p) => (
-                  <Link key={p.id} to={`/app/editor/${p.id}`} className="group">
-                    <Card className="overflow-hidden hover:shadow-premium transition-all hover:-translate-y-0.5">
-                      <div className="aspect-video bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center">
-                        <div className="font-display text-xl px-4 text-center text-primary/80 line-clamp-3">{p.slides[0]?.content?.title ?? p.title}</div>
-                      </div>
-                      <div className="p-3">
-                        <div className="text-sm font-medium truncate">{p.title}</div>
-                        <div className="text-[11px] text-muted-foreground">
-                          {p.slides.length} slides · {formatDistanceToNow(p.updatedAt)} ago
-                        </div>
-                      </div>
-                    </Card>
-                  </Link>
-                ))}
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                {/* Hero card (most recent) */}
+                <div className="md:col-span-7">
+                  <HoverPreviewCard
+                    project={recent[0]}
+                    to={`/app/editor/${recent[0].id}`}
+                    size="lg"
+                  />
+                </div>
+                <div className="md:col-span-5 grid grid-cols-2 gap-4">
+                  {recent.slice(1, 5).map((p) => (
+                    <HoverPreviewCard key={p.id} project={p} to={`/app/editor/${p.id}`} />
+                  ))}
+                </div>
               </div>
             )}
           </section>
 
-          {/* Recent activity */}
+          {/* Recent activity — quiet hairline list, no card */}
           {entries.length > 0 && (
             <section>
-              <div className="flex items-end justify-between mb-4">
-                <h2 className="font-display text-xl">Recent activity</h2>
-                <Link to="/app/history" className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1">
+              <div className="flex items-end justify-between mb-5">
+                <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                  Recent activity
+                </div>
+                <Link
+                  to="/app/history"
+                  className="text-[12px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors"
+                >
                   Full history <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
-              <Card className="divide-y divide-border">
-                {entries.slice(0, 5).map((e) => (
-                  <div key={e.id} className="px-4 py-3 flex items-center justify-between text-sm">
-                    <div className="min-w-0 flex items-center gap-3">
-                      <div className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
-                      <span className="truncate">{e.label}</span>
-                    </div>
-                    <div className="text-xs text-muted-foreground shrink-0 ml-3">{formatDistanceToNow(e.at)} ago</div>
-                  </div>
+              <ul className="border-y hairline divide-y divide-hairline">
+                {entries.slice(0, 6).map((e) => (
+                  <li key={e.id} className="flex items-center gap-4 py-3 text-sm">
+                    <span className="h-1 w-1 rounded-full bg-foreground/30 shrink-0" />
+                    <span className="truncate flex-1">{e.label}</span>
+                    <span className="text-[11px] text-muted-foreground tnum shrink-0">
+                      {formatDistanceToNow(e.at)} ago
+                    </span>
+                  </li>
                 ))}
-              </Card>
+              </ul>
             </section>
           )}
         </div>
@@ -210,17 +285,28 @@ export default function Dashboard() {
   );
 }
 
-function QuickCard({ icon: Icon, title, desc, onClick }: { icon: any; title: string; desc: string; onClick: () => void }) {
+function SmallStartCard({
+  icon: Icon,
+  title,
+  desc,
+  onClick,
+}: {
+  icon: any;
+  title: string;
+  desc: string;
+  onClick: () => void;
+}) {
   return (
-    <button onClick={onClick} className="text-left">
-      <Card className="p-5 h-full hover:border-primary/50 hover:shadow-premium transition-all hover:-translate-y-0.5 group">
-        <Icon className="h-5 w-5 text-primary mb-3" />
-        <div className="font-medium mb-1">{title}</div>
-        <div className="text-xs text-muted-foreground">{desc}</div>
-        <div className="mt-3 text-xs text-primary inline-flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          Start <ArrowRight className="h-3 w-3" />
-        </div>
-      </Card>
+    <button
+      onClick={onClick}
+      className="text-left bg-card border hairline shadow-paper hover:shadow-paper-hover transition-shadow group p-5 flex items-start gap-3"
+    >
+      <Icon className="h-4 w-4 text-primary shrink-0 mt-1" strokeWidth={1.75} />
+      <div className="min-w-0 flex-1">
+        <div className="text-sm font-medium underline-grow inline">{title}</div>
+        <div className="text-[12px] text-muted-foreground mt-0.5">{desc}</div>
+      </div>
+      <ArrowRight className="h-3.5 w-3.5 text-muted-foreground transition-transform group-hover:translate-x-1 mt-1" />
     </button>
   );
 }
