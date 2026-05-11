@@ -121,4 +121,4 @@ export const THEMES: Record<ThemeId, Theme> = {
 };
 
 // Curated picks shown on the input screen.
-export const THEME_LIST = [THEMES.studio, THEMES.editorial, THEMES.noir];
+export const THEME_LIST = [THEMES.studio, THEMES.editorial, THEMES.midnight];
