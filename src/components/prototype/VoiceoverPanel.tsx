@@ -294,7 +294,7 @@ export const VoiceoverPanel = () => {
             <TabsTrigger value="voice" className="text-xs gap-1.5"><Mic className="h-3 w-3" />Voiceover</TabsTrigger>
             <TabsTrigger value="element" className="text-xs gap-1.5">
               <Sparkles className="h-3 w-3" />Element
-              {selectedElementKey && <span className="h-1.5 w-1.5 rounded-full bg-brand" />}
+              {selectedElementKey && <span className="h-1.5 w-1.5 rounded-full bg-primary" />}
             </TabsTrigger>
           </TabsList>
         </div>

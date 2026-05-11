@@ -27,18 +27,19 @@ type SourceTab = "paste" | "upload" | "audio";
 const PACE_OPTIONS = ["Slow", "Normal", "Fast"] as const;
 const TONE_OPTIONS = ["Neutral", "Warm", "Energetic"] as const;
 
-// Warm-only deterministic gradient per voice name (sand → amber range)
+// Forest-warm deterministic gradient per voice name (greens + warm muted)
 const voiceGradient = (name: string) => {
   let h = 0;
-  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 30;
-  const base = 20 + h; // 20..49
-  return `linear-gradient(135deg, hsl(${base} 70% 80%), hsl(${(base + 12) % 360} 78% 64%))`;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 40;
+  const base = 140 + h; // 140..179 (forest → teal)
+  const warm = 30 + (h % 20); // 30..49 (warm sand partner)
+  return `linear-gradient(135deg, hsl(${base} 35% 60%), hsl(${warm} 50% 78%))`;
 };
 
 const Eyebrow = ({ children, hint }: { children: React.ReactNode; hint?: string }) => (
   <div className="flex items-end justify-between mb-3">
     <div>
-      <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{children}</div>
+      <div className="font-sans text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{children}</div>
     </div>
     {hint && <div className="text-[11px] text-muted-foreground">{hint}</div>}
   </div>
@@ -145,7 +146,7 @@ export default function InputScreen() {
           <div className="flex items-center gap-3">
             <Wordmark size="md" />
             <span className="text-muted-foreground/40">·</span>
-            <span className="text-[11px] font-mono uppercase tracking-[0.18em] text-muted-foreground">Step 1 of 2 — Setup</span>
+            <span className="text-[11px] font-sans uppercase tracking-[0.18em] text-muted-foreground">Step 1 of 2 — Setup</span>
           </div>
           <button
             onClick={() => navigate("/generating")}
@@ -158,7 +159,7 @@ export default function InputScreen() {
 
       {/* Hero / inline title */}
       <section className="max-w-6xl mx-auto px-8 pt-12 pb-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
-        <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-3">
+        <div className="font-sans text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-3">
           New presentation
         </div>
         <h1 className="font-display text-3xl md:text-4xl tracking-[-0.02em] text-foreground/65 mb-2 leading-[1.05]">
@@ -326,9 +327,9 @@ export default function InputScreen() {
                     setSourceText(SAMPLE_TEXT);
                     setUploadedDoc(null);
                   }}
-                  className="text-xs inline-flex items-center gap-1.5 px-2.5 h-7 rounded-full bg-brand-soft hover:bg-brand-soft/80 text-foreground border border-brand/30 transition-colors"
+                  className="text-xs inline-flex items-center gap-1.5 px-2.5 h-7 rounded-full bg-primary/10 hover:bg-primary/15 text-foreground border border-primary/30 transition-colors"
                 >
-                  <Sparkles className="h-3 w-3 text-brand" /> Use sample (SWOT)
+                  <Sparkles className="h-3 w-3 text-primary" /> Use sample (SWOT)
                 </button>
                 <div className="text-xs text-muted-foreground tabular-nums">
                   {wordCount} words · ~{slideEstimate} slides
@@ -360,7 +361,7 @@ export default function InputScreen() {
                       }}
                       className={`relative text-left rounded-md overflow-hidden border transition-all ${
                         active
-                          ? "border-brand ring-2 ring-brand/20"
+                          ? "border-primary ring-2 ring-primary/20"
                           : "border-border hover:border-foreground/30"
                       }`}
                     >
@@ -393,7 +394,7 @@ export default function InputScreen() {
                       <div className="px-2 py-1.5 flex items-center justify-between bg-card border-t border-border/60">
                         <span className="text-[11px] font-medium truncate">{t.name}</span>
                         {active && (
-                          <span className="h-3.5 w-3.5 rounded-full bg-brand text-brand-foreground flex items-center justify-center shrink-0">
+                          <span className="h-3.5 w-3.5 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0">
                             <Check className="h-2 w-2" strokeWidth={3} />
                           </span>
                         )}
@@ -487,7 +488,7 @@ export default function InputScreen() {
                           onClick={() => setVoice(v)}
                           className={`group relative rounded-lg border p-2.5 flex items-center gap-2.5 text-left transition-all ${
                             active
-                              ? "border-brand bg-brand-soft/40 ring-2 ring-brand/20"
+                              ? "border-primary bg-primary/10 ring-2 ring-primary/20"
                               : "border-border hover:border-foreground/30"
                           }`}
                         >
@@ -512,7 +513,7 @@ export default function InputScreen() {
                             {isPlaying ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3 ml-0.5" />}
                           </button>
                           {active && (
-                            <span className="absolute top-1.5 right-1.5 h-3.5 w-3.5 rounded-full bg-brand text-brand-foreground flex items-center justify-center">
+                            <span className="absolute top-1.5 right-1.5 h-3.5 w-3.5 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
                               <Check className="h-2 w-2" strokeWidth={3} />
                             </span>
                           )}
@@ -644,7 +645,7 @@ export default function InputScreen() {
               <kbd className="px-1.5 py-0.5 rounded border border-border bg-muted text-[10px] font-mono">↵</kbd>
               to generate
             </span>
-            <Button variant="brand" size="lg" disabled={!canGenerate} onClick={onGenerate} className="h-11 px-5">
+            <Button variant="default" size="lg" disabled={!canGenerate} onClick={onGenerate} className="h-11 px-5">
               <Sparkles className="h-4 w-4 mr-2" />
               Generate presentation
               <ArrowRight className="h-4 w-4 ml-2" />

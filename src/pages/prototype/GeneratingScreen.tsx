@@ -43,7 +43,7 @@ export default function GeneratingScreen() {
           <div className="relative flex flex-col items-center gap-5">
             <div className="relative">
               <Wordmark size="lg" iconOnly />
-              <span className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-brand breathing" />
+              <span className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-primary animate-pulse-glow" />
             </div>
             <Wordmark size="md" />
           </div>
@@ -59,13 +59,13 @@ export default function GeneratingScreen() {
               <li key={label} className="flex items-center gap-3">
                 <div
                   className={`h-5 w-5 rounded-full flex items-center justify-center text-xs flex-shrink-0 transition-colors ${
-                    done ? "bg-brand text-brand-foreground" : current ? "bg-brand-soft" : "bg-muted/60"
+                    done ? "bg-primary text-primary-foreground" : current ? "bg-primary/10" : "bg-muted/60"
                   }`}
                 >
                   {done ? (
                     <Check className="h-3 w-3" strokeWidth={3} />
                   ) : current ? (
-                    <span className="h-2 w-2 rounded-full bg-brand breathing" />
+                    <span className="h-2 w-2 rounded-full bg-primary animate-pulse-glow" />
                   ) : null}
                 </div>
                 <span className={`text-sm ${i <= step ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
