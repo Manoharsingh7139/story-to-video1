@@ -183,7 +183,7 @@ export default function EditorScreen() {
 
           <div className="flex-1 bg-muted/40 flex items-center justify-center p-8 min-h-0">
             <div
-              className="w-full h-full max-w-[1100px] aspect-video rounded-md shadow-[0_8px_30px_rgba(42,34,28,0.08)] overflow-hidden border border-border"
+              className="w-full h-full max-w-[1100px] aspect-video rounded-xl shadow-premium-xl overflow-hidden border border-border"
               style={{ background: theme.bg }}
             >
               <SlideView

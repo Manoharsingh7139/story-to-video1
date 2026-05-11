@@ -27,12 +27,13 @@ type SourceTab = "paste" | "upload" | "audio";
 const PACE_OPTIONS = ["Slow", "Normal", "Fast"] as const;
 const TONE_OPTIONS = ["Neutral", "Warm", "Energetic"] as const;
 
-// Warm-only deterministic gradient per voice name (sand → amber range)
+// Forest-warm deterministic gradient per voice name (greens + warm muted)
 const voiceGradient = (name: string) => {
   let h = 0;
-  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 30;
-  const base = 20 + h; // 20..49
-  return `linear-gradient(135deg, hsl(${base} 70% 80%), hsl(${(base + 12) % 360} 78% 64%))`;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 40;
+  const base = 140 + h; // 140..179 (forest → teal)
+  const warm = 30 + (h % 20); // 30..49 (warm sand partner)
+  return `linear-gradient(135deg, hsl(${base} 35% 60%), hsl(${warm} 50% 78%))`;
 };
 
 const Eyebrow = ({ children, hint }: { children: React.ReactNode; hint?: string }) => (
