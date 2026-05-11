@@ -1,3 +1,3 @@
-# Welcome to your Lovable project
+# Content Studio
 
-TODO: Document your project here
+Where words become watchable. Turn writing into beautifully designed, narrated video presentations.

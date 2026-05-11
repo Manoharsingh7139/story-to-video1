@@ -27,11 +27,12 @@ type SourceTab = "paste" | "upload" | "audio";
 const PACE_OPTIONS = ["Slow", "Normal", "Fast"] as const;
 const TONE_OPTIONS = ["Neutral", "Warm", "Energetic"] as const;
 
-// Deterministic pastel gradient per voice name
+// Warm-only deterministic gradient per voice name (sand → amber range)
 const voiceGradient = (name: string) => {
   let h = 0;
-  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 360;
-  return `linear-gradient(135deg, hsl(${h} 70% 78%), hsl(${(h + 40) % 360} 75% 62%))`;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 30;
+  const base = 20 + h; // 20..49
+  return `linear-gradient(135deg, hsl(${base} 70% 80%), hsl(${(base + 12) % 360} 78% 64%))`;
 };
 
 const Eyebrow = ({ children, hint }: { children: React.ReactNode; hint?: string }) => (
@@ -160,8 +161,8 @@ export default function InputScreen() {
         <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-3">
           New presentation
         </div>
-        <h1 className="font-display text-3xl md:text-4xl tracking-tight text-foreground/70 mb-2 leading-[1.05]">
-          Turn your words into watchable stories.
+        <h1 className="font-display text-3xl md:text-4xl tracking-[-0.02em] text-foreground/65 mb-2 leading-[1.05]">
+          Where words become watchable.
         </h1>
         <input
           value={projectTitle}
@@ -325,9 +326,9 @@ export default function InputScreen() {
                     setSourceText(SAMPLE_TEXT);
                     setUploadedDoc(null);
                   }}
-                  className="text-xs inline-flex items-center gap-1.5 px-2.5 h-7 rounded-full bg-muted hover:bg-muted/70 text-foreground"
+                  className="text-xs inline-flex items-center gap-1.5 px-2.5 h-7 rounded-full bg-brand-soft hover:bg-brand-soft/80 text-foreground border border-brand/30 transition-colors"
                 >
-                  <Sparkles className="h-3 w-3" /> Use sample (SWOT)
+                  <Sparkles className="h-3 w-3 text-brand" /> Use sample (SWOT)
                 </button>
                 <div className="text-xs text-muted-foreground tabular-nums">
                   {wordCount} words · ~{slideEstimate} slides
@@ -359,7 +360,7 @@ export default function InputScreen() {
                       }}
                       className={`relative text-left rounded-md overflow-hidden border transition-all ${
                         active
-                          ? "border-foreground ring-2 ring-foreground/10"
+                          ? "border-brand ring-2 ring-brand/20"
                           : "border-border hover:border-foreground/30"
                       }`}
                     >
@@ -392,7 +393,7 @@ export default function InputScreen() {
                       <div className="px-2 py-1.5 flex items-center justify-between bg-card border-t border-border/60">
                         <span className="text-[11px] font-medium truncate">{t.name}</span>
                         {active && (
-                          <span className="h-3.5 w-3.5 rounded-full bg-foreground text-background flex items-center justify-center shrink-0">
+                          <span className="h-3.5 w-3.5 rounded-full bg-brand text-brand-foreground flex items-center justify-center shrink-0">
                             <Check className="h-2 w-2" strokeWidth={3} />
                           </span>
                         )}
@@ -486,12 +487,12 @@ export default function InputScreen() {
                           onClick={() => setVoice(v)}
                           className={`group relative rounded-lg border p-2.5 flex items-center gap-2.5 text-left transition-all ${
                             active
-                              ? "border-foreground bg-muted/40 ring-2 ring-foreground/10"
+                              ? "border-brand bg-brand-soft/40 ring-2 ring-brand/20"
                               : "border-border hover:border-foreground/30"
                           }`}
                         >
                           <div
-                            className="h-9 w-9 rounded-full flex items-center justify-center text-sm font-semibold text-white shrink-0"
+                            className="h-9 w-9 rounded-full flex items-center justify-center text-sm font-semibold text-foreground shrink-0"
                             style={{ background: voiceGradient(name) }}
                           >
                             {name[0]}
@@ -511,7 +512,7 @@ export default function InputScreen() {
                             {isPlaying ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3 ml-0.5" />}
                           </button>
                           {active && (
-                            <span className="absolute top-1.5 right-1.5 h-3.5 w-3.5 rounded-full bg-foreground text-background flex items-center justify-center">
+                            <span className="absolute top-1.5 right-1.5 h-3.5 w-3.5 rounded-full bg-brand text-brand-foreground flex items-center justify-center">
                               <Check className="h-2 w-2" strokeWidth={3} />
                             </span>
                           )}
