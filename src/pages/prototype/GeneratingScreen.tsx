@@ -40,27 +40,38 @@ export default function GeneratingScreen() {
     <div className="min-h-screen bg-background flex items-center justify-center px-8">
       <div className="max-w-md w-full">
         <div className="flex items-center justify-center mb-10">
-          <div className="flex flex-col items-center gap-4">
-            <Wordmark size="lg" />
-            <div className="h-1 w-16 rounded-full bg-brand animate-pulse" />
+          <div className="relative flex flex-col items-center gap-5">
+            <div className="relative">
+              <Wordmark size="lg" iconOnly />
+              <span className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-brand breathing" />
+            </div>
+            <Wordmark size="md" />
           </div>
         </div>
-        <h1 className="font-display text-3xl text-center mb-2 tracking-tight">Generating your presentation</h1>
-        <p className="text-muted-foreground text-center mb-10 text-sm">This usually takes a few seconds.</p>
+        <h1 className="font-display text-3xl text-center mb-2 tracking-[-0.02em]">Composing your presentation</h1>
+        <p className="text-muted-foreground text-center mb-10 text-sm">A few seconds of quiet, then yours.</p>
 
         <ul className="space-y-3">
-          {STEPS.map((label, i) => (
-            <li key={label} className="flex items-center gap-3">
-              <div
-                className={`h-5 w-5 rounded-full flex items-center justify-center text-xs flex-shrink-0 ${
-                  i < step ? "bg-foreground text-background" : i === step ? "bg-muted" : "bg-muted/40"
-                }`}
-              >
-                {i < step ? <Check className="h-3 w-3" /> : i === step ? <span className="h-2 w-2 rounded-full bg-foreground animate-pulse" /> : null}
-              </div>
-              <span className={`text-sm ${i <= step ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
-            </li>
-          ))}
+          {STEPS.map((label, i) => {
+            const done = i < step;
+            const current = i === step;
+            return (
+              <li key={label} className="flex items-center gap-3">
+                <div
+                  className={`h-5 w-5 rounded-full flex items-center justify-center text-xs flex-shrink-0 transition-colors ${
+                    done ? "bg-brand text-brand-foreground" : current ? "bg-brand-soft" : "bg-muted/60"
+                  }`}
+                >
+                  {done ? (
+                    <Check className="h-3 w-3" strokeWidth={3} />
+                  ) : current ? (
+                    <span className="h-2 w-2 rounded-full bg-brand breathing" />
+                  ) : null}
+                </div>
+                <span className={`text-sm ${i <= step ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </div>

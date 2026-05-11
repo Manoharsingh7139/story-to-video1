@@ -4,14 +4,27 @@ export const THEMES: Record<ThemeId, Theme> = {
   studio: {
     id: "studio",
     name: "Studio",
-    bg: "#FAF6F0",
-    surface: "#FFFFFF",
-    text: "#221E1A",
-    muted: "#736A60",
-    accent: "#DC5A2A",
-    accentText: "#FAF6F0",
+    bg: "#F7F1E6",
+    surface: "#FDFAF4",
+    text: "#2A221C",
+    muted: "#6A5F54",
+    accent: "#F08A0F",
+    accentText: "#2A221C",
     fontHead: "'Fraunces', Georgia, serif",
-    fontBody: "'Inter', system-ui, sans-serif",
+    fontBody: "'Geist', 'Inter', system-ui, sans-serif",
+    radius: "6px",
+  },
+  midnight: {
+    id: "midnight",
+    name: "Midnight",
+    bg: "#16130F",
+    surface: "#1F1B16",
+    text: "#F2E9D8",
+    muted: "#9A8E7C",
+    accent: "#F0B458",
+    accentText: "#16130F",
+    fontHead: "'Fraunces', Georgia, serif",
+    fontBody: "'Geist', 'Inter', system-ui, sans-serif",
     radius: "4px",
   },
   minimal: {
@@ -30,14 +43,14 @@ export const THEMES: Record<ThemeId, Theme> = {
   editorial: {
     id: "editorial",
     name: "Editorial",
-    bg: "#f5efe6",
-    surface: "#ebe3d4",
-    text: "#1a1410",
-    muted: "#7a6a55",
-    accent: "#9a3b1f",
-    accentText: "#f5efe6",
+    bg: "#F4ECDF",
+    surface: "#FBF5EA",
+    text: "#1F140F",
+    muted: "#7A6A55",
+    accent: "#7B463A",
+    accentText: "#F4ECDF",
     fontHead: "'Fraunces', Georgia, serif",
-    fontBody: "'Inter', system-ui, sans-serif",
+    fontBody: "'Geist', 'Inter', system-ui, sans-serif",
     radius: "2px",
   },
   noir: {
@@ -50,7 +63,7 @@ export const THEMES: Record<ThemeId, Theme> = {
     accent: "#E8B86A",
     accentText: "#161310",
     fontHead: "'Fraunces', Georgia, serif",
-    fontBody: "'Inter', system-ui, sans-serif",
+    fontBody: "'Geist', 'Inter', system-ui, sans-serif",
     radius: "2px",
   },
   corporate: {
@@ -108,4 +121,4 @@ export const THEMES: Record<ThemeId, Theme> = {
 };
 
 // Curated picks shown on the input screen.
-export const THEME_LIST = [THEMES.studio, THEMES.editorial, THEMES.noir];
+export const THEME_LIST = [THEMES.studio, THEMES.editorial, THEMES.midnight];
