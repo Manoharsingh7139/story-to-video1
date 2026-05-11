@@ -17,12 +17,6 @@ import {
 import { Download, ArrowLeft, Layout as LayoutIcon, Palette } from "lucide-react";
 import { Wordmark } from "@/components/Wordmark";
 import type { LayoutId } from "@/lib/prototype/types";
-import {
-  Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue,
-} from "@/components/ui/select";
-import { Download, ArrowLeft, Layout as LayoutIcon, Palette } from "lucide-react";
-import { Wordmark } from "@/components/Wordmark";
-import type { LayoutId } from "@/lib/prototype/types";
 
 const TEXT_LAYOUTS: { id: LayoutId; name: string }[] = [
   { id: "title", name: "Title" },
