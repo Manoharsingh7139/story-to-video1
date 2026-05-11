@@ -72,30 +72,72 @@ export default function SignIn() {
   </AuthLayout>;
 }
 
-export function AuthLayout({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
+export function AuthLayout({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string;
+  subtitle: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="min-h-screen grid md:grid-cols-2 bg-background">
-      <div className="flex flex-col justify-between p-8 md:p-12">
+      <div className="flex flex-col justify-between p-8 md:p-14 bg-paper">
         <Wordmark size="md" />
         <div className="max-w-sm w-full mx-auto md:mx-0">
-          <h1 className="font-display text-3xl md:text-4xl tracking-[-0.02em] mb-2">{title}</h1>
-          <p className="text-sm text-muted-foreground mb-8">{subtitle}</p>
+          <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground mb-3">
+            <span className="h-px w-6 bg-foreground/30 inline-block align-middle mr-2" />
+            Welcome
+          </div>
+          <h1 className="editorial-display text-4xl md:text-[44px] text-ink mb-3">
+            {title}
+          </h1>
+          <p className="font-serif italic text-base text-muted-foreground mb-10">
+            {subtitle}
+          </p>
           {children}
         </div>
-        <p className="text-[11px] text-muted-foreground">© Content Studio</p>
+        <p className="text-[11px] text-muted-foreground tnum">© Content Studio</p>
       </div>
-      <div className="hidden md:flex relative items-center justify-center p-12 overflow-hidden" style={{ background: "var(--gradient-primary)" }}>
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-10 left-10 w-72 h-72 rounded-full bg-primary-foreground/30 blur-3xl" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-primary-foreground/20 blur-3xl" />
-        </div>
+      <div
+        className="hidden md:flex relative items-center justify-center p-14 overflow-hidden border-l hairline"
+        style={{ background: "hsl(var(--primary))" }}
+      >
+        {/* Editorial mock slide */}
         <div className="relative max-w-md text-primary-foreground">
-          <div className="text-[10px] uppercase tracking-[0.24em] opacity-70 mb-6">Content Studio</div>
-          <p className="font-display text-3xl md:text-4xl leading-[1.15] tracking-[-0.01em]">
+          <div className="text-[10px] uppercase tracking-[0.24em] opacity-65 mb-8">
+            Slide 01 / 14
+          </div>
+          <p
+            className="text-4xl md:text-[44px] leading-[1.06] tracking-[-0.02em]"
+            style={{ fontFamily: "var(--font-serif)", fontWeight: 500 }}
+          >
             Turn writing into watchable stories — slide by slide, voice by voice.
           </p>
-          <div className="mt-10 h-px w-16 bg-primary-foreground/40" />
-          <p className="mt-6 text-sm opacity-80">Designed in Stockholm. Built for storytellers.</p>
+          <div className="mt-10 flex items-center gap-4">
+            <div className="h-px w-10 bg-primary-foreground/40" />
+            <p className="text-[11px] uppercase tracking-[0.22em] opacity-70">
+              An editorial system for video
+            </p>
+          </div>
+          <div className="mt-16 grid grid-cols-3 gap-3 text-[11px] opacity-75 tnum">
+            <div>
+              <div className="font-serif text-2xl text-primary-foreground/95">14</div>
+              <div className="uppercase tracking-[0.18em] mt-1 opacity-70">Templates</div>
+            </div>
+            <div>
+              <div className="font-serif text-2xl text-primary-foreground/95">9</div>
+              <div className="uppercase tracking-[0.18em] mt-1 opacity-70">Themes</div>
+            </div>
+            <div>
+              <div className="font-serif text-2xl text-primary-foreground/95">8</div>
+              <div className="uppercase tracking-[0.18em] mt-1 opacity-70">Voices</div>
+            </div>
+          </div>
+        </div>
+        <div className="absolute bottom-6 right-8 text-[10px] uppercase tracking-[0.24em] text-primary-foreground/60">
+          Designed in Stockholm
         </div>
       </div>
     </div>
