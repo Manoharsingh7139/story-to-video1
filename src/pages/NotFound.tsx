@@ -15,14 +15,14 @@ const NotFound = () => {
         <div className="flex justify-center mb-8">
           <Wordmark size="md" />
         </div>
-        <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-3">404</div>
+        <div className="font-sans text-[11px] uppercase tracking-[0.2em] text-muted-foreground mb-3">404</div>
         <h1 className="font-display text-4xl tracking-[-0.02em] mb-3">This page wandered off.</h1>
         <p className="text-sm text-muted-foreground mb-8">
-          The path <span className="font-mono text-foreground/70">{location.pathname}</span> doesn't exist.
+          The path <span className="font-sans text-foreground/70">{location.pathname}</span> doesn't exist.
         </p>
         <a
           href="/"
-          className="inline-flex items-center justify-center h-10 px-5 rounded-md bg-brand text-brand-foreground text-sm font-medium hover:bg-[hsl(32_92%_44%)] transition-colors"
+          className="inline-flex items-center justify-center h-10 px-5 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
         >
           Back to studio
         </a>

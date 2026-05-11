@@ -98,7 +98,7 @@ export default function EditorScreen() {
             className="h-7 text-sm font-medium border-transparent bg-transparent hover:bg-muted focus:bg-background w-64"
           />
         </div>
-        <Button variant="brand" size="sm" onClick={() => setExportOpen(true)}>
+        <Button variant="default" size="sm" onClick={() => setExportOpen(true)}>
           <Download className="h-3.5 w-3.5 mr-1.5" />
           Export video
         </Button>
@@ -174,7 +174,7 @@ export default function EditorScreen() {
             <div className="ml-auto text-xs text-muted-foreground">
               Slide {slides.findIndex((s) => s.id === slide.id) + 1} of {slides.length}
               {selectedElementKey && (
-                <span className="ml-3 px-1.5 py-0.5 rounded bg-brand-soft text-foreground border border-brand/30 text-[10px] font-medium">
+                <span className="ml-3 px-1.5 py-0.5 rounded bg-primary/10 text-foreground border border-primary/30 text-[10px] font-medium">
                   {selectedElementKey} selected
                 </span>
               )}
