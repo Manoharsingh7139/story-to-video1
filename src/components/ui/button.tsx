@@ -5,20 +5,20 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-[colors,box-shadow,transform] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_1px_0_rgba(0,0,0,0.06)] hover:-translate-y-px active:translate-y-0 transition-[colors,box-shadow,transform] duration-200 ease-out",
-        brand:
-          "bg-brand text-brand-foreground hover:bg-[hsl(32_92%_44%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_1px_0_rgba(0,0,0,0.06)] hover:-translate-y-px active:translate-y-0 transition-[colors,box-shadow,transform] duration-200 ease-out",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+          "bg-primary text-primary-foreground hover:bg-primary/90 shadow-premium hover:shadow-primary-glow hover:-translate-y-px active:translate-y-0",
+        destructive:
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-premium-sm",
         outline:
-          "border border-input bg-transparent hover:bg-accent hover:text-accent-foreground transition-colors duration-200",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          "border border-input bg-transparent hover:bg-accent hover:text-accent-foreground",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-brand underline-offset-4 hover:underline",
+        link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
         default: "h-10 px-4 py-2",
