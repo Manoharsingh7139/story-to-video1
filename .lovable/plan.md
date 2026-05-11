@@ -1,154 +1,129 @@
-# Content Studio — App Shell, Auth & Workspace
 
-Turn the current single-flow prototype (Input → Generating → Editor) into a complete app: mocked email/password auth, collapsible sidebar shell, and the workspace surfaces a real product needs (Dashboard, Library, History, Templates, Brand kit, Settings). All data stays mocked in `localStorage` per your choice — no backend yet, but the shape is production-ready so we can swap in Lovable Cloud later without rewrites.
+# /app — Editorial Redesign
 
-## Information architecture
+You're right. The current shell is generic. It uses placeholder gradient blocks as fake thumbnails, default shadcn cards stacked at equal weight, and primitive SVG empty-state illustrations. Nothing about it would survive a design review at Linear, Notion, or Arc. This plan is **not** about new features — it's about rebuilding the surfaces we already shipped with the same obsession the editor has.
 
-```text
-/ (public)
-  /signin              Email + password (mocked)
-  /signup              Email + password (mocked)
+## The diagnosis (what's wrong, specifically)
 
-/app (protected shell — sidebar + topbar)
-  /app                 Dashboard (home)
-  /app/new             InputScreen (current "/" flow)
-  /app/generating      GeneratingScreen
-  /app/editor/:id      EditorScreen (loads project by id)
-  /app/library         All saved videos (grid + list)
-  /app/history         Activity timeline
-  /app/templates       Starter templates gallery
-  /app/brand           Brand kit (logo, colors, default voice)
-  /app/settings        Profile, preferences, danger zone
-```
+1. **Fake thumbnails everywhere** — every project/template card is `bg-gradient-to-br from-primary/15 to-primary/5` + centered text. The laziest possible move. Reads as a wireframe, not a product.
+2. **Wordmark is a generic "Cs" rounded square monogram** — no character, no relationship to the forest brand.
+3. **Empty states use primitive SVGs** — concentric circles + a leaf shape. They look like a placeholder kit.
+4. **Dashboard has no rhythm** — stats / checklist / quick-start / recent / activity are all `Card`s of similar weight with `font-display text-xl` headers. No hero, no editorial pacing.
+5. **Sidebar is default shadcn** — no signature header, no project switcher feel, account row is cramped.
+6. **Topbar is a thin border strip** — no eyebrow rhythm, breadcrumbs missing on subpages, no "saved" indicator pattern.
+7. **Quick-start cards** — Lucide icon top-left, title, gray subhead. Identical to every AI-generated dashboard on the internet.
+8. **Universal `hover:-translate-y-0.5 hover:shadow-premium`** on every card. Lazy.
+9. **Generic spacing** — `max-w-6xl px-6 py-8 space-y-10` everywhere. No considered grid, no asymmetry.
 
-`/` redirects to `/app` when signed in, else `/signin`.
+## The direction
 
-## App shell
+**Editorial software.** Think the marriage of Are.na's restraint, Linear's density, and Stripe's typographic confidence. Forest palette stays. Every surface earns its space.
 
-Built on shadcn `Sidebar` (`collapsible="icon"`) inside a `SidebarProvider`.
+### Design principles for this pass
 
-- **Sidebar (left)**: Wordmark, primary nav (Dashboard, Library, History, Templates, Brand kit), bottom: Settings + user menu (avatar, email, sign out). Collapses to 56px icon rail with tooltips. Active route highlighted with `bg-primary/10 text-primary`.
-- **Topbar (in each route)**: route title, breadcrumbs, contextual actions (e.g. "New video" CTA on Dashboard/Library, "Export" on Editor).
-- **Global "New video" FAB-style CTA** in the sidebar header — primary forest button, always one click away.
-- Responsive: sidebar becomes a Sheet drawer below `md`.
+- **Earn the pixel** — no element exists without a reason. Remove before adding.
+- **Asymmetric grids** — break the equal-column reflex. Hero cells, supporting cells.
+- **Typography is the UI** — Fraunces (serif display) reintroduced for hero moments alongside Plus Jakarta. Numbers in tabular lining figures with `font-feature-settings: "tnum"`.
+- **Real previews, not gradients** — a `<SlideThumbnail>` component that renders the actual first slide of a project at 1/6 scale using the existing `SlideView` engine. Same for templates.
+- **Texture, sparingly** — a paper-grain noise overlay (8% opacity SVG) on signature surfaces (auth panel, dashboard hero, empty states). Already hinted at by the warm off-white background.
+- **Custom marks, not stock** — every illustration drawn for this product. Empty states get hand-composed editorial scenes, not concentric circles.
+- **Motion with restraint** — no universal hover lift. Different surfaces move differently: cards reveal a 1px primary underline on hover; sidebar items slide a 2px accent bar; thumbnails crossfade to a "play" affordance.
 
-## Auth (mocked)
+## Scope of this pass (what changes, file by file)
 
-A tiny `useAuth()` hook backed by `localStorage` (`cs.user`, `cs.users`). No real cryptography — this is a design prototype.
+### Foundation (`src/index.css`, `tailwind.config.ts`)
 
-- `/signin`, `/signup`: split-screen layout, left = form, right = editorial forest panel with a rotating quote/serif headline ("Turn writing into watchable stories.").
-- Validation with `zod`: email format, password ≥8 chars. Inline errors, loading state, success toast.
-- `RequireAuth` wrapper around `/app/*` redirects to `/signin?next=…`.
-- Sign-out clears session and routes home.
-- We will note in the UI (small text under form) that this is a demo account stored locally.
+- Add **Fraunces** as `--font-serif` for editorial moments (hero greetings, empty-state titles, quote panels). Keep Plus Jakarta as `--font-display` for UI titles, Inter for body.
+- New tokens: `--surface` (slightly warmer than card for nested surfaces), `--ink` (true near-black for headlines vs. softer `--foreground`), `--hairline` (border at 35% opacity for ultra-fine dividers).
+- New shadow: `--shadow-paper` (a single 1px hairline + 8px soft drop) for the editorial "card lifted off paper" feel.
+- A reusable `bg-paper` utility — base color + inline SVG noise data-URL at ~6% opacity.
+- Tabular figures utility `.tnum`.
 
-## First-user experience
+### New signature components
 
-Every list view ships with an obsessed-over empty state — large serif headline, one-line muted subhead, illustrative SVG (simple geometric forest motif using design tokens), and a single primary CTA.
+- **`<SlideThumbnail project={p} />`** — renders the actual slide via a memoized scaled `SlideView` (scale ~0.16, pointer-events-none, `aspect-video`, hairline border, paper shadow). Replaces every gradient block in Dashboard / Library / Templates / Continue editing rail. This single change carries 70% of the perceived quality lift.
+- **`<EditorialHeader>`** — reusable hero block: small caps eyebrow, large Fraunces title (`text-4xl md:text-5xl tracking-[-0.025em] leading-[1.05]`), supporting line in muted, optional inline metric row with tabular figures and hairline dividers.
+- **`<MetricRow>`** — replaces the three boxed stat cards. A single row of label/value pairs separated by hairlines, no boxes. Numbers are large Fraunces with `tnum`, labels are 10px tracked uppercase.
+- **`<HoverPreviewCard>`** — project card with: real thumbnail, title in Plus Jakarta Medium, meta line (slides · theme dot · updated), context menu trigger appearing on hover only. Hover state: thumbnail scales 1.02 inside its frame, title gains a 1px underline animating from left to right, no card translation.
+- **`<KBD>`** — keyboard-shortcut chip for the new command palette and tooltips.
 
-- **Dashboard empty**: "Welcome, {name}. Let's make your first video." → "Start from text" + "Browse templates".
-- **Library empty**: "Your library is quiet." → "Create video".
-- **History empty**: "Nothing's happened yet." (subtle).
-- **Templates**: never empty (seeded), but each card hover reveals "Use template".
-- **Brand kit**: prefilled with sensible defaults plus "Personalize your brand" callout banner that dismisses to `localStorage`.
+### Wordmark redesign (`src/components/Wordmark.tsx`)
 
-A first-run **welcome checklist** appears on Dashboard until dismissed: (1) Create your first video, (2) Set your brand colors, (3) Pick a default voice. Each item links to the relevant screen and checks itself off on completion.
+Drop the "Cs" rounded square. New mark: a custom SVG glyph — a bracketed serif "C" with a small leaf notch (3 strokes, hand-tuned), in `hsl(var(--primary))`. Wordmark uses Fraunces for "Studio" and Plus Jakarta Medium for "Content" — bilingual typography that signals what the product is (writing → video). Already-shipped sizing API kept.
 
-## Dashboard
+### Empty-state illustrations (`src/components/empty/EmptyState.tsx`)
 
-- Greeting (serif, time-of-day aware) + project count stat row (Videos, Drafts, Minutes generated — mocked).
-- **Quick start** cards: Paste text, Upload doc, From template.
-- **Continue editing** rail: last 4 projects (thumbnail, title, edited-ago, hover → Open / Duplicate / Delete).
-- **Recent activity** (last 5 items from history) with "View all".
+Replace the three primitive SVGs with hand-composed editorial scenes (still inline SVG, still tinted via `currentColor`):
 
-## Library
+- **Library empty** — a small "shelf": three stacked sheets of paper with a folded corner, a thin shadow, one sheet slightly askew. Reads as a manuscript pile.
+- **History empty** — a vertical timeline rule with three small stamps (●, ○, ●) and a tiny pen-mark crossing through one. Suggests a logbook.
+- **Dashboard / first-run** — a single sheet of paper with three lines of "writing" rendered as varied-length strokes, transforming into a tiny 16:9 frame at the bottom-right. The metaphor of the product, drawn.
 
-- Grid of project cards: slide-1 mini preview, title, slide count, theme chip, updated-at, voice.
-- Toolbar: search, sort (Recent / Name / Duration), view toggle (grid/list), filter by theme.
-- Card menu: Open, Duplicate, Rename, Export, Delete (with confirm).
-- Bulk select for delete.
+Each illustration ~140×140, line-only at 1.25–1.5px stroke, paired with a Fraunces headline and a single CTA.
 
-## History
+### `AppShell.tsx` — sidebar + topbar overhaul
 
-Timeline grouped by Today / Yesterday / This week / Earlier. Each entry: icon + verb + project link + timestamp.
-Tracked events: project created, slide regenerated, slide edited via chat, layout changed, theme changed, exported.
-Hooked into existing `usePrototypeStore` mutations via a thin `historyLog` middleware.
+**Sidebar:**
+- Header: full Wordmark (collapsed → just the new mark). Below it, a single `New video` row that is *not* a button — it's a sidebar item with a `+` mark and a `⌘N` `<KBD>` on the right. Feels native, not bolted on.
+- Nav: items get a 2px left accent bar on active (currently a pill background). Icons at 16px stroke 1.75. Labels in Inter 13/500.
+- A new "Recent" group below the main nav showing the 3 most-recent projects with tiny thumbnail dots — gives the sidebar life and utility.
+- Footer: account row redesigned as a single hairline-bordered tile with avatar + name + a chevron; opens the dropdown. Settings moves into that dropdown. Less crowding.
 
-## Templates
+**Topbar:**
+- 56px tall (currently 56), but the eyebrow + title pattern becomes a left-aligned breadcrumb (`Library / All videos`) in Inter 12, with the active crumb in foreground. The big Fraunces page title moves *into the page* as the editorial header, where it belongs.
+- Right side: contextual actions + a global `⌘K` command launcher button (chip styled, monospace shortcut visible).
+- Subtle bottom hairline only when content scrolls (use `IntersectionObserver` on a sentinel — already a pattern Linear/Vercel use).
 
-8–12 seeded starter decks (Pitch, Course intro, Product launch, Weekly recap, Tutorial, Case study, Onboarding, Founder update). Card preview + "Use template" duplicates the seed deck into a new project and routes to `/app/editor/:id`.
+### Page-by-page rework
 
-## Brand kit
+**Dashboard (`Dashboard.tsx`)**
+- Top: editorial hero — Fraunces greeting at `text-5xl`, a one-line italic subtitle ("Three drafts open. One published this week."), `MetricRow` of Videos / Slides / Minutes underneath as a hairline strip — *not* boxed cards.
+- Welcome checklist redesigned as a horizontal "card" with three numbered steps separated by vertical hairlines, each with its own micro-illustration. The next step has a single `→` that shifts on hover. No `animate-pulse-glow`.
+- Quick-start: dropped from three equal cards to **one hero "Paste your writing" card (8 cols)** plus two stacked supporting actions (Templates, From a doc, 4 cols). The hero card has a real, animated cursor in a faux text field — invites action.
+- Continue editing: 2-up large + 4-up small asymmetric grid using real `SlideThumbnail`s.
+- Recent activity: a quiet list with hairline rows, `tnum` timestamps right-aligned, type icon at 12px. No `Card` wrapper.
 
-- Logo upload (stored as data URL in mock).
-- Brand color picker (tied to a project-level accent override).
-- Default voice + pace + tone.
-- Default theme.
-- Saved values become the defaults for new projects.
+**Library (`Library.tsx`)**
+- Header: `EditorialHeader` with project count as part of the eyebrow ("Library · 12 videos").
+- Toolbar: search becomes a borderless input with a hairline underline that thickens on focus; sort and view-toggle become a single segmented control on the right. Add a list-view that's a true table with sortable headers (Title, Slides, Theme, Voice, Updated) — for power users.
+- Grid: real thumbnails. Card has no border by default — only a hairline that becomes primary on hover. Title underlines on hover (no translation). Context menu appears on hover only.
 
-## Settings
+**History (`History.tsx`)**
+- Centered `max-w-3xl` is correct, but reframe as a **logbook**: the day labels become large Fraunces dates ("Today · 11 May") with a long hairline beside them. Each entry: timestamp in `tnum` at the left gutter (88px), icon, action sentence in serif italics for the verb. Subtle, premium, opinionated.
 
-- Profile (name, email, avatar initials).
-- Preferences (default theme, default voice, reduced motion).
-- Danger zone (clear all local data, sign out everywhere).
+**Templates (`Templates.tsx`)**
+- Real preview thumbnails (render the seed deck's first slide).
+- Category headings get oversized Fraunces numbers ("01 — Pitches", "02 — Courses") in a side gutter — editorial table-of-contents feel.
+- Hover reveals a "Preview" affordance that opens a quick-look dialog showing 3 sample slides before "Use template".
 
-## Data model (localStorage, typed)
+**Brand (`Brand.tsx`)**
+- Two-column layout: left rail = the kit (logo, color, voice). Right rail = a **live preview card** rendering a sample slide using the current brand kit values. Changing the accent updates it in real time. This is the moment the page earns its existence.
+- Color picker: replace the freeform HSL string field (terrible UX — was forced by the constraint of HSL values) with a curated palette of 8 forest-friendly accents *plus* an HSL custom field for power users. Show the resulting color name (e.g. "Moss", "Pine", "Ink") for personality.
 
-```ts
-type Project = {
-  id; title; createdAt; updatedAt;
-  themeId; voice; voiceMode;
-  slides: Slide[];           // existing type
-  thumbnail?: string;        // first-slide snapshot (later)
-};
-type HistoryEntry = { id; projectId; type; label; at };
-type BrandKit = { logoDataUrl?; accentHsl?; defaultVoice; defaultTheme; defaultPace; defaultTone };
-type User = { id; email; name; createdAt };
-```
+**Settings, SignIn, SignUp**
+- Settings: same editorial header pattern. Sections separated by Fraunces section titles + hairlines, no nested cards.
+- Auth pages: keep the split-screen, but replace the static gradient panel with a slow Ken Burns-style loop of three editorial slides (text → quote → mark). One thoughtful detail.
 
-Stored under `cs.projects`, `cs.history`, `cs.brand`, `cs.user`. A `useProjects()` hook (zustand, persisted) replaces the in-memory deck for cross-route persistence. Existing `usePrototypeStore` becomes the "active editor session" and syncs back to the project on save.
+### Command palette (`⌘K`) — small new addition
 
-## Editor integration
+A `cmdk`-based palette (`shadcn/ui` already exposes it) that does: jump to project, jump to nav item, create new video, switch theme. This is the difference between an app and a tool. Wired into the topbar chip. Five files, ~150 LOC.
 
-- Editor loads project by `:id`, hydrates `usePrototypeStore`, and writes back on every mutation (debounced).
-- Topbar shows breadcrumb `Library / {title}` + "Saved · 2s ago" indicator.
-- Back button returns to Library, not `/`.
+## Out of scope for this pass
 
-## Visual polish (carries the forest system)
-
-- All new surfaces use existing tokens (`bg-card`, `border-border`, `shadow-premium`, `--gradient-primary`).
-- Empty-state illustrations: lightweight inline SVGs (concentric arcs, single leaf-like mark) tinted with `hsl(var(--primary))`.
-- Micro-interactions: `animate-fade-in-up` on cards, `animate-pulse-glow` on the welcome checklist's next step.
-- Sidebar uses Plus Jakarta Sans for labels; topbar titles use Fraunces (or Plus Jakarta — match Wordmark).
-
----
+- New features beyond the command palette
+- Real backend / Cloud
+- The editor itself (separate obsession session)
+- Mobile-first redesign
+- Dark mode (still mirroring light per current setup)
 
 ## Technical notes
 
-**New files**
-- `src/lib/auth/useAuth.tsx` — context, sign in/up/out, persisted user.
-- `src/lib/auth/RequireAuth.tsx`.
-- `src/lib/data/useProjects.ts` — zustand `persist` middleware → `cs.projects`.
-- `src/lib/data/useHistory.ts` — log + read.
-- `src/lib/data/useBrandKit.ts`.
-- `src/lib/data/seedTemplates.ts`.
-- `src/components/app-shell/AppShell.tsx`, `AppSidebar.tsx`, `Topbar.tsx`, `UserMenu.tsx`.
-- `src/components/empty/EmptyState.tsx` (+ inline SVG illustrations).
-- `src/components/welcome/WelcomeChecklist.tsx`.
-- `src/pages/auth/SignIn.tsx`, `SignUp.tsx`.
-- `src/pages/app/Dashboard.tsx`, `Library.tsx`, `History.tsx`, `Templates.tsx`, `Brand.tsx`, `Settings.tsx`.
+- New files: `src/components/preview/SlideThumbnail.tsx`, `src/components/editorial/EditorialHeader.tsx`, `src/components/editorial/MetricRow.tsx`, `src/components/editorial/HoverPreviewCard.tsx`, `src/components/ui/kbd.tsx`, `src/components/CommandPalette.tsx`, `src/assets/illustrations/*.tsx` (3 inline SVG components).
+- Edits: `src/index.css` (tokens, paper utility, Fraunces font-face), `tailwind.config.ts` (`fontFamily.serif`), `src/components/Wordmark.tsx` (new mark + bilingual type), `src/components/empty/EmptyState.tsx` (swap illustrations, add serif title variant), `src/components/app-shell/AppShell.tsx` (sidebar + topbar rework), all six `src/pages/app/*.tsx` files.
+- Fraunces loaded via `<link>` in `index.html` with `display=swap`, weights 400/500/600, optical sizing for headings.
+- The `SlideThumbnail` component will use the existing `SlideView` inside a fixed-aspect frame with `transform: scale(0.16)` and `transform-origin: top left`, sized via the parent's width — no re-implementation of the slide engine.
+- No new dependencies needed (`cmdk` already in `shadcn/ui`).
 
-**Edits**
-- `src/App.tsx` — new route tree, `AuthProvider`, `RequireAuth`, nest prototype routes under `/app`.
-- `src/pages/Index.tsx` — redirect to `/app` or `/signin`.
-- `src/pages/prototype/InputScreen.tsx` — on generate, create a `Project`, route to `/app/generating?id=…`.
-- `src/pages/prototype/GeneratingScreen.tsx` — on done, route to `/app/editor/:id`.
-- `src/pages/prototype/EditorScreen.tsx` — load by `:id`, autosave back, breadcrumb, back-to-Library.
-- `src/lib/prototype/store.ts` — add `loadProject(project)` + `serialize()` for sync.
+## Why this matters
 
-**Out of scope (v1)**
-- Real backend / Lovable Cloud (we leave clean seams: every hook is the only place that touches storage).
-- Collaboration, comments, sharing.
-- Real video render/export (existing dialog stays mocked).
-- Password reset, OAuth, email verification.
-- Mobile-first redesign of the editor (shell will be responsive; editor stays desktop-optimized).
+The editor screen is where the product is impressive today. The shell needs to set the same expectation from the very first second after sign-in — otherwise the contrast makes the editor feel accidental. After this pass, every surface from `/signin` to `/app/editor/:id` will share one voice.
