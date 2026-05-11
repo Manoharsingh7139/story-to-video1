@@ -1,5 +1,8 @@
-import InputScreen from "./prototype/InputScreen";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "@/lib/auth/useAuth";
 
 export default function Index() {
-  return <InputScreen />;
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  return <Navigate to={user ? "/app" : "/signin"} replace />;
 }
