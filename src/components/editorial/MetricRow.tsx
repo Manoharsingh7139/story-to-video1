@@ -23,7 +23,7 @@ export function MetricRow({ metrics, className }: Props) {
       {metrics.map((m, i) => (
         <Fragment key={m.label}>
           {i > 0 && <div className="w-px self-stretch bg-hairline" />}
-          <div className="flex-1 py-5 pr-6 first:pl-0 pl-6 first:pl-0">
+          <div className={cn("flex-1 py-5", i === 0 ? "pr-6" : "px-6")}>
             <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-2">
               {m.label}
             </div>
