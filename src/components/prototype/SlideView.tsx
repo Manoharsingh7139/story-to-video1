@@ -43,7 +43,7 @@ const Selectable = ({ elKey, selectedKey, onSelect, editable, children, style, c
         borderRadius: 4,
         transition: "outline-color 80ms",
       }}
-      className={`hover:outline hover:outline-2 hover:outline-blue-300/60 ${className}`}
+      className={`hover:outline hover:outline-2 hover:outline-brand/40 ${className}`}
     >
       {children}
     </div>
