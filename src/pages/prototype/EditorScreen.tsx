@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { usePrototypeStore } from "@/lib/prototype/store";
+import { useProjects } from "@/lib/data/useProjects";
 import { THEMES, THEME_LIST } from "@/lib/prototype/themes";
 import { SlideView } from "@/components/prototype/SlideView";
 import { ThumbnailRail } from "@/components/prototype/ThumbnailRail";
@@ -60,6 +61,11 @@ const EDUCATION_LAYOUTS: { id: LayoutId; name: string }[] = [
 
 export default function EditorScreen() {
   const navigate = useNavigate();
+  const { id: projectId } = useParams();
+  const project = useProjects((s) => (projectId ? s.projects.find((p) => p.id === projectId) : undefined));
+  const saveSlides = useProjects((s) => s.saveSlides);
+  const renameProject = useProjects((s) => s.renameProject);
+
   const slides = usePrototypeStore((s) => s.slides);
   const selectedSlideId = usePrototypeStore((s) => s.selectedSlideId);
   const themeId = usePrototypeStore((s) => s.themeId);
@@ -74,29 +80,80 @@ export default function EditorScreen() {
 
   const [exportOpen, setExportOpen] = useState(false);
   const [chatCollapsed, setChatCollapsed] = useState(() => window.innerHeight < 800);
+  const [savedAt, setSavedAt] = useState<number>(Date.now());
+  const hydratedRef = useRef<string | null>(null);
 
+  // Hydrate prototype store from project once.
   useEffect(() => {
-    if (slides.length === 0) navigate("/");
-  }, [slides.length, navigate]);
+    if (!projectId) { navigate("/app/library", { replace: true }); return; }
+    if (!project) return;
+    if (hydratedRef.current === projectId) return;
+    hydratedRef.current = projectId;
+    usePrototypeStore.setState({
+      slides: project.slides.map((s) => ({ ...s, content: { ...s.content } })),
+      selectedSlideId: project.slides[0]?.id ?? "",
+      selectedElementKey: null,
+      projectTitle: project.title,
+      themeId: project.themeId,
+      voice: project.voice,
+      voiceMode: project.voiceMode,
+      chatBySlide: Object.fromEntries(project.slides.map((s) => [s.id, [
+        { id: `welcome-${s.id}`, role: "assistant" as const, text: "Hi! I can edit this slide for you." },
+      ]])),
+    });
+  }, [projectId, project, navigate]);
+
+  // Autosave (debounced) when slides/theme change.
+  useEffect(() => {
+    if (!projectId || !project) return;
+    if (hydratedRef.current !== projectId) return;
+    const t = setTimeout(() => {
+      saveSlides(projectId, slides, themeId);
+      setSavedAt(Date.now());
+    }, 600);
+    return () => clearTimeout(t);
+  }, [slides, themeId, projectId, project, saveSlides]);
+
+  // Persist title changes.
+  useEffect(() => {
+    if (!projectId || !project) return;
+    if (hydratedRef.current !== projectId) return;
+    if (projectTitle && projectTitle !== project.title) {
+      const t = setTimeout(() => renameProject(projectId, projectTitle), 600);
+      return () => clearTimeout(t);
+    }
+  }, [projectTitle, projectId, project, renameProject]);
+
+  if (!projectId) return null;
+  if (!project) {
+    return (
+      <div className="h-screen flex items-center justify-center text-sm text-muted-foreground">
+        Project not found. <Link to="/app/library" className="ml-1 text-primary hover:underline">Back to library</Link>
+      </div>
+    );
+  }
 
   const slide = slides.find((s) => s.id === selectedSlideId);
   const theme = THEMES[themeId];
-
   if (!slide) return null;
+
+  const savedAgo = Math.max(1, Math.round((Date.now() - savedAt) / 1000));
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
       <header className="h-12 border-b border-border flex items-center justify-between px-3 flex-shrink-0">
         <div className="flex items-center gap-2 min-w-0">
-          <Link to="/" className="p-1.5 rounded hover:bg-muted">
+          <Link to="/app/library" className="p-1.5 rounded hover:bg-muted" title="Back to library">
             <ArrowLeft className="h-4 w-4" />
           </Link>
-          <Wordmark size="sm" />
+          <Wordmark size="sm" iconOnly />
+          <span className="text-xs text-muted-foreground hidden md:inline">Library /</span>
           <Input
             value={projectTitle}
             onChange={(e) => setProjectTitle(e.target.value)}
             className="h-7 text-sm font-medium border-transparent bg-transparent hover:bg-muted focus:bg-background w-64"
           />
+          <span className="text-[11px] text-muted-foreground hidden md:inline">Saved · {savedAgo}s ago</span>
         </div>
         <Button variant="default" size="sm" onClick={() => setExportOpen(true)}>
           <Download className="h-3.5 w-3.5 mr-1.5" />

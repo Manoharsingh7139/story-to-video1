@@ -21,6 +21,7 @@ import {
   AudioLines,
 } from "lucide-react";
 import { Wordmark } from "@/components/Wordmark";
+import { useProjects } from "@/lib/data/useProjects";
 
 type SourceTab = "paste" | "upload" | "audio";
 
@@ -127,7 +128,26 @@ export default function InputScreen() {
     setPreviewing(voiceName);
   };
 
-  const onGenerate = () => canGenerate && navigate("/generating");
+  const createProject = useProjects((s) => s.createProject);
+  const onGenerate = () => {
+    if (!canGenerate) return;
+    const project = createProject({
+      title: projectTitle || "Untitled video",
+      themeId,
+      voice,
+      voiceMode,
+      source: sourceText,
+      slides: [],
+    });
+    navigate(`/app/generating?id=${project.id}`);
+  };
+  const onSkip = () => {
+    const project = createProject({
+      title: projectTitle || "Untitled video",
+      themeId, voice, voiceMode, source: sourceText, slides: [],
+    });
+    navigate(`/app/generating?id=${project.id}`);
+  };
 
   // ⌘/Ctrl+Enter to generate
   useEffect(() => {
@@ -149,7 +169,7 @@ export default function InputScreen() {
             <span className="text-[11px] font-sans uppercase tracking-[0.18em] text-muted-foreground">Step 1 of 2 — Setup</span>
           </div>
           <button
-            onClick={() => navigate("/generating")}
+            onClick={onSkip}
             className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5"
           >
             Skip with sample <ArrowRight className="h-3 w-3" />

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { usePrototypeStore } from "@/lib/prototype/store";
+import { useProjects } from "@/lib/data/useProjects";
+import { SAMPLE_DECK } from "@/lib/prototype/sampleDeck";
 import { Check } from "lucide-react";
 import { Wordmark } from "@/components/Wordmark";
 
@@ -14,6 +16,10 @@ const STEPS = [
 
 export default function GeneratingScreen() {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const projectId = params.get("id");
+  const saveSlides = useProjects((s) => s.saveSlides);
+  const getProject = useProjects((s) => s.getProject);
   const loadSampleDeck = usePrototypeStore((s) => s.loadSampleDeck);
   const [step, setStep] = useState(0);
 
@@ -26,15 +32,22 @@ export default function GeneratingScreen() {
 
     const done = setTimeout(() => {
       clearInterval(interval);
-      loadSampleDeck();
-      navigate("/editor");
+      const slides = SAMPLE_DECK.map((s) => ({ ...s, content: { ...s.content } }));
+      if (projectId && getProject(projectId)) {
+        saveSlides(projectId, slides);
+        loadSampleDeck();
+        navigate(`/app/editor/${projectId}`, { replace: true });
+      } else {
+        loadSampleDeck();
+        navigate("/app", { replace: true });
+      }
     }, totalMs + 400);
 
     return () => {
       clearInterval(interval);
       clearTimeout(done);
     };
-  }, [loadSampleDeck, navigate]);
+  }, [loadSampleDeck, navigate, projectId, saveSlides, getProject]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-8">
