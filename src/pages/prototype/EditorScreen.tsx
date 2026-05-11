@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { usePrototypeStore } from "@/lib/prototype/store";
+import { useProjects } from "@/lib/data/useProjects";
 import { THEMES, THEME_LIST } from "@/lib/prototype/themes";
 import { SlideView } from "@/components/prototype/SlideView";
 import { ThumbnailRail } from "@/components/prototype/ThumbnailRail";
@@ -10,6 +11,12 @@ import { ExportDialog } from "@/components/prototype/ExportDialog";
 import { RegenerateButton } from "@/components/prototype/RegenerateButton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import { Download, ArrowLeft, Layout as LayoutIcon, Palette } from "lucide-react";
+import { Wordmark } from "@/components/Wordmark";
+import type { LayoutId } from "@/lib/prototype/types";
 import {
   Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
