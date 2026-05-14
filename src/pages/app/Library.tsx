@@ -236,7 +236,7 @@ export default function LibraryPage() {
       <AlertDialog open={!!confirmId} onOpenChange={(o) => !o && setConfirmId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-serif">Delete this video?</AlertDialogTitle>
+            <AlertDialogTitle className="font-serif">Delete this script?</AlertDialogTitle>
             <AlertDialogDescription>This cannot be undone.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -256,7 +256,7 @@ export default function LibraryPage() {
       <Dialog open={!!renameId} onOpenChange={(o) => !o && setRenameId(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="font-serif">Rename video</DialogTitle>
+            <DialogTitle className="font-serif">Rename script</DialogTitle>
           </DialogHeader>
           <Input
             value={renameValue}
@@ -269,7 +269,7 @@ export default function LibraryPage() {
             </Button>
             <Button
               onClick={() => {
-                if (renameId) rename(renameId, renameValue.trim() || "Untitled video");
+                if (renameId) rename(renameId, renameValue.trim() || "Untitled script");
                 setRenameId(null);
               }}
             >
