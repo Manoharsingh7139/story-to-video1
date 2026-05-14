@@ -67,6 +67,37 @@ const RowLabel = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
+// Tiny animated preview that visually communicates each motion preset.
+// Pure CSS animations driven by Tailwind arbitrary values.
+const MotionPreview = ({ id }: { id: MotionId }) => {
+  // Shared mini-slide chrome (title bar + 3 bullet lines), animated per preset.
+  const cfg: Record<MotionId, { dur: string; translate: string; scale: string; ease: string; stagger: number }> = {
+    subtle:    { dur: "1.6s", translate: "4px",  scale: "1",     ease: "ease-out",                 stagger: 120 },
+    dynamic:   { dur: "1.4s", translate: "10px", scale: "1",     ease: "cubic-bezier(.2,.8,.2,1)", stagger: 140 },
+    dramatic:  { dur: "2.0s", translate: "16px", scale: "0.94",  ease: "cubic-bezier(.2,.8,.2,1)", stagger: 200 },
+    cinematic: { dur: "2.2s", translate: "0px",  scale: "0.88",  ease: "cubic-bezier(.16,1,.3,1)", stagger: 220 },
+  };
+  const c = cfg[id];
+  const keyframes = `@keyframes mp-${id} {
+    0%   { opacity: 0; transform: translateY(${c.translate}) scale(${c.scale}); }
+    55%  { opacity: 1; transform: translateY(0) scale(1); }
+    85%  { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(0) scale(1); }
+  }`;
+  const anim = (i: number) => ({
+    animation: `mp-${id} ${c.dur} ${c.ease} ${i * c.stagger}ms infinite`,
+  });
+  return (
+    <div className="absolute inset-0 p-2 flex flex-col gap-1 justify-center">
+      <style>{keyframes}</style>
+      <div className="h-1.5 w-2/3 rounded-sm bg-foreground/70" style={anim(0)} />
+      <div className="h-1 w-full rounded-sm bg-foreground/35" style={anim(1)} />
+      <div className="h-1 w-5/6 rounded-sm bg-foreground/35" style={anim(2)} />
+      <div className="h-1 w-3/5 rounded-sm bg-foreground/35" style={anim(3)} />
+    </div>
+  );
+};
+
 export default function InputScreen() {
   const navigate = useNavigate();
   const {
