@@ -103,7 +103,7 @@ export default function LibraryPage() {
         crumbs={[{ label: "Library" }]}
         actions={
           <Button onClick={() => navigate("/app/new")} size="sm">
-            <Plus className="h-4 w-4" /> New video
+            <Plus className="h-4 w-4" /> New script
           </Button>
         }
       />
@@ -114,11 +114,11 @@ export default function LibraryPage() {
             eyebrow={
               <>
                 <span className="h-px w-6 bg-foreground/30 inline-block" />
-                <span>Library · {projects.length} {projects.length === 1 ? "video" : "videos"}</span>
+                <span>Library · {projects.length} {projects.length === 1 ? "script" : "scripts"}</span>
               </>
             }
-            title="Your videos"
-            lede="Every draft, copy, and finished piece — all in one shelf."
+            title="Your productions"
+            lede="Every script, take, and finished cut — all in one shelf."
           />
 
           {projects.length === 0 ? (
@@ -127,10 +127,10 @@ export default function LibraryPage() {
                 illustration={<ManuscriptIllustration />}
                 eyebrow="Library"
                 title={<>Your library is <em className="font-serif italic">quiet.</em></>}
-                description="Every video you create lands here, ready to revisit, duplicate, or share."
+                description="Every script you produce lands here, ready to revisit, duplicate, or share."
                 actions={
                   <Button onClick={() => navigate("/app/new")}>
-                    <Plus className="h-4 w-4" /> Create video
+                    <Plus className="h-4 w-4" /> Write your first script
                   </Button>
                 }
               />
@@ -144,7 +144,7 @@ export default function LibraryPage() {
                   <input
                     value={q}
                     onChange={(e) => setQ(e.target.value)}
-                    placeholder="Search videos…"
+                    placeholder="Search scripts…"
                     className={cn(
                       "w-full pl-6 pr-2 py-1.5 bg-transparent text-sm outline-none",
                       "border-b border-transparent focus:border-foreground transition-colors",
@@ -155,7 +155,7 @@ export default function LibraryPage() {
                 <div className="flex items-center gap-1.5">
                   <SortChip active={sort === "recent"} onClick={() => setSort("recent")}>Recent</SortChip>
                   <SortChip active={sort === "name"} onClick={() => setSort("name")}>Name</SortChip>
-                  <SortChip active={sort === "slides"} onClick={() => setSort("slides")}>Slides</SortChip>
+                  <SortChip active={sort === "slides"} onClick={() => setSort("slides")}>Scenes</SortChip>
                 </div>
                 <div className="flex items-center border hairline rounded-md overflow-hidden ml-2">
                   <button
