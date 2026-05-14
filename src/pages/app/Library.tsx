@@ -183,7 +183,7 @@ export default function LibraryPage() {
 
               {filtered.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-16">
-                  No videos match <span className="font-serif italic">"{q}"</span>.
+                  No scripts match <span className="font-serif italic">"{q}"</span>.
                 </p>
               ) : view === "grid" ? (
                 <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -200,8 +200,8 @@ export default function LibraryPage() {
                 <div className="mt-6 border-y hairline">
                   <div className="grid grid-cols-12 gap-4 px-2 py-2 text-[10px] uppercase tracking-[0.18em] text-muted-foreground border-b hairline">
                     <div className="col-span-6">Title</div>
-                    <div className="col-span-2 tnum">Slides</div>
-                    <div className="col-span-2">Theme</div>
+                    <div className="col-span-2 tnum">Scenes</div>
+                    <div className="col-span-2">Style</div>
                     <div className="col-span-2 text-right">Updated</div>
                   </div>
                   {filtered.map((p) => {
