@@ -72,6 +72,38 @@ export default function SignIn() {
   </AuthLayout>;
 }
 
+function AnimateTagline({ text }: { text: string }) {
+  const words = text.split(" ");
+  return (
+    <p
+      className="text-4xl md:text-[44px] leading-[1.06] tracking-[-0.02em] flex flex-wrap gap-x-2.5 gap-y-1"
+      style={{ fontFamily: "var(--font-serif)", fontWeight: 500 }}
+    >
+      {words.map((word, i) => (
+        <span
+          key={i}
+          className="inline-block"
+          style={{
+            animation: "tagline-pop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+            animationDelay: `${i * 0.08}s`,
+            opacity: 0,
+            transform: "translateY(18px) rotate(-3deg)",
+          }}
+        >
+          {word}
+        </span>
+      ))}
+      <style>{`
+        @keyframes tagline-pop {
+          0% { opacity: 0; transform: translateY(18px) rotate(-3deg) scale(0.9); }
+          60% { opacity: 1; transform: translateY(-3px) rotate(1deg) scale(1.04); }
+          100% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+        }
+      `}</style>
+    </p>
+  );
+}
+
 export function AuthLayout({
   title,
   subtitle,
@@ -104,40 +136,8 @@ export function AuthLayout({
         className="hidden md:flex relative items-center justify-center p-14 overflow-hidden border-l hairline"
         style={{ background: "hsl(var(--primary))" }}
       >
-        {/* Editorial mock slide */}
         <div className="relative max-w-md text-primary-foreground">
-          <div className="text-[10px] uppercase tracking-[0.24em] opacity-65 mb-8">
-            Slide 01 / 14
-          </div>
-          <p
-            className="text-4xl md:text-[44px] leading-[1.06] tracking-[-0.02em]"
-            style={{ fontFamily: "var(--font-serif)", fontWeight: 500 }}
-          >
-            Turn your scripts and audio into LMS ready videos — in minutes.
-          </p>
-          <div className="mt-10 flex items-center gap-4">
-            <div className="h-px w-10 bg-primary-foreground/40" />
-            <p className="text-[11px] uppercase tracking-[0.22em] opacity-70">
-              &nbsp;
-            </p>
-          </div>
-          <div className="mt-16 grid grid-cols-3 gap-3 text-[11px] opacity-75 tnum">
-            <div>
-              <div className="font-serif text-2xl text-primary-foreground/95">14</div>
-              <div className="uppercase tracking-[0.18em] mt-1 opacity-70">Templates</div>
-            </div>
-            <div>
-              <div className="font-serif text-2xl text-primary-foreground/95">9</div>
-              <div className="uppercase tracking-[0.18em] mt-1 opacity-70">Themes</div>
-            </div>
-            <div>
-              <div className="font-serif text-2xl text-primary-foreground/95">8</div>
-              <div className="uppercase tracking-[0.18em] mt-1 opacity-70">Voices</div>
-            </div>
-          </div>
-        </div>
-        <div className="absolute bottom-6 right-8 text-[10px] uppercase tracking-[0.24em] text-primary-foreground/60">
-          Designed in Stockholm
+          <AnimateTagline text="Turn your scripts and audio into LMS ready videos — in minutes." />
         </div>
       </div>
     </div>
