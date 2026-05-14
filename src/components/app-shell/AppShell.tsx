@@ -45,6 +45,7 @@ import { cn } from "@/lib/utils";
 import { KBD } from "@/components/ui/kbd";
 import { THEMES } from "@/lib/prototype/themes";
 import { CommandPalette, useCommandPalette } from "@/components/CommandPalette";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const NAV = [
   { to: "/app", label: "Dashboard", icon: LayoutDashboard, end: true },
