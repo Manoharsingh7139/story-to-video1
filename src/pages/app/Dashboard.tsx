@@ -145,14 +145,14 @@ export default function Dashboard() {
           <section>
             <div className="flex items-end justify-between mb-5">
               <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                Continue
+                In production
               </div>
               {recent.length > 0 && (
                 <Link
                   to="/app/library"
                   className="text-[12px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors"
                 >
-                  All <ArrowRight className="h-3 w-3" />
+                  All scripts <ArrowRight className="h-3 w-3" />
                 </Link>
               )}
             </div>
@@ -163,13 +163,13 @@ export default function Dashboard() {
                   eyebrow="Your studio is quiet"
                   title={
                     <>
-                      Let's make your <em className="not-italic font-serif italic">first</em> video.
+                      Let's record your <em className="not-italic font-serif italic">first</em> take.
                     </>
                   }
-                  description="Paste any writing — an essay, a doc, a transcript — and we'll turn it into slides with voiceover."
+                  description="Paste any script — an essay, a doc, a transcript — and we'll cut it into scenes with a narrated voice over."
                   actions={
                     <Button onClick={() => navigate("/app/new")}>
-                      <Plus className="h-4 w-4" /> Start your first video
+                      <Plus className="h-4 w-4" /> Start your first script
                     </Button>
                   }
                 />
