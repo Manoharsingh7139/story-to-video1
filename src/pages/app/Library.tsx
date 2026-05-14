@@ -144,7 +144,7 @@ export default function LibraryPage() {
                   <input
                     value={q}
                     onChange={(e) => setQ(e.target.value)}
-                    placeholder="Search scripts…"
+                    placeholder="Search videos…"
                     className={cn(
                       "w-full pl-6 pr-2 py-1.5 bg-transparent text-sm outline-none",
                       "border-b border-transparent focus:border-foreground transition-colors",
