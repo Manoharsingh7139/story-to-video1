@@ -657,11 +657,12 @@ export default function InputScreen() {
             </div>
           </Card>
         </div>
-      </main>
+          </main>
+      </div>
 
-      {/* Sticky bottom action bar */}
-      <div className="fixed bottom-0 inset-x-0 z-40 border-t border-border/60 bg-background/85 backdrop-blur">
-        <div className="max-w-6xl mx-auto px-8 py-3 flex items-center justify-between gap-4">
+      {/* Sticky bottom action bar — within shell content area */}
+      <div className="sticky bottom-0 z-30 border-t hairline bg-background/85 backdrop-blur">
+        <div className="max-w-6xl mx-auto px-8 lg:px-12 py-3 flex items-center justify-between gap-4">
           <div className="text-xs text-muted-foreground tabular-nums hidden sm:block">
             <span className="font-medium text-foreground">{wordCount}</span> words ·{" "}
             <span className="font-medium text-foreground">~{slideEstimate}</span> slides ·{" "}
@@ -681,11 +682,39 @@ export default function InputScreen() {
           </div>
         </div>
         {!canGenerate && (
-          <div className="max-w-6xl mx-auto px-8 pb-2 -mt-1 text-[11px] text-muted-foreground text-right">
+          <div className="max-w-6xl mx-auto px-8 lg:px-12 pb-2 -mt-1 text-[11px] text-muted-foreground text-right">
             Add some text or upload a document to continue
           </div>
         )}
       </div>
+    </>
+  );
+}
+
+function StepDots({ step }: { step: 1 | 2 | 3 }) {
+  const labels = ["Setup", "Generate", "Edit"];
+  return (
+    <div className="hidden md:flex items-center gap-2 text-[11px] text-muted-foreground">
+      {labels.map((l, i) => {
+        const n = (i + 1) as 1 | 2 | 3;
+        const active = n === step;
+        const done = n < step;
+        return (
+          <span key={l} className="flex items-center gap-2">
+            <span
+              className={
+                active
+                  ? "h-1.5 w-1.5 rounded-full bg-primary"
+                  : done
+                    ? "h-1.5 w-1.5 rounded-full bg-foreground/40"
+                    : "h-1.5 w-1.5 rounded-full bg-foreground/15"
+              }
+            />
+            <span className={active ? "text-foreground" : ""}>{l}</span>
+            {i < labels.length - 1 && <span className="text-muted-foreground/40">→</span>}
+          </span>
+        );
+      })}
     </div>
   );
 }
