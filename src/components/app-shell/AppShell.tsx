@@ -385,8 +385,8 @@ export function Topbar({
 function ShortcutsDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
   const rows: { keys: string[]; label: string }[] = [
     { keys: ["⌘", "K"], label: "Open search" },
-    { keys: ["⌘", "N"], label: "New video" },
-    { keys: ["⌘", "↵"], label: "Generate (in Setup)" },
+    { keys: ["⌘", "N"], label: "New script" },
+    { keys: ["⌘", "↵"], label: "Generate video (in Setup)" },
     { keys: ["esc"], label: "Close dialogs" },
   ];
   return (
