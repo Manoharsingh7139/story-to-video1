@@ -236,7 +236,7 @@ export default function LibraryPage() {
       <AlertDialog open={!!confirmId} onOpenChange={(o) => !o && setConfirmId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-serif">Delete this script?</AlertDialogTitle>
+            <AlertDialogTitle className="font-serif">Delete this video?</AlertDialogTitle>
             <AlertDialogDescription>This cannot be undone.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
