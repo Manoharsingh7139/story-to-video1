@@ -49,7 +49,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 
 const NAV = [
   { to: "/app", label: "Dashboard", icon: LayoutDashboard, end: true },
-  { to: "/app/library", label: "Scripts", icon: Library },
+  { to: "/app/library", label: "Templates", icon: Library },
   { to: "/app/history", label: "Studio log", icon: History },
   { to: "/app/templates", label: "Style templates", icon: LayoutTemplate },
   { to: "/app/brand", label: "Brand kit", icon: Palette },
