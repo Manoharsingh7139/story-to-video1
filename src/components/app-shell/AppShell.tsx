@@ -50,8 +50,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 const NAV = [
   { to: "/app", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/app/library", label: "Templates", icon: Library },
-  { to: "/app/history", label: "Studio log", icon: History },
-  { to: "/app/templates", label: "Style templates", icon: LayoutTemplate },
+  { to: "/app/history", label: "History", icon: History },
+  { to: "/app/templates", label: "Demo templates", icon: LayoutTemplate },
   { to: "/app/brand", label: "Brand kit", icon: Palette },
 ];
 
@@ -145,7 +145,7 @@ function AppSidebar({ onOpenCommand: _onOpenCommand, onOpenShortcuts }: { onOpen
         <SidebarMenu className="mb-1">
           <SidebarMenuItem>
             <SidebarMenuButton
-              tooltip="New script"
+              tooltip="New video"
               onClick={() => navigate("/app/new")}
               className={cn(
                 "h-9 px-2.5 group/new",
@@ -155,7 +155,7 @@ function AppSidebar({ onOpenCommand: _onOpenCommand, onOpenShortcuts }: { onOpen
               <Plus className="h-[15px] w-[15px] shrink-0" strokeWidth={2} />
               {!collapsed && (
                 <>
-                  <span className="text-[13px] font-medium">New script</span>
+                  <span className="text-[13px] font-medium">New video</span>
                   <span className="ml-auto opacity-60 group-hover/new:opacity-100">
                     <KBD>⌘</KBD>
                     <KBD className="ml-1">N</KBD>
@@ -385,7 +385,7 @@ export function Topbar({
 function ShortcutsDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
   const rows: { keys: string[]; label: string }[] = [
     { keys: ["⌘", "K"], label: "Open search" },
-    { keys: ["⌘", "N"], label: "New script" },
+    { keys: ["⌘", "N"], label: "New video" },
     { keys: ["⌘", "↵"], label: "Generate video (in Setup)" },
     { keys: ["esc"], label: "Close dialogs" },
   ];

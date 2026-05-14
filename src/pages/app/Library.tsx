@@ -126,7 +126,7 @@ export default function LibraryPage() {
               <EmptyState
                 illustration={<ManuscriptIllustration />}
                 eyebrow="Library"
-                title={<>Your library is <em className="font-serif italic">quiet.</em></>}
+                title={<>YOUR LIBRARY IS <em className="font-serif italic">QUIET.</em></>}
                 description="All your generated videos get listed here."
                 actions={
                   <Button onClick={() => navigate("/app/new")}>

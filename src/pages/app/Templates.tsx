@@ -17,14 +17,14 @@ export default function TemplatesPage() {
 
   return (
     <>
-      <Topbar crumbs={[{ label: "Style templates" }]} />
+      <Topbar crumbs={[{ label: "Demo templates" }]} />
       <div className="flex-1 overflow-auto">
         <div className="max-w-6xl mx-auto px-8 lg:px-12 py-12 lg:py-16">
           <EditorialHeader
             eyebrow={
               <>
                 <span className="h-px w-6 bg-foreground/30 inline-block" />
-                <span>Style templates · {TEMPLATES.length} starters</span>
+                <span>Demo templates · {TEMPLATES.length} starters</span>
               </>
             }
             title="Start with a structure."
