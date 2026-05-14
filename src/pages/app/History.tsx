@@ -152,7 +152,6 @@ function HistoryRow({ entry, email, slideCount, errorDetail }: RowProps) {
 
 export default function HistoryPage() {
   const entries = useHistoryStore((s) => s.entries);
-  const clear = useHistoryStore((s) => s.clear);
   const projects = useProjects((s) => s.projects);
   const { user } = useAuth();
   const groups = groupByDay(entries);
