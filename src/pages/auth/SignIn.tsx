@@ -62,8 +62,8 @@ export default function SignIn() {
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? "Signing in…" : "Sign in"}
       </Button>
-      <p className="text-xs text-center text-muted-foreground">
-        Don't have an account? <Link to="/signup" className="text-primary hover:underline font-medium">Create one</Link>
+      <p className="text-[11px] text-center text-muted-foreground">
+        Contact Admin for new account setup.
       </p>
       <p className="text-[10px] text-center text-muted-foreground/70 pt-2">
         Demo account — credentials stored locally in this browser.
