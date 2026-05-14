@@ -71,7 +71,7 @@ export default function BrandPage() {
               </>
             }
             title="Make it unmistakably yours."
-            lede="Set your logo, voice over, and palette once — every new script starts here."
+            lede="Set your logo, voice over, and palette once — every new video starts here."
           />
 
           <div className="mt-12 grid grid-cols-1 lg:grid-cols-12 gap-10">
