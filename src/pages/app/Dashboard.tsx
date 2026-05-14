@@ -46,7 +46,7 @@ export default function Dashboard() {
   // One-line "next step" ribbon — only the very next undone item
   const nextStep = (() => {
     if (dismissed) return null;
-    if (projects.length === 0) return { label: "Write your first script", to: "/app/new" };
+    if (projects.length === 0) return { label: "Create your first video", to: "/app/new" };
     if (!kit.accentHsl && !kit.logoDataUrl) return { label: "Set your studio brand", to: "/app/brand" };
     if (kit.defaultVoice === "Aurora") return { label: "Pick a default voice over", to: "/app/brand" };
     return null;
