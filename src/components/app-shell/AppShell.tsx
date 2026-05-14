@@ -162,25 +162,6 @@ function AppSidebar({ onOpenCommand }: { onOpenCommand: () => void }) {
               )}
             </SidebarMenuButton>
           </SidebarMenuItem>
-          {/* Search / palette */}
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              tooltip="Search… ⌘K"
-              onClick={onOpenCommand}
-              className="h-9 px-2.5 hover:bg-foreground/[0.04] text-foreground/70"
-            >
-              <Search className="h-[15px] w-[15px] shrink-0" strokeWidth={1.75} />
-              {!collapsed && (
-                <>
-                  <span className="text-[13px] font-medium">Search</span>
-                  <span className="ml-auto">
-                    <KBD>⌘</KBD>
-                    <KBD className="ml-1">K</KBD>
-                  </span>
-                </>
-              )}
-            </SidebarMenuButton>
-          </SidebarMenuItem>
         </SidebarMenu>
 
         {!collapsed && (
