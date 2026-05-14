@@ -30,6 +30,14 @@ type SourceTab = "paste" | "upload" | "audio";
 const PACE_OPTIONS = ["Slow", "Normal", "Fast"] as const;
 const TONE_OPTIONS = ["Neutral", "Warm", "Energetic"] as const;
 
+const MOTION_OPTIONS = [
+  { id: "subtle", name: "Subtle", desc: "Gentle fade-in with a touch of motion" },
+  { id: "dynamic", name: "Dynamic", desc: "Recommended — bullets rise, boxes pop", recommended: true },
+  { id: "dramatic", name: "Dramatic", desc: "Bigger motion, slower entrance" },
+  { id: "cinematic", name: "Cinematic", desc: "Scale + wipe with overshoot — cinematic feel" },
+] as const;
+type MotionId = typeof MOTION_OPTIONS[number]["id"];
+
 // Forest-warm deterministic gradient per voice name (greens + warm muted)
 const voiceGradient = (name: string) => {
   let h = 0;
@@ -76,6 +84,7 @@ export default function InputScreen() {
   const [customTemplate, setCustomTemplate] = useState<string | null>(null);
   const [pace, setPace] = useState<typeof PACE_OPTIONS[number]>("Normal");
   const [tone, setTone] = useState<typeof TONE_OPTIONS[number]>("Warm");
+  const [motion, setMotion] = useState<MotionId>("dynamic");
   const [previewing, setPreviewing] = useState<string | null>(null);
 
   const [search] = useSearchParams();
