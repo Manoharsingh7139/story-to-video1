@@ -66,7 +66,7 @@ export function CommandPalette() {
 
   return (
     <CommandDialog open={isOpen} onOpenChange={(o) => (o ? useCommandPalette.getState().open() : close())}>
-      <CommandInput placeholder="Search scripts, jump to a page…" />
+      <CommandInput placeholder="Search videos, jump to a page…" />
       <CommandList>
         <CommandEmpty>No matches.</CommandEmpty>
         <CommandGroup heading="Actions">
@@ -84,7 +84,7 @@ export function CommandPalette() {
             <LayoutDashboard className="h-4 w-4 mr-2" /> Dashboard
           </CommandItem>
           <CommandItem onSelect={() => go("/app/library")}>
-            <LibraryIcon className="h-4 w-4 mr-2" /> Scripts
+            <LibraryIcon className="h-4 w-4 mr-2" /> Templates
           </CommandItem>
           <CommandItem onSelect={() => go("/app/history")}>
             <HistoryIcon className="h-4 w-4 mr-2" /> Studio log
@@ -99,7 +99,7 @@ export function CommandPalette() {
         {recent.length > 0 && (
           <>
             <CommandSeparator />
-            <CommandGroup heading="Recent scripts">
+            <CommandGroup heading="Recent videos">
               {recent.map((p) => (
                 <CommandItem key={p.id} onSelect={() => go(`/app/editor/${p.id}`)}>
                   <FileText className="h-4 w-4 mr-2" />

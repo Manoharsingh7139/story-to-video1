@@ -103,7 +103,7 @@ export default function LibraryPage() {
         crumbs={[{ label: "Library" }]}
         actions={
           <Button onClick={() => navigate("/app/new")} size="sm">
-            <Plus className="h-4 w-4" /> New script
+            <Plus className="h-4 w-4" /> New video
           </Button>
         }
       />
@@ -114,11 +114,11 @@ export default function LibraryPage() {
             eyebrow={
               <>
                 <span className="h-px w-6 bg-foreground/30 inline-block" />
-                <span>Library · {projects.length} {projects.length === 1 ? "script" : "scripts"}</span>
+                <span>Library · {projects.length} {projects.length === 1 ? "video" : "videos"}</span>
               </>
             }
             title="Your productions"
-            lede="Every script, take, and finished cut — all in one shelf."
+            lede="Every script, presentation , and finished cut — all in one shelf."
           />
 
           {projects.length === 0 ? (
@@ -127,10 +127,10 @@ export default function LibraryPage() {
                 illustration={<ManuscriptIllustration />}
                 eyebrow="Library"
                 title={<>Your library is <em className="font-serif italic">quiet.</em></>}
-                description="Every script you produce lands here, ready to revisit, duplicate, or share."
+                description="All your generated videos get listed here."
                 actions={
                   <Button onClick={() => navigate("/app/new")}>
-                    <Plus className="h-4 w-4" /> Write your first script
+                    <Plus className="h-4 w-4" /> New video
                   </Button>
                 }
               />
@@ -144,7 +144,7 @@ export default function LibraryPage() {
                   <input
                     value={q}
                     onChange={(e) => setQ(e.target.value)}
-                    placeholder="Search scripts…"
+                    placeholder="Search videos…"
                     className={cn(
                       "w-full pl-6 pr-2 py-1.5 bg-transparent text-sm outline-none",
                       "border-b border-transparent focus:border-foreground transition-colors",
@@ -183,7 +183,7 @@ export default function LibraryPage() {
 
               {filtered.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-16">
-                  No scripts match <span className="font-serif italic">"{q}"</span>.
+                  No videos match <span className="font-serif italic">"{q}"</span>.
                 </p>
               ) : view === "grid" ? (
                 <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -236,7 +236,7 @@ export default function LibraryPage() {
       <AlertDialog open={!!confirmId} onOpenChange={(o) => !o && setConfirmId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-serif">Delete this script?</AlertDialogTitle>
+            <AlertDialogTitle className="font-serif">Delete this video?</AlertDialogTitle>
             <AlertDialogDescription>This cannot be undone.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -256,7 +256,7 @@ export default function LibraryPage() {
       <Dialog open={!!renameId} onOpenChange={(o) => !o && setRenameId(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="font-serif">Rename script</DialogTitle>
+            <DialogTitle className="font-serif">Rename video</DialogTitle>
           </DialogHeader>
           <Input
             value={renameValue}
@@ -269,7 +269,7 @@ export default function LibraryPage() {
             </Button>
             <Button
               onClick={() => {
-                if (renameId) rename(renameId, renameValue.trim() || "Untitled script");
+                if (renameId) rename(renameId, renameValue.trim() || "Untitled video");
                 setRenameId(null);
               }}
             >

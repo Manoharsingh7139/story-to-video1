@@ -46,7 +46,7 @@ export default function Dashboard() {
   // One-line "next step" ribbon — only the very next undone item
   const nextStep = (() => {
     if (dismissed) return null;
-    if (projects.length === 0) return { label: "Write your first script", to: "/app/new" };
+    if (projects.length === 0) return { label: "Create your first video", to: "/app/new" };
     if (!kit.accentHsl && !kit.logoDataUrl) return { label: "Set your studio brand", to: "/app/brand" };
     if (kit.defaultVoice === "Aurora") return { label: "Pick a default voice over", to: "/app/brand" };
     return null;
@@ -121,7 +121,7 @@ export default function Dashboard() {
                 <Plus className="h-4 w-4" strokeWidth={2} />
               </span>
               <span className="flex-1 min-w-0">
-                <span className="block text-[15px] font-medium text-ink">New script</span>
+                <span className="block text-[15px] font-medium text-ink">New video</span>
                 <span className="block font-serif italic text-[13px] text-muted-foreground mt-0.5">
                   Paste your writing — we'll cut it into scenes and add a voice over.
                 </span>
@@ -145,14 +145,14 @@ export default function Dashboard() {
           <section>
             <div className="flex items-end justify-between mb-5">
               <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                In production
+                Recent videos
               </div>
               {recent.length > 0 && (
                 <Link
                   to="/app/library"
                   className="text-[12px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors"
                 >
-                  All scripts <ArrowRight className="h-3 w-3" />
+                  All videos <ArrowRight className="h-3 w-3" />
                 </Link>
               )}
             </div>
@@ -166,10 +166,10 @@ export default function Dashboard() {
                       Let's record your <em className="not-italic font-serif italic">first</em> take.
                     </>
                   }
-                  description="Paste any script — an essay, a doc, a transcript — and we'll cut it into scenes with a narrated voice over."
+                  description="Paste any script — an essay, a doc, a transcript — and we'll cut it into scenes with a narrated video."
                   actions={
                     <Button onClick={() => navigate("/app/new")}>
-                      <Plus className="h-4 w-4" /> Start your first script
+                      <Plus className="h-4 w-4" /> Start your first video
                     </Button>
                   }
                 />
@@ -210,7 +210,7 @@ export default function Dashboard() {
               </ul>
               {projects.length > 0 && (
                 <div className="mt-3 text-[11px] text-muted-foreground tnum">
-                  {projects.length} {projects.length === 1 ? "script" : "scripts"} · {totalSlides} scenes
+                  {projects.length} {projects.length === 1 ? "video" : "videos"} · {totalSlides} scenes
                 </div>
               )}
             </section>
