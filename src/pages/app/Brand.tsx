@@ -71,14 +71,14 @@ export default function BrandPage() {
               </>
             }
             title="Make it unmistakably yours."
-            lede="Set your logo, voice, and palette once — every new project starts here."
+            lede="Set your logo, voice over, and palette once — every new script starts here."
           />
 
           <div className="mt-12 grid grid-cols-1 lg:grid-cols-12 gap-10">
             {/* Form */}
             <div className="lg:col-span-7 space-y-12">
               {/* Logo */}
-              <Section title="Logo" caption="Shown in your video corner-card and exports.">
+              <Section title="Logo" caption="Shown in your scene corner-card and exports.">
                 <div className="flex items-center gap-5">
                   <div className="h-20 w-20 border hairline bg-surface flex items-center justify-center overflow-hidden">
                     {kit.logoDataUrl ? (
@@ -185,7 +185,7 @@ export default function BrandPage() {
                       </SelectContent>
                     </Select>
                   </FieldRow>
-                  <FieldRow label="Voice">
+                  <FieldRow label="Voice over">
                     <Select
                       value={kit.defaultVoice}
                       onValueChange={(v) => update({ defaultVoice: v })}

@@ -174,7 +174,7 @@ export default function InputScreen() {
   return (
     <>
       <Topbar
-        crumbs={[{ label: "New video" }]}
+        crumbs={[{ label: "New script" }]}
         actions={
           <div className="flex items-center gap-3">
             <StepDots step={1} />
@@ -191,16 +191,16 @@ export default function InputScreen() {
         {/* Hero / inline title */}
         <section className="max-w-6xl mx-auto px-8 lg:px-12 pt-10 pb-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
           <div className="font-sans text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-3">
-            New video
+            New script
           </div>
           <input
             value={projectTitle}
             onChange={(e) => setProjectTitle(e.target.value)}
             className="w-full bg-transparent border-none outline-none editorial-display text-3xl md:text-5xl text-ink placeholder:text-muted-foreground/40 focus:ring-0"
-            placeholder="Untitled video"
+            placeholder="Untitled script"
           />
           <p className="text-sm text-muted-foreground mt-2 font-serif italic">
-            Give your video a name. You can change it anytime.
+            Title your production. You can rename it anytime.
           </p>
         </section>
 
@@ -210,14 +210,14 @@ export default function InputScreen() {
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: "60ms" }}>
           <Card className="overflow-hidden border-border/70 shadow-sm">
             <div className="px-5 pt-5">
-              <Eyebrow hint={`${wordCount} words · ~${slideEstimate} slides · ~${minutes} min video`}>Source</Eyebrow>
+              <Eyebrow hint={`${wordCount} words · ~${slideEstimate} scenes · ~${minutes} min runtime`}>Script</Eyebrow>
 
               {/* Tabs */}
               <div className="inline-flex p-0.5 rounded-md bg-muted text-xs">
                 {([
-                  { id: "paste", label: "Paste text", icon: FileText },
+                  { id: "paste", label: "Paste script", icon: FileText },
                   { id: "upload", label: "Upload document", icon: FileUp },
-                  { id: "audio", label: "Audio script", icon: AudioLines },
+                  { id: "audio", label: "Audio recording", icon: AudioLines },
                 ] as const).map((t) => {
                   const Icon = t.icon;
                   const active = sourceTab === t.id;
@@ -242,7 +242,7 @@ export default function InputScreen() {
                 <Textarea
                   value={sourceText}
                   onChange={(e) => setSourceText(e.target.value)}
-                  placeholder="Paste an article, brief, lecture transcript, or chapter notes…"
+                  placeholder="Paste your script — an article, brief, lecture transcript, or chapter notes…"
                   className="min-h-[280px] resize-none border-border/60 text-[15px] leading-relaxed focus-visible:ring-1"
                 />
               )}
@@ -314,7 +314,7 @@ export default function InputScreen() {
                         })}
                       </svg>
                       <div className="text-sm font-medium">{uploadedAudioScript}</div>
-                      <div className="text-xs text-muted-foreground">Transcribed · ready to generate slides</div>
+                      <div className="text-xs text-muted-foreground">Transcribed · ready to cut into scenes</div>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -330,9 +330,9 @@ export default function InputScreen() {
                       <div className="h-12 w-12 rounded-full bg-background flex items-center justify-center shadow-sm">
                         <AudioLines className="h-5 w-5" />
                       </div>
-                      <div className="text-sm font-medium">Upload an audio script</div>
+                      <div className="text-sm font-medium">Upload an audio recording</div>
                       <div className="text-xs text-muted-foreground max-w-sm">
-                        Drop a lecture, podcast, or recording. We'll transcribe it and use the text to build your slides.
+                        Drop a lecture, podcast, or take. We'll transcribe it and use the script to cut your scenes.
                       </div>
                       <div className="text-[11px] text-muted-foreground">.mp3, .wav, .m4a — up to 50 MB</div>
                     </>
@@ -360,7 +360,7 @@ export default function InputScreen() {
                   <Sparkles className="h-3 w-3 text-primary" /> Use sample (SWOT)
                 </button>
                 <div className="text-xs text-muted-foreground tabular-nums">
-                  {wordCount} words · ~{slideEstimate} slides
+                  {wordCount} words · ~{slideEstimate} scenes
                 </div>
               </div>
             </div>
@@ -375,7 +375,7 @@ export default function InputScreen() {
           {/* LOOK */}
           <Card className="border-border/70 shadow-sm">
             <div className="p-5">
-              <Eyebrow hint="Fonts, colors, and slide style">Look</Eyebrow>
+              <Eyebrow hint="Fonts, colors, and scene style">Visual style</Eyebrow>
 
               <div className="grid grid-cols-3 gap-2">
                 {THEME_LIST.map((t) => {
@@ -478,12 +478,12 @@ export default function InputScreen() {
           {/* VOICE */}
           <Card className="border-border/70 shadow-sm">
             <div className="p-5">
-              <Eyebrow hint="Choose how it sounds">Voice</Eyebrow>
+              <Eyebrow hint="Choose how it sounds">Voice over</Eyebrow>
 
               {/* Mode segmented */}
               <div className="inline-flex p-0.5 rounded-md bg-muted text-xs mb-4">
                 {([
-                  { id: "ai", label: "AI voice", icon: Sparkles },
+                  { id: "ai", label: "AI voice over", icon: Sparkles },
                   { id: "upload", label: "My recording", icon: Mic },
                 ] as const).map((m) => {
                   const Icon = m.icon;
@@ -638,9 +638,9 @@ export default function InputScreen() {
                         <div className="h-10 w-10 rounded-full bg-background flex items-center justify-center shadow-sm">
                           <Mic className="h-5 w-5" />
                         </div>
-                        <div className="text-sm font-medium">Upload your voiceover</div>
+                        <div className="text-sm font-medium">Upload your voice over</div>
                         <div className="text-xs text-muted-foreground">
-                          .mp3 or .wav — we'll sync slides to your audio
+                          .mp3 or .wav — we'll sync scenes to your audio
                         </div>
                       </>
                     )}
@@ -665,8 +665,8 @@ export default function InputScreen() {
         <div className="max-w-6xl mx-auto px-8 lg:px-12 py-3 flex items-center justify-between gap-4">
           <div className="text-xs text-muted-foreground tabular-nums hidden sm:block">
             <span className="font-medium text-foreground">{wordCount}</span> words ·{" "}
-            <span className="font-medium text-foreground">~{slideEstimate}</span> slides ·{" "}
-            <span className="font-medium text-foreground">~{minutes} min</span> video
+            <span className="font-medium text-foreground">~{slideEstimate}</span> scenes ·{" "}
+            <span className="font-medium text-foreground">~{minutes} min</span> runtime
           </div>
           <div className="flex items-center gap-3 ml-auto">
             <span className="text-[11px] text-muted-foreground hidden md:inline-flex items-center gap-1">
@@ -676,14 +676,14 @@ export default function InputScreen() {
             </span>
             <Button variant="default" size="lg" disabled={!canGenerate} onClick={onGenerate} className="h-11 px-5">
               <Sparkles className="h-4 w-4 mr-2" />
-              Generate presentation
+              Generate video
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           </div>
         </div>
         {!canGenerate && (
           <div className="max-w-6xl mx-auto px-8 lg:px-12 pb-2 -mt-1 text-[11px] text-muted-foreground text-right">
-            Add some text or upload a document to continue
+            Add your script or upload a document to continue
           </div>
         )}
       </div>
@@ -692,7 +692,7 @@ export default function InputScreen() {
 }
 
 function StepDots({ step }: { step: 1 | 2 | 3 }) {
-  const labels = ["Setup", "Generate", "Edit"];
+  const labels = ["Script", "Render", "Cut"];
   return (
     <div className="hidden md:flex items-center gap-2 text-[11px] text-muted-foreground">
       {labels.map((l, i) => {

@@ -21,9 +21,9 @@ const greet = (name: string) => {
 };
 
 const lede = (count: number) => {
-  if (count === 0) return "A blank page is its own kind of opening.";
-  if (count === 1) return "One draft underway. Where to next?";
-  return `${count} drafts underway. Pick up where you left off.`;
+  if (count === 0) return "A blank script is its own kind of opening.";
+  if (count === 1) return "One script in production. Where to next?";
+  return `${count} scripts in production. Pick up where you left off.`;
 };
 
 export default function Dashboard() {
@@ -46,9 +46,9 @@ export default function Dashboard() {
   // One-line "next step" ribbon — only the very next undone item
   const nextStep = (() => {
     if (dismissed) return null;
-    if (projects.length === 0) return { label: "Create your first video", to: "/app/new" };
-    if (!kit.accentHsl && !kit.logoDataUrl) return { label: "Set your brand colors", to: "/app/brand" };
-    if (kit.defaultVoice === "Aurora") return { label: "Pick a default voice", to: "/app/brand" };
+    if (projects.length === 0) return { label: "Write your first script", to: "/app/new" };
+    if (!kit.accentHsl && !kit.logoDataUrl) return { label: "Set your studio brand", to: "/app/brand" };
+    if (kit.defaultVoice === "Aurora") return { label: "Pick a default voice over", to: "/app/brand" };
     return null;
   })();
 
@@ -121,9 +121,9 @@ export default function Dashboard() {
                 <Plus className="h-4 w-4" strokeWidth={2} />
               </span>
               <span className="flex-1 min-w-0">
-                <span className="block text-[15px] font-medium text-ink">New video</span>
+                <span className="block text-[15px] font-medium text-ink">New script</span>
                 <span className="block font-serif italic text-[13px] text-muted-foreground mt-0.5">
-                  Paste your writing — we'll turn it into slides with voice.
+                  Paste your writing — we'll cut it into scenes and add a voice over.
                 </span>
               </span>
               <span className="hidden sm:inline-flex items-center gap-1 text-muted-foreground">
@@ -135,7 +135,7 @@ export default function Dashboard() {
                 onClick={(e) => e.stopPropagation()}
                 className="hidden md:inline-flex items-center gap-1 text-[12px] text-muted-foreground hover:text-foreground border-l hairline pl-4 ml-2"
               >
-                Use a template
+                Use a style template
                 <ArrowRight className="h-3 w-3" />
               </Link>
             </button>
@@ -145,14 +145,14 @@ export default function Dashboard() {
           <section>
             <div className="flex items-end justify-between mb-5">
               <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                Continue
+                In production
               </div>
               {recent.length > 0 && (
                 <Link
                   to="/app/library"
                   className="text-[12px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors"
                 >
-                  All <ArrowRight className="h-3 w-3" />
+                  All scripts <ArrowRight className="h-3 w-3" />
                 </Link>
               )}
             </div>
@@ -163,13 +163,13 @@ export default function Dashboard() {
                   eyebrow="Your studio is quiet"
                   title={
                     <>
-                      Let's make your <em className="not-italic font-serif italic">first</em> video.
+                      Let's record your <em className="not-italic font-serif italic">first</em> take.
                     </>
                   }
-                  description="Paste any writing — an essay, a doc, a transcript — and we'll turn it into slides with voiceover."
+                  description="Paste any script — an essay, a doc, a transcript — and we'll cut it into scenes with a narrated voice over."
                   actions={
                     <Button onClick={() => navigate("/app/new")}>
-                      <Plus className="h-4 w-4" /> Start your first video
+                      <Plus className="h-4 w-4" /> Start your first script
                     </Button>
                   }
                 />
@@ -188,13 +188,13 @@ export default function Dashboard() {
             <section>
               <div className="flex items-end justify-between mb-5">
                 <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                  Recently
+                  Studio activity
                 </div>
                 <Link
                   to="/app/history"
                   className="text-[12px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors"
                 >
-                  Log <ArrowRight className="h-3 w-3" />
+                  Full log <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
               <ul className="border-y hairline divide-y divide-hairline">
@@ -210,7 +210,7 @@ export default function Dashboard() {
               </ul>
               {projects.length > 0 && (
                 <div className="mt-3 text-[11px] text-muted-foreground tnum">
-                  {projects.length} {projects.length === 1 ? "video" : "videos"} · {totalSlides} slides
+                  {projects.length} {projects.length === 1 ? "script" : "scripts"} · {totalSlides} scenes
                 </div>
               )}
             </section>

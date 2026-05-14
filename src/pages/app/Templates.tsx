@@ -17,18 +17,18 @@ export default function TemplatesPage() {
 
   return (
     <>
-      <Topbar crumbs={[{ label: "Templates" }]} />
+      <Topbar crumbs={[{ label: "Style templates" }]} />
       <div className="flex-1 overflow-auto">
         <div className="max-w-6xl mx-auto px-8 lg:px-12 py-12 lg:py-16">
           <EditorialHeader
             eyebrow={
               <>
                 <span className="h-px w-6 bg-foreground/30 inline-block" />
-                <span>Templates · {TEMPLATES.length} starters</span>
+                <span>Style templates · {TEMPLATES.length} starters</span>
               </>
             }
             title="Start with a structure."
-            lede="Tested arcs for the talks you keep giving — pitches, recaps, intros, updates."
+            lede="Tested arcs for the videos you keep producing — pitches, recaps, intros, updates."
           />
 
           <div className="mt-14 space-y-16">
