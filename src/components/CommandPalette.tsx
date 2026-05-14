@@ -99,7 +99,7 @@ export function CommandPalette() {
         {recent.length > 0 && (
           <>
             <CommandSeparator />
-            <CommandGroup heading="Recent scripts">
+            <CommandGroup heading="Recent videos">
               {recent.map((p) => (
                 <CommandItem key={p.id} onSelect={() => go(`/app/editor/${p.id}`)}>
                   <FileText className="h-4 w-4 mr-2" />
