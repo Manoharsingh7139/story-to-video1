@@ -381,8 +381,39 @@ export function Topbar({
   );
 }
 
+function ShortcutsDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
+  const rows: { keys: string[]; label: string }[] = [
+    { keys: ["⌘", "K"], label: "Open search" },
+    { keys: ["⌘", "N"], label: "New video" },
+    { keys: ["⌘", "↵"], label: "Generate (in Setup)" },
+    { keys: ["esc"], label: "Close dialogs" },
+  ];
+  return (
+    <ShortcutsDialogPrimitive open={open} onOpenChange={onOpenChange}>
+      <ShortcutsDialogContent className="sm:max-w-sm">
+        <ShortcutsDialogHeader>
+          <ShortcutsDialogTitle className="font-serif text-xl">Keyboard shortcuts</ShortcutsDialogTitle>
+        </ShortcutsDialogHeader>
+        <ul className="border-y hairline divide-y divide-hairline mt-1">
+          {rows.map((r) => (
+            <li key={r.label} className="flex items-center justify-between py-2.5 text-sm">
+              <span className="text-foreground/85">{r.label}</span>
+              <span className="flex items-center gap-1">
+                {r.keys.map((k) => (
+                  <KBD key={k}>{k}</KBD>
+                ))}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </ShortcutsDialogContent>
+    </ShortcutsDialogPrimitive>
+  );
+}
+
 export default function AppShell() {
   const location = useLocation();
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const fullBleed =
     location.pathname.startsWith("/app/editor") ||
     location.pathname.startsWith("/app/generating");
@@ -395,7 +426,11 @@ export default function AppShell() {
     <SidebarProvider defaultOpen>
       <div className="min-h-screen flex w-full bg-background">
         <CommandPalette />
-        <AppSidebar onOpenCommand={() => useCommandPalette.getState().open()} />
+        <ShortcutsDialog open={shortcutsOpen} onOpenChange={setShortcutsOpen} />
+        <AppSidebar
+          onOpenCommand={() => useCommandPalette.getState().open()}
+          onOpenShortcuts={() => setShortcutsOpen(true)}
+        />
         <div className="flex-1 flex flex-col min-w-0 bg-paper">
           <Outlet />
         </div>
@@ -403,3 +438,4 @@ export default function AppShell() {
     </SidebarProvider>
   );
 }
+
