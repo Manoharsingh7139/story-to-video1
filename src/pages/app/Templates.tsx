@@ -115,6 +115,9 @@ export default function TemplatesPage() {
                                 className="self-start mt-4 -ml-2 text-primary hover:text-primary"
                                 onClick={() => useTemplate(t.id)}
                               >
+                                Start with this
+                                <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
+                              </Button>
                                 Use template
                                 <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
                               </Button>
