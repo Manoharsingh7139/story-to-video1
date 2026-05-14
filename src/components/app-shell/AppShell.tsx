@@ -122,7 +122,7 @@ function NavRow({
   );
 }
 
-function AppSidebar({ onOpenCommand }: { onOpenCommand: () => void }) {
+function AppSidebar({ onOpenCommand: _onOpenCommand, onOpenShortcuts }: { onOpenCommand: () => void; onOpenShortcuts: () => void }) {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const navigate = useNavigate();
