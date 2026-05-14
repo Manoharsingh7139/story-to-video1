@@ -21,9 +21,9 @@ const greet = (name: string) => {
 };
 
 const lede = (count: number) => {
-  if (count === 0) return "A blank page is its own kind of opening.";
-  if (count === 1) return "One draft underway. Where to next?";
-  return `${count} drafts underway. Pick up where you left off.`;
+  if (count === 0) return "A blank script is its own kind of opening.";
+  if (count === 1) return "One script in production. Where to next?";
+  return `${count} scripts in production. Pick up where you left off.`;
 };
 
 export default function Dashboard() {
