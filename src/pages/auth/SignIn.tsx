@@ -113,12 +113,12 @@ export function AuthLayout({
             className="text-4xl md:text-[44px] leading-[1.06] tracking-[-0.02em]"
             style={{ fontFamily: "var(--font-serif)", fontWeight: 500 }}
           >
-            Turn writing into watchable stories — slide by slide, voice by voice.
+            Turn your scripts and audio into LMS ready videos — in minutes.
           </p>
           <div className="mt-10 flex items-center gap-4">
             <div className="h-px w-10 bg-primary-foreground/40" />
             <p className="text-[11px] uppercase tracking-[0.22em] opacity-70">
-              An editorial system for video
+              &nbsp;
             </p>
           </div>
           <div className="mt-16 grid grid-cols-3 gap-3 text-[11px] opacity-75 tnum">
