@@ -103,7 +103,7 @@ export default function LibraryPage() {
         crumbs={[{ label: "Library" }]}
         actions={
           <Button onClick={() => navigate("/app/new")} size="sm">
-            <Plus className="h-4 w-4" /> New script
+            <Plus className="h-4 w-4" /> New video
           </Button>
         }
       />
@@ -114,11 +114,11 @@ export default function LibraryPage() {
             eyebrow={
               <>
                 <span className="h-px w-6 bg-foreground/30 inline-block" />
-                <span>Library · {projects.length} {projects.length === 1 ? "script" : "scripts"}</span>
+                <span>Library · {projects.length} {projects.length === 1 ? "video" : "videos"}</span>
               </>
             }
             title="Your productions"
-            lede="Every script, take, and finished cut — all in one shelf."
+            lede="Every script, presentation , and finished cut — all in one shelf."
           />
 
           {projects.length === 0 ? (
@@ -127,10 +127,10 @@ export default function LibraryPage() {
                 illustration={<ManuscriptIllustration />}
                 eyebrow="Library"
                 title={<>Your library is <em className="font-serif italic">quiet.</em></>}
-                description="Every script you produce lands here, ready to revisit, duplicate, or share."
+                description="All your generated videos get listed here."
                 actions={
                   <Button onClick={() => navigate("/app/new")}>
-                    <Plus className="h-4 w-4" /> Write your first script
+                    <Plus className="h-4 w-4" /> New video
                   </Button>
                 }
               />
