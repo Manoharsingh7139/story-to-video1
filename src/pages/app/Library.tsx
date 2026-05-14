@@ -256,7 +256,7 @@ export default function LibraryPage() {
       <Dialog open={!!renameId} onOpenChange={(o) => !o && setRenameId(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="font-serif">Rename script</DialogTitle>
+            <DialogTitle className="font-serif">Rename video</DialogTitle>
           </DialogHeader>
           <Input
             value={renameValue}
@@ -269,7 +269,7 @@ export default function LibraryPage() {
             </Button>
             <Button
               onClick={() => {
-                if (renameId) rename(renameId, renameValue.trim() || "Untitled script");
+                if (renameId) rename(renameId, renameValue.trim() || "Untitled video");
                 setRenameId(null);
               }}
             >
