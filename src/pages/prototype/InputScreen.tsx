@@ -665,8 +665,8 @@ export default function InputScreen() {
         <div className="max-w-6xl mx-auto px-8 lg:px-12 py-3 flex items-center justify-between gap-4">
           <div className="text-xs text-muted-foreground tabular-nums hidden sm:block">
             <span className="font-medium text-foreground">{wordCount}</span> words ·{" "}
-            <span className="font-medium text-foreground">~{slideEstimate}</span> slides ·{" "}
-            <span className="font-medium text-foreground">~{minutes} min</span> video
+            <span className="font-medium text-foreground">~{slideEstimate}</span> scenes ·{" "}
+            <span className="font-medium text-foreground">~{minutes} min</span> runtime
           </div>
           <div className="flex items-center gap-3 ml-auto">
             <span className="text-[11px] text-muted-foreground hidden md:inline-flex items-center gap-1">
@@ -676,7 +676,7 @@ export default function InputScreen() {
             </span>
             <Button variant="default" size="lg" disabled={!canGenerate} onClick={onGenerate} className="h-11 px-5">
               <Sparkles className="h-4 w-4 mr-2" />
-              Generate presentation
+              Generate video
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           </div>
