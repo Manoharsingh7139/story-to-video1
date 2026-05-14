@@ -619,9 +619,9 @@ export default function InputScreen() {
               </div>
 
               {voiceMode === "ai" ? (
-                <div className="flex items-center gap-3 flex-wrap">
-                  {/* Voice picker */}
-                  <div className="flex items-center gap-2 min-w-0">
+                <div className="flex flex-col gap-2">
+                  {/* Voice picker row */}
+                  <div className="flex items-center gap-2">
                     <div
                       className="h-8 w-8 rounded-full flex items-center justify-center text-[12px] font-semibold text-foreground shrink-0"
                       style={{ background: voiceGradient(selectedVoiceName) }}
@@ -629,7 +629,7 @@ export default function InputScreen() {
                       {selectedVoiceName[0]}
                     </div>
                     <Select value={voice} onValueChange={setVoice}>
-                      <SelectTrigger className="h-8 min-w-[180px] text-xs">
+                      <SelectTrigger className="h-8 flex-1 min-w-0 text-xs">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -649,46 +649,42 @@ export default function InputScreen() {
                     </button>
                   </div>
 
-                  {/* Pace + tone */}
-                  <div className="flex items-center gap-2 ml-auto">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="inline-flex p-0.5 rounded-md bg-muted text-[11px]">
-                          {PACE_OPTIONS.map((p) => (
-                            <button
-                              key={p}
-                              onClick={() => setPace(p)}
-                              className={cn(
-                                "px-2 h-7 rounded-[5px] transition-colors",
-                                pace === p ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground",
-                              )}
-                            >
-                              {p}
-                            </button>
-                          ))}
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent side="top" className="text-[11px]">Pace</TooltipContent>
-                    </Tooltip>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="inline-flex p-0.5 rounded-md bg-muted text-[11px]">
-                          {TONE_OPTIONS.map((p) => (
-                            <button
-                              key={p}
-                              onClick={() => setTone(p)}
-                              className={cn(
-                                "px-2 h-7 rounded-[5px] transition-colors",
-                                tone === p ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground",
-                              )}
-                            >
-                              {p}
-                            </button>
-                          ))}
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent side="top" className="text-[11px]">Tone</TooltipContent>
-                    </Tooltip>
+                  {/* Pace + tone row with labels */}
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/80">Pace</span>
+                      <div className="inline-flex p-0.5 rounded-md bg-muted text-[11px]">
+                        {PACE_OPTIONS.map((p) => (
+                          <button
+                            key={p}
+                            onClick={() => setPace(p)}
+                            className={cn(
+                              "px-2 h-6 rounded-[5px] transition-colors",
+                              pace === p ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground",
+                            )}
+                          >
+                            {p}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/80">Tone</span>
+                      <div className="inline-flex p-0.5 rounded-md bg-muted text-[11px]">
+                        {TONE_OPTIONS.map((p) => (
+                          <button
+                            key={p}
+                            onClick={() => setTone(p)}
+                            className={cn(
+                              "px-2 h-6 rounded-[5px] transition-colors",
+                              tone === p ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground",
+                            )}
+                          >
+                            {p}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               ) : (
