@@ -242,7 +242,7 @@ export default function InputScreen() {
                 <Textarea
                   value={sourceText}
                   onChange={(e) => setSourceText(e.target.value)}
-                  placeholder="Paste an article, brief, lecture transcript, or chapter notes…"
+                  placeholder="Paste your script — an article, brief, lecture transcript, or chapter notes…"
                   className="min-h-[280px] resize-none border-border/60 text-[15px] leading-relaxed focus-visible:ring-1"
                 />
               )}
