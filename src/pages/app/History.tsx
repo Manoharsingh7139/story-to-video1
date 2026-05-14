@@ -183,7 +183,7 @@ export default function HistoryPage() {
                 illustration={<LogbookIllustration />}
                 eyebrow="History"
                 title={<>Nothing's happened <em className="font-serif italic">yet.</em></>}
-                description="Write your first script and the studio log will fill — every take, every video, every cut."
+                description="Create your first video and your history will fill — every take, every video, every cut."
               />
             </div>
           ) : (
