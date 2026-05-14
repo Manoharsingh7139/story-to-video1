@@ -169,7 +169,7 @@ export default function Dashboard() {
                   description="Paste any script — an essay, a doc, a transcript — and we'll cut it into scenes with a narrated voice over."
                   actions={
                     <Button onClick={() => navigate("/app/new")}>
-                      <Plus className="h-4 w-4" /> Start your first script
+                      <Plus className="h-4 w-4" /> Start your first video
                     </Button>
                   }
                 />
