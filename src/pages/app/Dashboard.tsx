@@ -166,7 +166,7 @@ export default function Dashboard() {
                       Let's record your <em className="not-italic font-serif italic">first</em> take.
                     </>
                   }
-                  description="Paste any script — an essay, a doc, a transcript — and we'll cut it into scenes with a narrated voice over."
+                  description="Paste any script — an essay, a doc, a transcript — and we'll cut it into scenes with a narrated video."
                   actions={
                     <Button onClick={() => navigate("/app/new")}>
                       <Plus className="h-4 w-4" /> Start your first video
