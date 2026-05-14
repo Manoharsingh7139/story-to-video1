@@ -118,9 +118,6 @@ export default function TemplatesPage() {
                                 Start with this
                                 <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
                               </Button>
-                                Use template
-                                <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
-                              </Button>
                             </div>
                           </article>
                         );
