@@ -172,47 +172,42 @@ export default function InputScreen() {
   }, [canGenerate]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 pb-32">
-      {/* Header */}
-      <header className="border-b border-border/60 backdrop-blur bg-background/70 sticky top-0 z-30">
-        <div className="max-w-6xl mx-auto px-8 py-4 flex items-center justify-between">
+    <>
+      <Topbar
+        crumbs={[{ label: "New video" }]}
+        actions={
           <div className="flex items-center gap-3">
-            <Wordmark size="md" />
-            <span className="text-muted-foreground/40">·</span>
-            <span className="text-[11px] font-sans uppercase tracking-[0.18em] text-muted-foreground">Step 1 of 2 — Setup</span>
+            <StepDots step={1} />
+            <button
+              onClick={onSkip}
+              className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5"
+            >
+              Skip with sample <ArrowRight className="h-3 w-3" />
+            </button>
           </div>
-          <button
-            onClick={onSkip}
-            className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5"
-          >
-            Skip with sample <ArrowRight className="h-3 w-3" />
-          </button>
-        </div>
-      </header>
+        }
+      />
+      <div className="flex-1 overflow-auto pb-28">
+        {/* Hero / inline title */}
+        <section className="max-w-6xl mx-auto px-8 lg:px-12 pt-10 pb-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+          <div className="font-sans text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-3">
+            New video
+          </div>
+          <input
+            value={projectTitle}
+            onChange={(e) => setProjectTitle(e.target.value)}
+            className="w-full bg-transparent border-none outline-none editorial-display text-3xl md:text-5xl text-ink placeholder:text-muted-foreground/40 focus:ring-0"
+            placeholder="Untitled video"
+          />
+          <p className="text-sm text-muted-foreground mt-2 font-serif italic">
+            Give your video a name. You can change it anytime.
+          </p>
+        </section>
 
-      {/* Hero / inline title */}
-      <section className="max-w-6xl mx-auto px-8 pt-12 pb-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
-        <div className="font-sans text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-3">
-          New presentation
-        </div>
-        <h1 className="font-display text-3xl md:text-4xl tracking-[-0.02em] text-foreground/65 mb-2 leading-[1.05]">
-          Where words become watchable.
-        </h1>
-        <input
-          value={projectTitle}
-          onChange={(e) => setProjectTitle(e.target.value)}
-          className="w-full bg-transparent border-none outline-none font-display text-4xl md:text-5xl font-semibold tracking-tight placeholder:text-muted-foreground/40 focus:ring-0"
-          placeholder="Untitled video"
-        />
-        <p className="text-sm text-muted-foreground mt-2">
-          Give your video a name. You can change it anytime.
-        </p>
-      </section>
-
-      {/* Two-column body */}
-      <main className="max-w-6xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-6">
-        {/* LEFT — SOURCE */}
-        <div className="animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: "60ms" }}>
+        {/* Two-column body */}
+        <main className="max-w-6xl mx-auto px-8 lg:px-12 grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-6">
+          {/* LEFT — SOURCE */}
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: "60ms" }}>
           <Card className="overflow-hidden border-border/70 shadow-sm">
             <div className="px-5 pt-5">
               <Eyebrow hint={`${wordCount} words · ~${slideEstimate} slides · ~${minutes} min video`}>Source</Eyebrow>
