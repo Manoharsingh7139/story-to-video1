@@ -5,6 +5,19 @@ import { TEMPLATES } from "@/lib/data/seedTemplates";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { usePrototypeStore } from "@/lib/prototype/store";
 import { SAMPLE_TEXT, VOICES } from "@/lib/prototype/sampleDeck";
 import { THEME_LIST } from "@/lib/prototype/themes";
@@ -15,13 +28,14 @@ import {
   Upload,
   Mic,
   FileUp,
-  Plus,
   X,
   ArrowRight,
   Play,
   Pause,
   AudioLines,
+  LayoutTemplate,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 import { useProjects } from "@/lib/data/useProjects";
 
@@ -31,28 +45,25 @@ const PACE_OPTIONS = ["Slow", "Normal", "Fast"] as const;
 const TONE_OPTIONS = ["Neutral", "Warm", "Energetic"] as const;
 
 const MOTION_OPTIONS = [
-  { id: "subtle", name: "Subtle", desc: "Gentle fade-in with a touch of motion" },
-  { id: "dynamic", name: "Dynamic", desc: "Recommended — bullets rise, boxes pop", recommended: true },
-  { id: "dramatic", name: "Dramatic", desc: "Bigger motion, slower entrance" },
-  { id: "cinematic", name: "Cinematic", desc: "Scale + wipe with overshoot — cinematic feel" },
+  { id: "subtle", name: "Subtle", desc: "Gentle fade-in" },
+  { id: "dynamic", name: "Dynamic", desc: "Bullets rise, boxes pop" },
+  { id: "dramatic", name: "Dramatic", desc: "Bigger, slower entrance" },
+  { id: "cinematic", name: "Cinematic", desc: "Scale + wipe overshoot" },
 ] as const;
 type MotionId = typeof MOTION_OPTIONS[number]["id"];
 
-// Forest-warm deterministic gradient per voice name (greens + warm muted)
+// Forest-warm deterministic gradient per voice name
 const voiceGradient = (name: string) => {
   let h = 0;
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 40;
-  const base = 140 + h; // 140..179 (forest → teal)
-  const warm = 30 + (h % 20); // 30..49 (warm sand partner)
+  const base = 140 + h;
+  const warm = 30 + (h % 20);
   return `linear-gradient(135deg, hsl(${base} 35% 60%), hsl(${warm} 50% 78%))`;
 };
 
-const Eyebrow = ({ children, hint }: { children: React.ReactNode; hint?: string }) => (
-  <div className="flex items-end justify-between mb-3">
-    <div>
-      <div className="font-sans text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{children}</div>
-    </div>
-    {hint && <div className="text-[11px] text-muted-foreground">{hint}</div>}
+const RowLabel = ({ children }: { children: React.ReactNode }) => (
+  <div className="font-sans text-[10px] uppercase tracking-[0.22em] text-muted-foreground/90 w-14 shrink-0 pt-1">
+    {children}
   </div>
 );
 
@@ -115,21 +126,17 @@ export default function InputScreen() {
       setSourceText(SAMPLE_TEXT);
     }
   };
-
   const handleAudioScriptUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setUploadedAudioScript(file.name);
-      // Prototype: pretend we transcribed the audio into the source text.
       setSourceText(SAMPLE_TEXT);
     }
   };
-
   const handleVoiceUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) setUploadedVoice(file.name);
   };
-
   const handleTemplateUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) setCustomTemplate(file.name);
@@ -171,7 +178,6 @@ export default function InputScreen() {
     navigate(`/app/generating?id=${project.id}`);
   };
 
-  // ⌘/Ctrl+Enter to generate
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "Enter") onGenerate();
@@ -180,90 +186,97 @@ export default function InputScreen() {
     return () => window.removeEventListener("keydown", onKey);
   }, [canGenerate]);
 
+  const selectedVoiceName = (voice || VOICES[0]).split(" — ")[0];
+
   return (
-    <>
+    <TooltipProvider delayDuration={200}>
       <Topbar
         crumbs={[{ label: "New video" }]}
         actions={
-          <div className="flex items-center gap-3">
-            <StepDots step={1} />
-            <button
-              onClick={onSkip}
-              className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5"
-            >
-              Skip with sample <ArrowRight className="h-3 w-3" />
-            </button>
-          </div>
+          <button
+            onClick={onSkip}
+            className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5"
+          >
+            Skip with sample <ArrowRight className="h-3 w-3" />
+          </button>
         }
       />
-      <div className="flex-1 overflow-auto pb-28">
-        {/* Hero / inline title */}
-        <section className="max-w-6xl mx-auto px-8 lg:px-12 pt-10 pb-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
-          <div className="font-sans text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-3">
+
+      {/* Page column — fills the remaining shell height, no scroll */}
+      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+        {/* Compact hero */}
+        <section className="max-w-7xl w-full mx-auto px-6 lg:px-10 pt-5 pb-3 shrink-0 flex items-center gap-4">
+          <span className="font-sans text-[10px] uppercase tracking-[0.22em] text-muted-foreground/80 shrink-0">
             New video
-          </div>
+          </span>
+          <span className="h-px w-6 bg-foreground/15 shrink-0" aria-hidden />
           <input
             value={projectTitle}
             onChange={(e) => setProjectTitle(e.target.value)}
-            className="w-full bg-transparent border-none outline-none editorial-display text-3xl md:text-5xl text-ink placeholder:text-muted-foreground/40 focus:ring-0"
-            placeholder="Untitled script"
+            className="flex-1 min-w-0 bg-transparent border-none outline-none editorial-display text-[22px] md:text-[26px] leading-tight text-ink placeholder:text-muted-foreground/40 focus:ring-0"
+            placeholder="Untitled video"
           />
-          <p className="text-sm text-muted-foreground mt-2 font-serif italic">
-            Title your production. You can rename it anytime.
-          </p>
         </section>
 
         {/* Two-column body */}
-        <main className="max-w-6xl mx-auto px-8 lg:px-12 grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-6">
-          {/* LEFT — SOURCE */}
-          <div className="animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: "60ms" }}>
-          <Card className="overflow-hidden border-border/70 shadow-sm">
-            <div className="px-5 pt-5">
-              <Eyebrow hint={`${wordCount} words · ~${slideEstimate} scenes · ~${minutes} min runtime`}>Script</Eyebrow>
-
-              {/* Tabs */}
-              <div className="inline-flex p-0.5 rounded-md bg-muted text-xs">
-                {([
-                  { id: "paste", label: "Paste script", icon: FileText },
-                  { id: "upload", label: "Upload document", icon: FileUp },
-                  { id: "audio", label: "Audio recording", icon: AudioLines },
-                ] as const).map((t) => {
-                  const Icon = t.icon;
-                  const active = sourceTab === t.id;
-                  return (
-                    <button
-                      key={t.id}
-                      onClick={() => setSourceTab(t.id as SourceTab)}
-                      className={`px-3 h-8 rounded-[5px] inline-flex items-center gap-1.5 transition-colors ${
-                        active ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      <Icon className="h-3.5 w-3.5" />
-                      {t.label}
-                    </button>
-                  );
-                })}
+        <main className="max-w-7xl w-full mx-auto px-6 lg:px-10 grid grid-cols-1 lg:grid-cols-2 gap-5 flex-1 min-h-0 pb-3 items-stretch">
+          {/* LEFT — Script */}
+          <Card className="overflow-hidden border-border/70 shadow-sm flex flex-col min-h-0">
+            <div className="px-4 pt-3.5 pb-2 flex items-center justify-between gap-3 shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="font-sans text-[10px] uppercase tracking-[0.22em] text-muted-foreground/90">
+                  Script
+                </div>
+                <div className="inline-flex p-0.5 rounded-md bg-muted text-xs">
+                  {([
+                    { id: "paste", label: "Paste", icon: FileText },
+                    { id: "upload", label: "Document", icon: FileUp },
+                    { id: "audio", label: "Audio", icon: AudioLines },
+                  ] as const).map((t) => {
+                    const Icon = t.icon;
+                    const active = sourceTab === t.id;
+                    return (
+                      <button
+                        key={t.id}
+                        onClick={() => setSourceTab(t.id as SourceTab)}
+                        className={cn(
+                          "px-2.5 h-7 rounded-[5px] inline-flex items-center gap-1.5 transition-colors",
+                          active
+                            ? "bg-background shadow-sm text-foreground"
+                            : "text-muted-foreground hover:text-foreground",
+                        )}
+                      >
+                        <Icon className="h-3 w-3" />
+                        {t.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="text-[10px] text-muted-foreground tabular-nums whitespace-nowrap">
+                {wordCount} words · ~{slideEstimate} scenes · ~{minutes} min
               </div>
             </div>
 
-            <div className="p-5">
+            <div className="px-4 pb-3 flex-1 min-h-0 flex flex-col">
               {sourceTab === "paste" && (
                 <Textarea
                   value={sourceText}
                   onChange={(e) => setSourceText(e.target.value)}
                   placeholder="Paste your script — an article, brief, lecture transcript, or chapter notes…"
-                  className="min-h-[280px] resize-none border-border/60 text-[15px] leading-relaxed focus-visible:ring-1"
+                  className="flex-1 min-h-0 resize-none border-border/60 text-[14px] leading-relaxed focus-visible:ring-1"
                 />
               )}
 
               {sourceTab === "upload" && (
-                <div
+                <button
+                  type="button"
                   onClick={() => docInputRef.current?.click()}
-                  className="min-h-[280px] rounded-md border-2 border-dashed border-border hover:border-foreground/40 transition-colors flex flex-col items-center justify-center gap-3 cursor-pointer bg-muted/20"
+                  className="flex-1 min-h-0 rounded-md border-2 border-dashed border-border hover:border-foreground/40 transition-colors flex flex-col items-center justify-center gap-2.5 cursor-pointer bg-muted/20 px-6 text-center"
                 >
                   {uploadedDoc ? (
                     <>
-                      <div className="h-12 w-12 rounded-full bg-background flex items-center justify-center shadow-sm">
+                      <div className="h-11 w-11 rounded-full bg-background flex items-center justify-center shadow-sm">
                         <FileText className="h-5 w-5" />
                       </div>
                       <div className="text-sm font-medium">{uploadedDoc}</div>
@@ -279,11 +292,11 @@ export default function InputScreen() {
                     </>
                   ) : (
                     <>
-                      <div className="h-12 w-12 rounded-full bg-background flex items-center justify-center shadow-sm">
+                      <div className="h-11 w-11 rounded-full bg-background flex items-center justify-center shadow-sm">
                         <Upload className="h-5 w-5" />
                       </div>
                       <div className="text-sm font-medium">Drop a file or click to browse</div>
-                      <div className="text-xs text-muted-foreground">.pdf, .docx, .txt — up to 20 MB</div>
+                      <div className="text-[11px] text-muted-foreground">.pdf, .docx, .txt — up to 20 MB</div>
                     </>
                   )}
                   <input
@@ -293,20 +306,21 @@ export default function InputScreen() {
                     className="hidden"
                     onChange={handleDocUpload}
                   />
-                </div>
+                </button>
               )}
 
               {sourceTab === "audio" && (
-                <div
+                <button
+                  type="button"
                   onClick={() => audioScriptInputRef.current?.click()}
-                  className="min-h-[280px] rounded-md border-2 border-dashed border-border hover:border-foreground/40 transition-colors flex flex-col items-center justify-center gap-3 cursor-pointer bg-muted/20 px-6 text-center"
+                  className="flex-1 min-h-0 rounded-md border-2 border-dashed border-border hover:border-foreground/40 transition-colors flex flex-col items-center justify-center gap-2.5 cursor-pointer bg-muted/20 px-6 text-center"
                 >
                   {uploadedAudioScript ? (
                     <>
-                      <div className="h-12 w-12 rounded-full bg-background flex items-center justify-center shadow-sm">
+                      <div className="h-11 w-11 rounded-full bg-background flex items-center justify-center shadow-sm">
                         <AudioLines className="h-5 w-5" />
                       </div>
-                      <svg viewBox="0 0 200 28" className="w-full max-w-[280px] h-7" aria-hidden>
+                      <svg viewBox="0 0 200 28" className="w-full max-w-[260px] h-6" aria-hidden>
                         {Array.from({ length: 40 }).map((_, i) => {
                           const h = 4 + Math.abs(Math.sin(i * 0.7)) * 18 + (i % 3) * 2;
                           return (
@@ -323,7 +337,6 @@ export default function InputScreen() {
                         })}
                       </svg>
                       <div className="text-sm font-medium">{uploadedAudioScript}</div>
-                      <div className="text-xs text-muted-foreground">Transcribed · ready to cut into scenes</div>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -336,14 +349,13 @@ export default function InputScreen() {
                     </>
                   ) : (
                     <>
-                      <div className="h-12 w-12 rounded-full bg-background flex items-center justify-center shadow-sm">
+                      <div className="h-11 w-11 rounded-full bg-background flex items-center justify-center shadow-sm">
                         <AudioLines className="h-5 w-5" />
                       </div>
                       <div className="text-sm font-medium">Upload an audio recording</div>
-                      <div className="text-xs text-muted-foreground max-w-sm">
+                      <div className="text-[11px] text-muted-foreground max-w-sm">
                         Drop a lecture, podcast, or take. We'll transcribe it and use the script to cut your scenes.
                       </div>
-                      <div className="text-[11px] text-muted-foreground">.mp3, .wav, .m4a — up to 50 MB</div>
                     </>
                   )}
                   <input
@@ -353,496 +365,336 @@ export default function InputScreen() {
                     className="hidden"
                     onChange={handleAudioScriptUpload}
                   />
-                </div>
-              )}
-
-              {/* Footer */}
-              <div className="flex items-center justify-between mt-4">
-                <button
-                  onClick={() => {
-                    setSourceTab("paste");
-                    setSourceText(SAMPLE_TEXT);
-                    setUploadedDoc(null);
-                  }}
-                  className="text-xs inline-flex items-center gap-1.5 px-2.5 h-7 rounded-full bg-primary/10 hover:bg-primary/15 text-foreground border border-primary/30 transition-colors"
-                >
-                  <Sparkles className="h-3 w-3 text-primary" /> Use sample (SWOT)
                 </button>
-                <div className="text-xs text-muted-foreground tabular-nums">
-                  {wordCount} words · ~{slideEstimate} scenes
-                </div>
-              </div>
+              )}
+            </div>
+
+            <div className="px-4 py-2 border-t border-border/60 flex items-center justify-between text-xs shrink-0">
+              <button
+                onClick={() => {
+                  setSourceTab("paste");
+                  setSourceText(SAMPLE_TEXT);
+                  setUploadedDoc(null);
+                }}
+                className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Sparkles className="h-3 w-3 text-primary" /> Use sample (SWOT)
+              </button>
+              <span className="text-muted-foreground tabular-nums">
+                {sourceText.length.toLocaleString()} chars
+              </span>
             </div>
           </Card>
-        </div>
 
-        {/* RIGHT — LOOK + VOICE */}
-        <div
-          className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500"
-          style={{ animationDelay: "120ms" }}
-        >
-          {/* LOOK */}
-          <Card className="border-border/70 shadow-sm">
-            <div className="p-5">
-              <Eyebrow hint="Fonts, colors, and scene style">Visual style</Eyebrow>
-
-              <div className="grid grid-cols-3 gap-2">
+          {/* RIGHT — grouped Style / Motion / Voice */}
+          <Card className="overflow-hidden border-border/70 shadow-sm flex flex-col min-h-0 divide-y divide-border/60">
+            {/* STYLE */}
+            <div className="px-4 py-3 flex items-start gap-3 shrink-0">
+              <RowLabel>Style</RowLabel>
+              <div className="flex-1 min-w-0 flex items-center gap-2 overflow-x-auto no-scrollbar pb-0.5">
                 {THEME_LIST.map((t) => {
                   const active = themeId === t.id && !customTemplate;
                   return (
-                    <button
-                      key={t.id}
-                      onClick={() => {
-                        setThemeId(t.id);
-                        setCustomTemplate(null);
-                      }}
-                      className={`relative text-left rounded-md overflow-hidden border transition-all ${
-                        active
-                          ? "border-primary ring-2 ring-primary/20"
-                          : "border-border hover:border-foreground/30"
-                      }`}
-                    >
-                      {/* Mini slide preview using the theme tokens */}
-                      <div
-                        className="aspect-[5/4] p-2.5 flex flex-col justify-between"
-                        style={{ background: t.bg, color: t.text }}
-                      >
-                        <div
-                          style={{
-                            fontFamily: t.fontHead,
-                            fontWeight: 700,
-                            fontSize: 11,
-                            lineHeight: 1.1,
-                            letterSpacing: "-0.01em",
+                    <Tooltip key={t.id}>
+                      <TooltipTrigger asChild>
+                        <button
+                          onClick={() => {
+                            setThemeId(t.id);
+                            setCustomTemplate(null);
                           }}
+                          className={cn(
+                            "relative shrink-0 rounded-md overflow-hidden border transition-all",
+                            active
+                              ? "border-primary ring-2 ring-primary/20"
+                              : "border-border hover:border-foreground/30",
+                          )}
+                          aria-label={t.name}
                         >
-                          Big idea,
-                          <br />
-                          told well.
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div style={{ width: 18, height: 2.5, background: t.accent, borderRadius: 2 }} />
-                          <div className="flex gap-1">
-                            <span style={{ width: 4, height: 4, borderRadius: 999, background: t.accent }} />
-                            <span style={{ width: 4, height: 4, borderRadius: 999, background: t.muted, opacity: 0.5 }} />
+                          <div
+                            className="w-12 h-9 p-1.5 flex flex-col justify-between"
+                            style={{ background: t.bg, color: t.text }}
+                          >
+                            <div
+                              style={{
+                                fontFamily: t.fontHead,
+                                fontWeight: 700,
+                                fontSize: 6,
+                                lineHeight: 1.05,
+                              }}
+                            >
+                              Aa
+                            </div>
+                            <div className="flex items-center gap-0.5">
+                              <span style={{ width: 8, height: 1.5, background: t.accent, borderRadius: 1 }} />
+                              <span style={{ width: 2, height: 2, borderRadius: 999, background: t.muted, opacity: 0.6 }} />
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                      <div className="px-2 py-1.5 flex items-center justify-between bg-card border-t border-border/60">
-                        <span className="text-[11px] font-medium truncate">{t.name}</span>
-                        {active && (
-                          <span className="h-3.5 w-3.5 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0">
-                            <Check className="h-2 w-2" strokeWidth={3} />
-                          </span>
-                        )}
-                      </div>
-                    </button>
+                          {active && (
+                            <span className="absolute top-0.5 right-0.5 h-3 w-3 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                              <Check className="h-2 w-2" strokeWidth={3} />
+                            </span>
+                          )}
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="text-[11px]">
+                        {t.name}
+                      </TooltipContent>
+                    </Tooltip>
                   );
                 })}
               </div>
 
-              {/* Custom template */}
-              <button
-                onClick={() => templateInputRef.current?.click()}
-                className={`mt-3 w-full rounded-lg border border-dashed px-4 py-3 flex items-center gap-3 text-left transition-colors ${
-                  customTemplate ? "border-foreground bg-muted/40" : "border-border hover:border-foreground/40"
-                }`}
-              >
-                <div className="h-9 w-9 rounded-md bg-muted flex items-center justify-center">
-                  {customTemplate ? <Check className="h-4 w-4" /> : <Upload className="h-4 w-4" />}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium truncate">
-                    {customTemplate ?? "Upload your own template"}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {customTemplate
-                      ? "We'll match its fonts, colors, and layout."
-                      : ".pptx, .key, .pdf, or an image"}
-                  </div>
-                </div>
-                {customTemplate && (
+              <Tooltip>
+                <TooltipTrigger asChild>
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      setCustomTemplate(null);
-                    }}
-                    className="text-muted-foreground hover:text-foreground p-1"
+                    onClick={() => templateInputRef.current?.click()}
+                    className={cn(
+                      "shrink-0 h-9 px-2.5 rounded-md border inline-flex items-center gap-1.5 text-[11px] transition-colors",
+                      customTemplate
+                        ? "border-foreground bg-muted/40 text-foreground"
+                        : "border-dashed border-border hover:border-foreground/40 text-muted-foreground hover:text-foreground",
+                    )}
                   >
-                    <X className="h-3.5 w-3.5" />
+                    {customTemplate ? (
+                      <>
+                        <LayoutTemplate className="h-3.5 w-3.5" />
+                        <span className="max-w-[80px] truncate">{customTemplate}</span>
+                        <X
+                          className="h-3 w-3 hover:text-destructive"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCustomTemplate(null);
+                          }}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="h-3.5 w-3.5" /> Upload
+                      </>
+                    )}
+                    <input
+                      ref={templateInputRef}
+                      type="file"
+                      accept=".pptx,.key,.pdf,image/*"
+                      className="hidden"
+                      onChange={handleTemplateUpload}
+                    />
                   </button>
-                )}
-                <input
-                  ref={templateInputRef}
-                  type="file"
-                  accept=".pptx,.key,.pdf,image/*"
-                  className="hidden"
-                  onChange={handleTemplateUpload}
-                />
-              </button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="text-[11px]">
+                  Upload your own template (.pptx, .key, .pdf)
+                </TooltipContent>
+              </Tooltip>
             </div>
-          </Card>
 
-          {/* MOTION */}
-          <Card className="border-border/70 shadow-sm">
-            <div className="p-5">
-              <Eyebrow hint="How elements appear on each slide">Motion</Eyebrow>
-              <div className="grid grid-cols-2 gap-3">
+            {/* MOTION */}
+            <div className="px-4 py-3 flex items-start gap-3 shrink-0">
+              <RowLabel>Motion</RowLabel>
+              <div className="flex-1 grid grid-cols-4 gap-1.5">
                 {MOTION_OPTIONS.map((m) => {
                   const active = motion === m.id;
                   return (
                     <button
                       key={m.id}
                       onClick={() => setMotion(m.id)}
-                      className={`group relative text-left rounded-lg border overflow-hidden transition-all ${
+                      className={cn(
+                        "relative rounded-md border px-2 py-1.5 text-left transition-all",
                         active
-                          ? "border-foreground ring-2 ring-foreground/10"
-                          : "border-border hover:border-foreground/30"
-                      }`}
+                          ? "border-foreground bg-foreground/[0.04]"
+                          : "border-border hover:border-foreground/30",
+                      )}
                     >
-                      <MotionPreview id={m.id} />
-                      <div className="px-3 py-2.5 border-t border-border/60 bg-card">
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="text-[13px] font-medium truncate">{m.name}</div>
-                          {active && (
-                            <span className="h-3.5 w-3.5 rounded-full bg-foreground text-background flex items-center justify-center shrink-0">
-                              <Check className="h-2 w-2" strokeWidth={3} />
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-[11px] text-muted-foreground mt-0.5 leading-snug">
-                          {m.desc}
-                        </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[12px] font-medium leading-none">{m.name}</span>
+                        {active && (
+                          <span className="h-3 w-3 rounded-full bg-foreground text-background flex items-center justify-center shrink-0">
+                            <Check className="h-2 w-2" strokeWidth={3} />
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-[10px] text-muted-foreground mt-0.5 leading-tight truncate">
+                        {m.desc}
                       </div>
                     </button>
                   );
                 })}
               </div>
             </div>
-          </Card>
 
-          {/* VOICE */}
-          <Card className="border-border/70 shadow-sm">
-            <div className="p-5">
-              <Eyebrow hint="Choose how it sounds">Voice over</Eyebrow>
-
-              {/* Mode segmented */}
-              <div className="inline-flex p-0.5 rounded-md bg-muted text-xs mb-4">
-                {([
-                  { id: "ai", label: "AI voice over", icon: Sparkles },
-                  { id: "upload", label: "My recording", icon: Mic },
-                ] as const).map((m) => {
-                  const Icon = m.icon;
-                  const active = voiceMode === m.id;
-                  return (
-                    <button
-                      key={m.id}
-                      onClick={() => setVoiceMode(m.id)}
-                      className={`px-3 h-8 rounded-[5px] inline-flex items-center gap-1.5 transition-colors ${
-                        active ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      <Icon className="h-3.5 w-3.5" />
-                      {m.label}
-                    </button>
-                  );
-                })}
+            {/* VOICE */}
+            <div className="px-4 py-3 flex flex-col gap-2.5 flex-1 min-h-0">
+              <div className="flex items-center gap-3">
+                <RowLabel>Voice</RowLabel>
+                <div className="inline-flex p-0.5 rounded-md bg-muted text-xs">
+                  {([
+                    { id: "ai", label: "AI voice over", icon: Sparkles },
+                    { id: "upload", label: "My recording", icon: Mic },
+                  ] as const).map((m) => {
+                    const Icon = m.icon;
+                    const active = voiceMode === m.id;
+                    return (
+                      <button
+                        key={m.id}
+                        onClick={() => setVoiceMode(m.id)}
+                        className={cn(
+                          "px-2.5 h-7 rounded-[5px] inline-flex items-center gap-1.5 transition-colors text-xs",
+                          active
+                            ? "bg-background shadow-sm text-foreground"
+                            : "text-muted-foreground hover:text-foreground",
+                        )}
+                      >
+                        <Icon className="h-3 w-3" />
+                        {m.label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               {voiceMode === "ai" ? (
-                <>
-                  <div className="grid grid-cols-2 gap-2">
-                    {VOICES.slice(0, 6).map((v) => {
-                      const [name, desc] = v.split(" — ");
-                      const active = voice === v;
-                      const isPlaying = previewing === v;
-                      return (
-                        <button
-                          key={v}
-                          onClick={() => setVoice(v)}
-                          className={`group relative rounded-lg border p-2.5 flex items-center gap-2.5 text-left transition-all ${
-                            active
-                              ? "border-primary bg-primary/10 ring-2 ring-primary/20"
-                              : "border-border hover:border-foreground/30"
-                          }`}
-                        >
-                          <div
-                            className="h-9 w-9 rounded-full flex items-center justify-center text-sm font-semibold text-foreground shrink-0"
-                            style={{ background: voiceGradient(name) }}
-                          >
-                            {name[0]}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium truncate">{name}</div>
-                            <div className="text-[11px] text-muted-foreground truncate">{desc}</div>
-                          </div>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              playPreview(v);
-                            }}
-                            className="h-7 w-7 rounded-full bg-background border border-border flex items-center justify-center hover:bg-muted shrink-0"
-                            aria-label={`Preview ${name}`}
-                          >
-                            {isPlaying ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3 ml-0.5" />}
-                          </button>
-                          {active && (
-                            <span className="absolute top-1.5 right-1.5 h-3.5 w-3.5 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-                              <Check className="h-2 w-2" strokeWidth={3} />
-                            </span>
-                          )}
-                        </button>
-                      );
-                    })}
+                <div className="flex items-center gap-3 flex-wrap">
+                  {/* Voice picker */}
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div
+                      className="h-8 w-8 rounded-full flex items-center justify-center text-[12px] font-semibold text-foreground shrink-0"
+                      style={{ background: voiceGradient(selectedVoiceName) }}
+                    >
+                      {selectedVoiceName[0]}
+                    </div>
+                    <Select value={voice} onValueChange={setVoice}>
+                      <SelectTrigger className="h-8 min-w-[180px] text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {VOICES.map((v) => (
+                          <SelectItem key={v} value={v} className="text-xs">
+                            {v}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <button
+                      onClick={() => playPreview(voice)}
+                      className="h-8 w-8 rounded-full bg-background border border-border flex items-center justify-center hover:bg-muted shrink-0"
+                      aria-label={`Preview ${selectedVoiceName}`}
+                    >
+                      {previewing === voice ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3 ml-0.5" />}
+                    </button>
                   </div>
 
                   {/* Pace + tone */}
-                  <div className="grid grid-cols-2 gap-3 mt-4">
-                    <div>
-                      <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-1.5">
-                        Pace
-                      </div>
-                      <div className="inline-flex w-full p-0.5 rounded-md bg-muted text-xs">
-                        {PACE_OPTIONS.map((p) => (
-                          <button
-                            key={p}
-                            onClick={() => setPace(p)}
-                            className={`flex-1 h-7 rounded-[5px] transition-colors ${
-                              pace === p ? "bg-background shadow-sm text-foreground" : "text-muted-foreground"
-                            }`}
-                          >
-                            {p}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium mb-1.5">
-                        Tone
-                      </div>
-                      <div className="inline-flex w-full p-0.5 rounded-md bg-muted text-xs">
-                        {TONE_OPTIONS.map((p) => (
-                          <button
-                            key={p}
-                            onClick={() => setTone(p)}
-                            className={`flex-1 h-7 rounded-[5px] transition-colors ${
-                              tone === p ? "bg-background shadow-sm text-foreground" : "text-muted-foreground"
-                            }`}
-                          >
-                            {p}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-3 text-[11px] text-muted-foreground">
-                    Language: English (US) · 9 more available in editor
-                  </div>
-                </>
-              ) : (
-                <div>
-                  <div
-                    onClick={() => voiceInputRef.current?.click()}
-                    className="rounded-lg border-2 border-dashed border-border hover:border-foreground/40 transition-colors p-5 flex flex-col items-center justify-center gap-3 cursor-pointer bg-muted/20 min-h-[180px]"
-                  >
-                    {uploadedVoice ? (
-                      <>
-                        <div className="h-10 w-10 rounded-full bg-background flex items-center justify-center shadow-sm">
-                          <AudioLines className="h-5 w-5" />
+                  <div className="flex items-center gap-2 ml-auto">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="inline-flex p-0.5 rounded-md bg-muted text-[11px]">
+                          {PACE_OPTIONS.map((p) => (
+                            <button
+                              key={p}
+                              onClick={() => setPace(p)}
+                              className={cn(
+                                "px-2 h-7 rounded-[5px] transition-colors",
+                                pace === p ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground",
+                              )}
+                            >
+                              {p}
+                            </button>
+                          ))}
                         </div>
-                        {/* Waveform placeholder */}
-                        <svg viewBox="0 0 200 28" className="w-full max-w-[260px] h-7" aria-hidden>
-                          {Array.from({ length: 40 }).map((_, i) => {
-                            const h = 4 + Math.abs(Math.sin(i * 0.7)) * 18 + (i % 3) * 2;
-                            return (
-                              <rect
-                                key={i}
-                                x={i * 5}
-                                y={(28 - h) / 2}
-                                width={2.5}
-                                height={h}
-                                rx={1}
-                                className="fill-foreground/70"
-                              />
-                            );
-                          })}
-                        </svg>
-                        <div className="text-sm font-medium">{uploadedVoice}</div>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setUploadedVoice(null);
-                          }}
-                          className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
-                        >
-                          <X className="h-3 w-3" /> Remove
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <div className="h-10 w-10 rounded-full bg-background flex items-center justify-center shadow-sm">
-                          <Mic className="h-5 w-5" />
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="text-[11px]">Pace</TooltipContent>
+                    </Tooltip>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="inline-flex p-0.5 rounded-md bg-muted text-[11px]">
+                          {TONE_OPTIONS.map((p) => (
+                            <button
+                              key={p}
+                              onClick={() => setTone(p)}
+                              className={cn(
+                                "px-2 h-7 rounded-[5px] transition-colors",
+                                tone === p ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground",
+                              )}
+                            >
+                              {p}
+                            </button>
+                          ))}
                         </div>
-                        <div className="text-sm font-medium">Upload your voice over</div>
-                        <div className="text-xs text-muted-foreground">
-                          .mp3 or .wav — we'll sync scenes to your audio
-                        </div>
-                      </>
-                    )}
-                    <input
-                      ref={voiceInputRef}
-                      type="file"
-                      accept="audio/mpeg,audio/wav,.mp3,.wav"
-                      className="hidden"
-                      onChange={handleVoiceUpload}
-                    />
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="text-[11px]">Tone</TooltipContent>
+                    </Tooltip>
                   </div>
                 </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => voiceInputRef.current?.click()}
+                  className="rounded-md border-2 border-dashed border-border hover:border-foreground/40 transition-colors px-4 py-3 flex items-center gap-3 cursor-pointer bg-muted/20 text-left"
+                >
+                  <div className="h-9 w-9 rounded-full bg-background flex items-center justify-center shadow-sm shrink-0">
+                    {uploadedVoice ? <AudioLines className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[13px] font-medium truncate">
+                      {uploadedVoice ?? "Upload your voice over"}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground">
+                      {uploadedVoice ? "Synced to your scenes" : ".mp3 or .wav — we'll sync scenes to your audio"}
+                    </div>
+                  </div>
+                  {uploadedVoice && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setUploadedVoice(null);
+                      }}
+                      className="text-muted-foreground hover:text-foreground p-1"
+                      aria-label="Remove"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                  <input
+                    ref={voiceInputRef}
+                    type="file"
+                    accept="audio/mpeg,audio/wav,.mp3,.wav"
+                    className="hidden"
+                    onChange={handleVoiceUpload}
+                  />
+                </button>
               )}
             </div>
           </Card>
+        </main>
+
+        {/* Sticky bottom action bar */}
+        <div className="border-t hairline bg-background/85 backdrop-blur shrink-0">
+          <div className="max-w-7xl mx-auto px-6 lg:px-10 py-2.5 flex items-center justify-between gap-4">
+            <div className="text-[11px] text-muted-foreground tabular-nums hidden sm:block">
+              {canGenerate ? (
+                <>
+                  <span className="font-medium text-foreground">{wordCount}</span> words ·{" "}
+                  <span className="font-medium text-foreground">~{slideEstimate}</span> scenes ·{" "}
+                  <span className="font-medium text-foreground">~{minutes} min</span> runtime
+                </>
+              ) : (
+                <span>Add your script or upload a document to continue</span>
+              )}
+            </div>
+            <div className="flex items-center gap-3 ml-auto">
+              <span className="text-[11px] text-muted-foreground hidden md:inline-flex items-center gap-1">
+                <kbd className="px-1.5 py-0.5 rounded border border-border bg-muted text-[10px] font-mono">⌘</kbd>
+                <kbd className="px-1.5 py-0.5 rounded border border-border bg-muted text-[10px] font-mono">↵</kbd>
+                to generate
+              </span>
+              <Button variant="default" size="default" disabled={!canGenerate} onClick={onGenerate}>
+                <Sparkles className="h-4 w-4 mr-2" />
+                Generate video
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
+            </div>
+          </div>
         </div>
-          </main>
       </div>
-
-      {/* Sticky bottom action bar — within shell content area */}
-      <div className="sticky bottom-0 z-30 border-t hairline bg-background/85 backdrop-blur">
-        <div className="max-w-6xl mx-auto px-8 lg:px-12 py-3 flex items-center justify-between gap-4">
-          <div className="text-xs text-muted-foreground tabular-nums hidden sm:block">
-            <span className="font-medium text-foreground">{wordCount}</span> words ·{" "}
-            <span className="font-medium text-foreground">~{slideEstimate}</span> scenes ·{" "}
-            <span className="font-medium text-foreground">~{minutes} min</span> runtime
-          </div>
-          <div className="flex items-center gap-3 ml-auto">
-            <span className="text-[11px] text-muted-foreground hidden md:inline-flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 rounded border border-border bg-muted text-[10px] font-mono">⌘</kbd>
-              <kbd className="px-1.5 py-0.5 rounded border border-border bg-muted text-[10px] font-mono">↵</kbd>
-              to generate
-            </span>
-            <Button variant="default" size="lg" disabled={!canGenerate} onClick={onGenerate} className="h-11 px-5">
-              <Sparkles className="h-4 w-4 mr-2" />
-              Generate video
-              <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
-          </div>
-        </div>
-        {!canGenerate && (
-          <div className="max-w-6xl mx-auto px-8 lg:px-12 pb-2 -mt-1 text-[11px] text-muted-foreground text-right">
-            Add your script or upload a document to continue
-          </div>
-        )}
-      </div>
-    </>
-  );
-}
-
-function MotionPreview({ id }: { id: MotionId }) {
-  // Each variant uses a slightly different bar composition + animation cadence
-  // to communicate "how elements appear on each slide".
-  const variants: Record<MotionId, { bars: { w: string; tone: "accent" | "ink" | "muted" | "faint" }[]; duration: string; ease: string; delayStep: number }> = {
-    subtle: {
-      bars: [
-        { w: "85%", tone: "accent" },
-        { w: "60%", tone: "ink" },
-        { w: "40%", tone: "muted" },
-        { w: "30%", tone: "faint" },
-      ],
-      duration: "2.6s",
-      ease: "ease-out",
-      delayStep: 0.18,
-    },
-    dynamic: {
-      bars: [
-        { w: "85%", tone: "accent" },
-        { w: "55%", tone: "ink" },
-        { w: "40%", tone: "ink" },
-      ],
-      duration: "1.8s",
-      ease: "cubic-bezier(0.34, 1.56, 0.64, 1)",
-      delayStep: 0.14,
-    },
-    dramatic: {
-      bars: [
-        { w: "85%", tone: "accent" },
-        { w: "60%", tone: "ink" },
-        { w: "45%", tone: "ink" },
-      ],
-      duration: "3.2s",
-      ease: "cubic-bezier(0.16, 1, 0.3, 1)",
-      delayStep: 0.32,
-    },
-    cinematic: {
-      bars: [
-        { w: "82%", tone: "accent" },
-        { w: "70%", tone: "ink" },
-        { w: "55%", tone: "ink" },
-      ],
-      duration: "2.6s",
-      ease: "cubic-bezier(0.22, 1, 0.36, 1)",
-      delayStep: 0.22,
-    },
-  };
-
-  const toneClass: Record<string, string> = {
-    accent: "bg-[hsl(22_85%_58%)]",
-    ink: "bg-[hsl(220_25%_15%)]",
-    muted: "bg-[hsl(220_10%_45%)]",
-    faint: "bg-[hsl(220_8%_65%)]",
-  };
-
-  const v = variants[id];
-
-  return (
-    <div className="aspect-[5/3] bg-muted/40 px-4 pt-4 pb-3 flex flex-col gap-2.5">
-      <style>
-        {`
-          @keyframes motion-rise {
-            0% { opacity: 0; transform: translateY(6px); }
-            12%, 92% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-2px); }
-          }
-        `}
-      </style>
-      {v.bars.map((b, i) => (
-        <span
-          key={i}
-          className={`h-[6px] rounded-full ${toneClass[b.tone]}`}
-          style={{
-            width: b.w,
-            animation: `motion-rise ${v.duration} ${v.ease} ${i * v.delayStep}s infinite`,
-          }}
-        />
-      ))}
-    </div>
-  );
-}
-
-function StepDots({ step }: { step: 1 | 2 | 3 }) {
-  const labels = ["Script", "Render", "Cut"];
-  return (
-    <div className="hidden md:flex items-center gap-2 text-[11px] text-muted-foreground">
-      {labels.map((l, i) => {
-        const n = (i + 1) as 1 | 2 | 3;
-        const active = n === step;
-        const done = n < step;
-        return (
-          <span key={l} className="flex items-center gap-2">
-            <span
-              className={
-                active
-                  ? "h-1.5 w-1.5 rounded-full bg-primary"
-                  : done
-                    ? "h-1.5 w-1.5 rounded-full bg-foreground/40"
-                    : "h-1.5 w-1.5 rounded-full bg-foreground/15"
-              }
-            />
-            <span className={active ? "text-foreground" : ""}>{l}</span>
-            {i < labels.length - 1 && <span className="text-muted-foreground/40">→</span>}
-          </span>
-        );
-      })}
-    </div>
+    </TooltipProvider>
   );
 }

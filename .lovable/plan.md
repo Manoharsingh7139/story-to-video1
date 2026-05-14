@@ -1,119 +1,84 @@
-# Simplify Dashboard & Re-look User Flows
+## Goal
 
-## Why
+Fix the broken-feeling New Video screen (`/app/new`). Today the left column is a single short Script card while the right column stacks three tall cards (Visual style, Motion, Voice over), creating a long scroll and visually unbalanced layout. The redesign keeps a two-column structure but compresses everything so all inputs are visible in the first fold on a typical laptop (≈1024×700 and up).
 
-Today's Dashboard does five jobs at once (greeting, metrics, checklist, three quick-start cards, hero + 4-up recents, activity feed). It reads as a directory, not a place to act. And several flows leak: `/app/new` lives outside the shell with its own header, Templates is a dead-end gallery, and "Recent" appears in three places (sidebar, dashboard hero, dashboard secondary grid).
+## Layout
 
-This pass cuts the Dashboard to **one decision and three glances**, and makes the create flow feel like one continuous app.
-
----
-
-## 1. Dashboard — simpler, calmer
+Two equal columns under a shrunken hero. The hero (title input + helper line) becomes one tight row instead of a 200px section. The sticky generate bar stays at the bottom.
 
 ```text
-┌──────────────────────────────────────────────────────┐
-│  Studio · Thursday, 14 May                           │  ← eyebrow
-│                                                      │
-│  Good afternoon, Maya.                               │  ← serif, smaller (was huge)
-│  Three drafts underway.                              │  ← single italic line
-│                                                      │
-│  ┌────────────────────────────────────────────────┐  │
-│  │  + New video        ⌘N      [Use a template →] │  │  ← single primary action row
-│  └────────────────────────────────────────────────┘  │
-│                                                      │
-│  Continue                                  All →     │
-│  ┌────┐ ┌────┐ ┌────┐ ┌────┐                         │  ← 4 equal thumbnails
-│  │    │ │    │ │    │ │    │                         │
-│  └────┘ └────┘ └────┘ └────┘                         │
-│                                                      │
-│  Recently                                  Log →     │
-│  · created "The Async Advantage"   2h                │  ← max 4 lines
-│  · regenerated slide 3             3h                │
-└──────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│  New video · [Untitled video__________________]  ⌘↵ generate │  (one row, ~64px)
+├──────────────────────────────┬──────────────────────────────┤
+│  SCRIPT                      │  STYLE   [swatch row →]      │
+│  [paste | upload | audio]    │  MOTION  [○ ○ ● ○]           │
+│                              │  VOICE   [avatar ▾] pace tone│
+│  ┌────────────────────────┐  │                              │
+│  │  textarea / dropzone   │  │  (each row ~72px, no cards   │
+│  │                        │  │   stacked — single grouped   │
+│  │                        │  │   panel with hairline rows)  │
+│  └────────────────────────┘  │                              │
+│  word/scene meter            │                              │
+└──────────────────────────────┴──────────────────────────────┘
+[ sticky bottom bar: meter · ⌘↵ · Generate video → ]
 ```
 
-**Removed**
-- Three "Begin a draft" cards (paste / template / voice idea) — redundant with the single CTA row and with the New-video screen itself.
-- Asymmetric 1-hero-+-4 thumbnails grid → flat 4-up of equal cards.
-- Three-column numbered checklist → folded into a one-line ribbon under the lede *only when nothing is done yet* (e.g. "Next: pick a brand color · skip"). Disappears for good once dismissed or completed.
-- "Minutes generated" metric (not meaningful for a mocked app). Keep "Videos · Slides" only, and only if > 0.
+Both columns share the same height (`grid-cols-2` with `items-stretch`). Right column becomes one container with three hairline-divided rows instead of three separate Cards.
 
-**Kept, simpler**
-- Editorial header with eyebrow + greeting + one-line lede.
-- Continue (max 4) and Recently (max 4). Both have a quiet "→" link to their full page.
+## Changes per section
 
-**Empty state** stays the editorial illustration, but with a single CTA ("Start your first video") — no secondary "Browse templates" button on the empty state, since templates appear inside the New-video screen.
+### Hero (top of `InputScreen.tsx`)
+- Replace the 5xl serif title block + serif tagline with a single 28px input row plus a small "New video" eyebrow on the same line.
+- Drop ~140px of vertical space.
 
----
+### Left column — Script (only thing kept "as is" conceptually)
+- Keep the paste/upload/audio tabs, but reduce the textarea min-height from `280px` to a flexible `min-h-0` that fills available column height (`flex-1`), so it grows to match the right column.
+- Move the "Use sample (SWOT)" pill into the bottom hairline row of the card so it doesn't add vertical space.
+- Word/scene meter stays inside the card footer (already there).
 
-## 2. Create-video flow — bring it inside the shell
+### Right column — Style, Motion, Voice (compressed)
+Replace three stacked Cards with a single Card containing three hairline-separated rows. Each row is ~one-third of the right column height.
 
-Today: clicking **+ New video** jumps to `/app/new`, which renders its *own* `<header>` with Wordmark and a "Step 1 of 2 — Setup" eyebrow. The sidebar disappears. It feels like a different app.
+1. **Visual style row**
+   - Eyebrow on left: `STYLE`.
+   - Horizontal scrollable swatch strip of theme thumbnails (square, ~56×42 each) with name on hover. Selected theme gets the primary ring.
+   - Trailing button: small "Upload template" icon button (custom template). Selected custom template shows as a chip; remove on click.
+   - Removes: large 3-column theme grid, full-width "Upload your own template" panel.
 
-Change:
-- `/app/new` renders **inside `AppShell`** (remove from `fullBleed` allow-list; remove its internal Wordmark header).
-- Topbar shows breadcrumb `Studio › New video` + a quiet `Skip with sample` link on the right.
-- Step indicator collapses to a small "Setup → Generate → Edit" hairline progress in the topbar (3 dots, current one filled).
-- Page body keeps its two-column layout (Source / Look + Voice) but loses its own page chrome.
-- `/app/generating` and `/app/editor/:id` stay full-bleed — they're focus modes.
+2. **Motion row**
+   - Eyebrow on left: `MOTION`.
+   - 4 inline chips: Subtle · Dynamic · Dramatic · Cinematic. Selected chip filled. Tiny dot + one-word descriptor under each chip.
+   - Removes: animated 2×2 preview grid (keep its concept as a tooltip on hover instead).
 
-Net: one continuous shell from Dashboard → Setup, then a deliberate handoff into the focus modes.
+3. **Voice row**
+   - Eyebrow on left: `VOICE`.
+   - AI/Recording segmented toggle (compact, 28px tall).
+   - When AI: voice avatar + dropdown to pick from the 6 voices (replaces 2×2 voice grid). Inline play/pause button next to the avatar.
+   - Pace and Tone become two small segmented controls on the same row (right-aligned).
+   - When Recording: replace dropzone with a single 56px row "Upload your voice over (.mp3, .wav)" + filename chip on success.
+   - Removes: large 2×2 voice grid, the language helper line (move to a tooltip on the language icon).
 
----
+### Sticky bottom bar
+- Unchanged in structure, but tighter padding (`py-2`) so it doesn't eat into the fold.
 
-## 3. Templates — make it a launch pad, not a gallery
+### Removed entirely
+- Step dots in the topbar (`StepDots`) — already redundant now that the screen is one fold.
+- The big "Use sample (SWOT)" pill becomes a small text link in the script footer.
 
-Today Templates is a browse page that ends in… nothing actionable beyond "use this template" which then jumps to a fresh New-video screen. The intent is right but the path is long.
+## Behavior / state
+- All existing state (`themeId`, `voice`, `voiceMode`, `motion`, `pace`, `tone`, `customTemplate`, `uploadedDoc`, `uploadedAudioScript`, `uploadedVoice`) stays intact — only the presentation changes. No store or type changes.
+- Defaults remain the same (Dynamic motion, Warm tone, Normal pace, first theme, first AI voice).
+- Cmd/Ctrl+Enter still triggers `onGenerate`.
 
-Change:
-- Templates page keeps the editorial grid, but each card's primary action is **"Start with this →"** which navigates to `/app/new?template=<id>` and pre-selects it (theme + sample text from `seedTemplates.ts`).
-- Add a **"Use a template"** secondary button on the New-video screen that opens a lightweight popover with the same templates inline, so users don't have to leave Setup to browse.
-- Remove Templates from the sidebar primary nav and put it under the New-video CTA group instead? **No** — keep in sidebar (templates are a discovery surface). But demote slightly: it sits below History.
+## Responsive
+- ≥1024px: two equal columns as described, fits the first fold.
+- 768–1024px: same two columns but right rows allowed to wrap chips to two lines.
+- <768px: stack to single column (script first, then a single right-rail-style settings card). Scroll allowed on mobile only.
 
----
+## Out of scope
+- No changes to the editor, generating page, or routing.
+- No data/store changes.
+- No changes to other screens (Dashboard, Library, Templates, History).
 
-## 4. Sidebar — tighten the duplication
-
-- "Recent" in the sidebar stays (3 items, quick jumps from anywhere).
-- Dashboard's "Continue" stays (4 items, with thumbnails). They serve different jobs (nav vs. browse).
-- Move the standalone **Search** sidebar item into the topbar `⌘K` chip only — it's already there. Saves one row in the sidebar.
-- Footer account tile: keep, but the dropdown loses **Brand kit** (it's already in the nav) and gains **Keyboard shortcuts** (opens a small dialog).
-
----
-
-## 5. History on Dashboard
-
-- Cap at 4 lines (was 6).
-- Keep the hairline divider list — already quiet enough.
-- "Full history" link → "Log →" to match the calmer tone.
-
----
-
-## 6. Out of scope
-
-- No new pages or features.
-- No changes to the editor, generating screen, brand kit, or settings beyond removing the Brand-kit dropdown item.
-- No backend / persistence changes.
-- Auth screens untouched.
-
----
-
-## Files to touch
-
-- **Edit** `src/pages/app/Dashboard.tsx` — remove "Begin a draft" section, flatten "Continue editing" grid, collapse checklist to one-line ribbon, drop "Minutes generated", trim activity to 4.
-- **Edit** `src/components/app-shell/AppShell.tsx` — remove `/app/new` from `fullBleed`; remove the standalone Search row from sidebar; remove Brand kit from account dropdown; add Keyboard-shortcuts item; add 3-dot setup→generate→edit progress component for the topbar (only mounts on `/app/new`).
-- **Edit** `src/pages/prototype/InputScreen.tsx` — drop its internal `<header>` (Wordmark + "Step 1 of 2"); rely on the shell's topbar; keep the rest.
-- **Edit** `src/pages/app/Templates.tsx` — change card CTA to "Start with this →" routed to `/app/new?template=<id>`; read `?template=` in `InputScreen` to preselect theme/sample.
-- **Edit** `src/lib/data/seedTemplates.ts` — minor: ensure each template has a `themeId` + sample-text reference for preselection (verify, no schema change).
-
-No new components, no new dependencies.
-
----
-
-## Acceptance checks
-
-1. Dashboard fits above the fold at 1280×800 with no scroll for empty + populated states (one-screen rule).
-2. Clicking **+ New video** keeps the sidebar visible; breadcrumb shows `Studio › New video`.
-3. Clicking a template → lands in Setup with that template's theme already selected and source text prefilled.
-4. Sidebar has exactly: New video · Dashboard · Library · History · Templates · Brand kit · Recent (3) · Account.
-5. "Continue" and "Recently" on Dashboard never exceed 4 items each.
+## Files touched
+- `src/pages/prototype/InputScreen.tsx` — full structural rewrite of the JSX inside `InputScreen`. Helpers (`Eyebrow`, `voiceGradient`, `MotionPreview`, `StepDots`) get pruned/inlined as needed; `MotionPreview` becomes optional (used in tooltip only) and `StepDots` is removed.
