@@ -78,10 +78,21 @@ export default function InputScreen() {
   const [tone, setTone] = useState<typeof TONE_OPTIONS[number]>("Warm");
   const [previewing, setPreviewing] = useState<string | null>(null);
 
+  const [search] = useSearchParams();
   useEffect(() => {
+    const tplId = search.get("template");
+    const tpl = tplId ? TEMPLATES.find((t) => t.id === tplId) : null;
+    if (tpl) {
+      setProjectTitle(tpl.name);
+      setSourceText(tpl.source);
+      setThemeId(tpl.themeId);
+      setVoice(tpl.voice);
+      setVoiceMode("ai");
+      return;
+    }
     if (!sourceText) setSourceText(SAMPLE_TEXT);
     if (!projectTitle || projectTitle === "Untitled video") setProjectTitle("The Async Advantage");
-  }, []);
+  }, [search]);
 
   const wordCount = sourceText.trim().split(/\s+/).filter(Boolean).length;
   const slideEstimate = Math.max(1, Math.round(wordCount / 80));
