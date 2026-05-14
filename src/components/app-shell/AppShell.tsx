@@ -51,7 +51,7 @@ const NAV = [
   { to: "/app", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/app/library", label: "Templates", icon: Library },
   { to: "/app/history", label: "History", icon: History },
-  { to: "/app/templates", label: "Demo templates", icon: LayoutTemplate },
+  { to: "/app/templates", label: "Templates", icon: LayoutTemplate },
   { to: "/app/brand", label: "Brand kit", icon: Palette },
 ];
 
