@@ -66,16 +66,16 @@ export function CommandPalette() {
 
   return (
     <CommandDialog open={isOpen} onOpenChange={(o) => (o ? useCommandPalette.getState().open() : close())}>
-      <CommandInput placeholder="Search projects, jump to a page…" />
+      <CommandInput placeholder="Search scripts, jump to a page…" />
       <CommandList>
         <CommandEmpty>No matches.</CommandEmpty>
         <CommandGroup heading="Actions">
           <CommandItem onSelect={() => go("/app/new")}>
-            <Plus className="h-4 w-4 mr-2" /> New video
+            <Plus className="h-4 w-4 mr-2" /> New script
             <span className="ml-auto text-[10px] text-muted-foreground">⌘N</span>
           </CommandItem>
           <CommandItem onSelect={() => go("/app/templates")}>
-            <LayoutTemplate className="h-4 w-4 mr-2" /> Browse templates
+            <LayoutTemplate className="h-4 w-4 mr-2" /> Browse style templates
           </CommandItem>
         </CommandGroup>
         <CommandSeparator />
@@ -84,10 +84,10 @@ export function CommandPalette() {
             <LayoutDashboard className="h-4 w-4 mr-2" /> Dashboard
           </CommandItem>
           <CommandItem onSelect={() => go("/app/library")}>
-            <LibraryIcon className="h-4 w-4 mr-2" /> Library
+            <LibraryIcon className="h-4 w-4 mr-2" /> Scripts
           </CommandItem>
           <CommandItem onSelect={() => go("/app/history")}>
-            <HistoryIcon className="h-4 w-4 mr-2" /> History
+            <HistoryIcon className="h-4 w-4 mr-2" /> Studio log
           </CommandItem>
           <CommandItem onSelect={() => go("/app/brand")}>
             <Palette className="h-4 w-4 mr-2" /> Brand kit
@@ -99,13 +99,13 @@ export function CommandPalette() {
         {recent.length > 0 && (
           <>
             <CommandSeparator />
-            <CommandGroup heading="Recent projects">
+            <CommandGroup heading="Recent scripts">
               {recent.map((p) => (
                 <CommandItem key={p.id} onSelect={() => go(`/app/editor/${p.id}`)}>
                   <FileText className="h-4 w-4 mr-2" />
                   <span className="truncate">{p.title}</span>
                   <span className="ml-auto text-[10px] text-muted-foreground tnum">
-                    {p.slides.length} slides
+                    {p.slides.length} scenes
                   </span>
                 </CommandItem>
               ))}
