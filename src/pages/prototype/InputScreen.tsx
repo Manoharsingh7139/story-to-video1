@@ -683,7 +683,7 @@ export default function InputScreen() {
         </div>
         {!canGenerate && (
           <div className="max-w-6xl mx-auto px-8 lg:px-12 pb-2 -mt-1 text-[11px] text-muted-foreground text-right">
-            Add some text or upload a document to continue
+            Add your script or upload a document to continue
           </div>
         )}
       </div>
