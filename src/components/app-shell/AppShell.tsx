@@ -342,7 +342,7 @@ export function Topbar({
         <div className="flex items-center gap-2 min-w-0">
           <SidebarTrigger className="md:hidden -ml-1.5" />
           <nav className="flex items-center gap-1.5 text-[12px] min-w-0">
-            <span className="text-muted-foreground/70">Studio</span>
+            <span className="text-muted-foreground/70">Library</span>
             {built.map((c, i) => (
               <span key={i} className="flex items-center gap-1.5 min-w-0">
                 <ChevronRight className="h-3 w-3 text-muted-foreground/40 shrink-0" />
