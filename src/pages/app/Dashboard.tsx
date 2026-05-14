@@ -188,13 +188,13 @@ export default function Dashboard() {
             <section>
               <div className="flex items-end justify-between mb-5">
                 <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                  Recently
+                  Studio activity
                 </div>
                 <Link
                   to="/app/history"
                   className="text-[12px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors"
                 >
-                  Log <ArrowRight className="h-3 w-3" />
+                  Full log <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
               <ul className="border-y hairline divide-y divide-hairline">
@@ -210,7 +210,7 @@ export default function Dashboard() {
               </ul>
               {projects.length > 0 && (
                 <div className="mt-3 text-[11px] text-muted-foreground tnum">
-                  {projects.length} {projects.length === 1 ? "video" : "videos"} · {totalSlides} slides
+                  {projects.length} {projects.length === 1 ? "script" : "scripts"} · {totalSlides} scenes
                 </div>
               )}
             </section>
