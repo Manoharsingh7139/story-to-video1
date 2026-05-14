@@ -30,6 +30,14 @@ type SourceTab = "paste" | "upload" | "audio";
 const PACE_OPTIONS = ["Slow", "Normal", "Fast"] as const;
 const TONE_OPTIONS = ["Neutral", "Warm", "Energetic"] as const;
 
+const MOTION_OPTIONS = [
+  { id: "subtle", name: "Subtle", desc: "Gentle fade-in with a touch of motion" },
+  { id: "dynamic", name: "Dynamic", desc: "Recommended — bullets rise, boxes pop", recommended: true },
+  { id: "dramatic", name: "Dramatic", desc: "Bigger motion, slower entrance" },
+  { id: "cinematic", name: "Cinematic", desc: "Scale + wipe with overshoot — cinematic feel" },
+] as const;
+type MotionId = typeof MOTION_OPTIONS[number]["id"];
+
 // Forest-warm deterministic gradient per voice name (greens + warm muted)
 const voiceGradient = (name: string) => {
   let h = 0;
@@ -76,6 +84,7 @@ export default function InputScreen() {
   const [customTemplate, setCustomTemplate] = useState<string | null>(null);
   const [pace, setPace] = useState<typeof PACE_OPTIONS[number]>("Normal");
   const [tone, setTone] = useState<typeof TONE_OPTIONS[number]>("Warm");
+  const [motion, setMotion] = useState<MotionId>("dynamic");
   const [previewing, setPreviewing] = useState<string | null>(null);
 
   const [search] = useSearchParams();
@@ -475,6 +484,44 @@ export default function InputScreen() {
             </div>
           </Card>
 
+          {/* MOTION */}
+          <Card className="border-border/70 shadow-sm">
+            <div className="p-5">
+              <Eyebrow hint="How elements appear on each slide">Motion</Eyebrow>
+              <div className="grid grid-cols-2 gap-3">
+                {MOTION_OPTIONS.map((m) => {
+                  const active = motion === m.id;
+                  return (
+                    <button
+                      key={m.id}
+                      onClick={() => setMotion(m.id)}
+                      className={`group relative text-left rounded-lg border overflow-hidden transition-all ${
+                        active
+                          ? "border-foreground ring-2 ring-foreground/10"
+                          : "border-border hover:border-foreground/30"
+                      }`}
+                    >
+                      <MotionPreview id={m.id} />
+                      <div className="px-3 py-2.5 border-t border-border/60 bg-card">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="text-[13px] font-medium truncate">{m.name}</div>
+                          {active && (
+                            <span className="h-3.5 w-3.5 rounded-full bg-foreground text-background flex items-center justify-center shrink-0">
+                              <Check className="h-2 w-2" strokeWidth={3} />
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground mt-0.5 leading-snug">
+                          {m.desc}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </Card>
+
           {/* VOICE */}
           <Card className="border-border/70 shadow-sm">
             <div className="p-5">
@@ -688,6 +735,87 @@ export default function InputScreen() {
         )}
       </div>
     </>
+  );
+}
+
+function MotionPreview({ id }: { id: MotionId }) {
+  // Each variant uses a slightly different bar composition + animation cadence
+  // to communicate "how elements appear on each slide".
+  const variants: Record<MotionId, { bars: { w: string; tone: "accent" | "ink" | "muted" | "faint" }[]; duration: string; ease: string; delayStep: number }> = {
+    subtle: {
+      bars: [
+        { w: "85%", tone: "accent" },
+        { w: "60%", tone: "ink" },
+        { w: "40%", tone: "muted" },
+        { w: "30%", tone: "faint" },
+      ],
+      duration: "2.6s",
+      ease: "ease-out",
+      delayStep: 0.18,
+    },
+    dynamic: {
+      bars: [
+        { w: "85%", tone: "accent" },
+        { w: "55%", tone: "ink" },
+        { w: "40%", tone: "ink" },
+      ],
+      duration: "1.8s",
+      ease: "cubic-bezier(0.34, 1.56, 0.64, 1)",
+      delayStep: 0.14,
+    },
+    dramatic: {
+      bars: [
+        { w: "85%", tone: "accent" },
+        { w: "60%", tone: "ink" },
+        { w: "45%", tone: "ink" },
+      ],
+      duration: "3.2s",
+      ease: "cubic-bezier(0.16, 1, 0.3, 1)",
+      delayStep: 0.32,
+    },
+    cinematic: {
+      bars: [
+        { w: "82%", tone: "accent" },
+        { w: "70%", tone: "ink" },
+        { w: "55%", tone: "ink" },
+      ],
+      duration: "2.6s",
+      ease: "cubic-bezier(0.22, 1, 0.36, 1)",
+      delayStep: 0.22,
+    },
+  };
+
+  const toneClass: Record<string, string> = {
+    accent: "bg-[hsl(22_85%_58%)]",
+    ink: "bg-[hsl(220_25%_15%)]",
+    muted: "bg-[hsl(220_10%_45%)]",
+    faint: "bg-[hsl(220_8%_65%)]",
+  };
+
+  const v = variants[id];
+
+  return (
+    <div className="aspect-[5/3] bg-muted/40 px-4 pt-4 pb-3 flex flex-col gap-2.5">
+      <style>
+        {`
+          @keyframes motion-rise {
+            0% { opacity: 0; transform: translateY(6px); }
+            12%, 92% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-2px); }
+          }
+        `}
+      </style>
+      {v.bars.map((b, i) => (
+        <span
+          key={i}
+          className={`h-[6px] rounded-full ${toneClass[b.tone]}`}
+          style={{
+            width: b.w,
+            animation: `motion-rise ${v.duration} ${v.ease} ${i * v.delayStep}s infinite`,
+          }}
+        />
+      ))}
+    </div>
   );
 }
 
