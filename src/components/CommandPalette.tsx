@@ -66,7 +66,7 @@ export function CommandPalette() {
 
   return (
     <CommandDialog open={isOpen} onOpenChange={(o) => (o ? useCommandPalette.getState().open() : close())}>
-      <CommandInput placeholder="Search scripts, jump to a page…" />
+      <CommandInput placeholder="Search videos, jump to a page…" />
       <CommandList>
         <CommandEmpty>No matches.</CommandEmpty>
         <CommandGroup heading="Actions">
