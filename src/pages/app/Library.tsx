@@ -183,7 +183,7 @@ export default function LibraryPage() {
 
               {filtered.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-16">
-                  No scripts match <span className="font-serif italic">"{q}"</span>.
+                  No videos match <span className="font-serif italic">"{q}"</span>.
                 </p>
               ) : view === "grid" ? (
                 <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
