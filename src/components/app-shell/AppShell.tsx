@@ -262,8 +262,8 @@ function AppSidebar({ onOpenCommand: _onOpenCommand, onOpenShortcuts }: { onOpen
                 <DropdownMenuItem onClick={() => navigate("/app/settings")}>
                   <Settings className="h-4 w-4 mr-2" /> Settings
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/app/brand")}>
-                  <Palette className="h-4 w-4 mr-2" /> Brand kit
+                <DropdownMenuItem onClick={onOpenShortcuts}>
+                  <Keyboard className="h-4 w-4 mr-2" /> Keyboard shortcuts
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
