@@ -152,7 +152,7 @@ export default function Dashboard() {
                   to="/app/library"
                   className="text-[12px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors"
                 >
-                  All scripts <ArrowRight className="h-3 w-3" />
+                  All videos <ArrowRight className="h-3 w-3" />
                 </Link>
               )}
             </div>
