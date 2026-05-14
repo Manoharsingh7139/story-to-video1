@@ -210,7 +210,7 @@ export default function Dashboard() {
               </ul>
               {projects.length > 0 && (
                 <div className="mt-3 text-[11px] text-muted-foreground tnum">
-                  {projects.length} {projects.length === 1 ? "script" : "scripts"} · {totalSlides} scenes
+                  {projects.length} {projects.length === 1 ? "video" : "videos"} · {totalSlides} scenes
                 </div>
               )}
             </section>
