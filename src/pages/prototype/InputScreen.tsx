@@ -174,7 +174,7 @@ export default function InputScreen() {
   return (
     <>
       <Topbar
-        crumbs={[{ label: "New video" }]}
+        crumbs={[{ label: "New script" }]}
         actions={
           <div className="flex items-center gap-3">
             <StepDots step={1} />
@@ -191,16 +191,16 @@ export default function InputScreen() {
         {/* Hero / inline title */}
         <section className="max-w-6xl mx-auto px-8 lg:px-12 pt-10 pb-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
           <div className="font-sans text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-3">
-            New video
+            New script
           </div>
           <input
             value={projectTitle}
             onChange={(e) => setProjectTitle(e.target.value)}
             className="w-full bg-transparent border-none outline-none editorial-display text-3xl md:text-5xl text-ink placeholder:text-muted-foreground/40 focus:ring-0"
-            placeholder="Untitled video"
+            placeholder="Untitled script"
           />
           <p className="text-sm text-muted-foreground mt-2 font-serif italic">
-            Give your video a name. You can change it anytime.
+            Title your production. You can rename it anytime.
           </p>
         </section>
 
@@ -210,7 +210,7 @@ export default function InputScreen() {
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ animationDelay: "60ms" }}>
           <Card className="overflow-hidden border-border/70 shadow-sm">
             <div className="px-5 pt-5">
-              <Eyebrow hint={`${wordCount} words · ~${slideEstimate} slides · ~${minutes} min video`}>Source</Eyebrow>
+              <Eyebrow hint={`${wordCount} words · ~${slideEstimate} scenes · ~${minutes} min runtime`}>Script</Eyebrow>
 
               {/* Tabs */}
               <div className="inline-flex p-0.5 rounded-md bg-muted text-xs">
