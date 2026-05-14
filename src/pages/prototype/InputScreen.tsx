@@ -1,5 +1,7 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { Topbar } from "@/components/app-shell/AppShell";
+import { TEMPLATES } from "@/lib/data/seedTemplates";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
