@@ -314,7 +314,7 @@ export default function InputScreen() {
                         })}
                       </svg>
                       <div className="text-sm font-medium">{uploadedAudioScript}</div>
-                      <div className="text-xs text-muted-foreground">Transcribed · ready to generate slides</div>
+                      <div className="text-xs text-muted-foreground">Transcribed · ready to cut into scenes</div>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -330,9 +330,9 @@ export default function InputScreen() {
                       <div className="h-12 w-12 rounded-full bg-background flex items-center justify-center shadow-sm">
                         <AudioLines className="h-5 w-5" />
                       </div>
-                      <div className="text-sm font-medium">Upload an audio script</div>
+                      <div className="text-sm font-medium">Upload an audio recording</div>
                       <div className="text-xs text-muted-foreground max-w-sm">
-                        Drop a lecture, podcast, or recording. We'll transcribe it and use the text to build your slides.
+                        Drop a lecture, podcast, or take. We'll transcribe it and use the script to cut your scenes.
                       </div>
                       <div className="text-[11px] text-muted-foreground">.mp3, .wav, .m4a — up to 50 MB</div>
                     </>
