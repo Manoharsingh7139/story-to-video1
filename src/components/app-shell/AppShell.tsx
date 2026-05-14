@@ -390,11 +390,11 @@ function ShortcutsDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
     { keys: ["esc"], label: "Close dialogs" },
   ];
   return (
-    <ShortcutsDialogPrimitive open={open} onOpenChange={onOpenChange}>
-      <ShortcutsDialogContent className="sm:max-w-sm">
-        <ShortcutsDialogHeader>
-          <ShortcutsDialogTitle className="font-serif text-xl">Keyboard shortcuts</ShortcutsDialogTitle>
-        </ShortcutsDialogHeader>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-sm">
+        <DialogHeader>
+          <DialogTitle className="font-serif text-xl">Keyboard shortcuts</DialogTitle>
+        </DialogHeader>
         <ul className="border-y hairline divide-y divide-hairline mt-1">
           {rows.map((r) => (
             <li key={r.label} className="flex items-center justify-between py-2.5 text-sm">
@@ -407,8 +407,8 @@ function ShortcutsDialog({ open, onOpenChange }: { open: boolean; onOpenChange: 
             </li>
           ))}
         </ul>
-      </ShortcutsDialogContent>
-    </ShortcutsDialogPrimitive>
+      </DialogContent>
+    </Dialog>
   );
 }
 
