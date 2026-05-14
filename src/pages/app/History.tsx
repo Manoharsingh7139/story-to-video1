@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { Topbar } from "@/components/app-shell/AppShell";
-import { Button } from "@/components/ui/button";
 import { useHistoryStore } from "@/lib/data/useHistory";
 import { useProjects } from "@/lib/data/useProjects";
 import { useAuth } from "@/lib/auth/useAuth";
@@ -153,7 +152,6 @@ function HistoryRow({ entry, email, slideCount, errorDetail }: RowProps) {
 
 export default function HistoryPage() {
   const entries = useHistoryStore((s) => s.entries);
-  const clear = useHistoryStore((s) => s.clear);
   const projects = useProjects((s) => s.projects);
   const { user } = useAuth();
   const groups = groupByDay(entries);
@@ -165,13 +163,6 @@ export default function HistoryPage() {
     <>
       <Topbar
         crumbs={[{ label: "History" }]}
-        actions={
-          entries.length > 0 ? (
-            <Button variant="outline" size="sm" onClick={clear}>
-              Clear history
-            </Button>
-          ) : undefined
-        }
       />
       <div className="flex-1 overflow-auto">
         <div className="max-w-4xl mx-auto px-8 lg:px-12 py-12 lg:py-16">
