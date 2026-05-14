@@ -170,7 +170,7 @@ export default function HistoryPage() {
             eyebrow={
               <>
                 <span className="h-px w-6 bg-foreground/30 inline-block" />
-                <span>The studio log</span>
+                <span>History</span>
               </>
             }
             title="Activity"
@@ -181,7 +181,7 @@ export default function HistoryPage() {
             <div className="mt-12 bg-card border hairline shadow-paper rounded-xl">
               <EmptyState
                 illustration={<LogbookIllustration />}
-                eyebrow="Studio log"
+                eyebrow="History"
                 title={<>Nothing's happened <em className="font-serif italic">yet.</em></>}
                 description="Write your first script and the studio log will fill — every take, every video, every cut."
               />

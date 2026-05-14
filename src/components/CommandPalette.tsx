@@ -71,11 +71,11 @@ export function CommandPalette() {
         <CommandEmpty>No matches.</CommandEmpty>
         <CommandGroup heading="Actions">
           <CommandItem onSelect={() => go("/app/new")}>
-            <Plus className="h-4 w-4 mr-2" /> New script
+            <Plus className="h-4 w-4 mr-2" /> New video
             <span className="ml-auto text-[10px] text-muted-foreground">⌘N</span>
           </CommandItem>
           <CommandItem onSelect={() => go("/app/templates")}>
-            <LayoutTemplate className="h-4 w-4 mr-2" /> Browse style templates
+            <LayoutTemplate className="h-4 w-4 mr-2" /> Browse demo templates
           </CommandItem>
         </CommandGroup>
         <CommandSeparator />
@@ -87,7 +87,7 @@ export function CommandPalette() {
             <LibraryIcon className="h-4 w-4 mr-2" /> Templates
           </CommandItem>
           <CommandItem onSelect={() => go("/app/history")}>
-            <HistoryIcon className="h-4 w-4 mr-2" /> Studio log
+            <HistoryIcon className="h-4 w-4 mr-2" /> History
           </CommandItem>
           <CommandItem onSelect={() => go("/app/brand")}>
             <Palette className="h-4 w-4 mr-2" /> Brand kit

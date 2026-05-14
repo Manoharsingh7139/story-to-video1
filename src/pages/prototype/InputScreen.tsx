@@ -174,7 +174,7 @@ export default function InputScreen() {
   return (
     <>
       <Topbar
-        crumbs={[{ label: "New script" }]}
+        crumbs={[{ label: "New video" }]}
         actions={
           <div className="flex items-center gap-3">
             <StepDots step={1} />
@@ -191,7 +191,7 @@ export default function InputScreen() {
         {/* Hero / inline title */}
         <section className="max-w-6xl mx-auto px-8 lg:px-12 pt-10 pb-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
           <div className="font-sans text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-3">
-            New script
+            New video
           </div>
           <input
             value={projectTitle}

@@ -135,7 +135,7 @@ export default function Dashboard() {
                 onClick={(e) => e.stopPropagation()}
                 className="hidden md:inline-flex items-center gap-1 text-[12px] text-muted-foreground hover:text-foreground border-l hairline pl-4 ml-2"
               >
-                Use a style template
+                Use a demo template
                 <ArrowRight className="h-3 w-3" />
               </Link>
             </button>
@@ -160,10 +160,10 @@ export default function Dashboard() {
               <div className="bg-card border hairline shadow-paper">
                 <EmptyState
                   illustration={<StudioIllustration />}
-                  eyebrow="Your studio is quiet"
+                  eyebrow="YOUR LIBRARY IS QUIET"
                   title={
                     <>
-                      Let's record your <em className="not-italic font-serif italic">first</em> take.
+                      Let's create your <em className="not-italic font-serif italic">first</em> video.
                     </>
                   }
                   description="Paste any script — an essay, a doc, a transcript — and we'll cut it into scenes with a narrated video."
