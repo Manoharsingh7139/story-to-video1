@@ -360,7 +360,7 @@ export default function InputScreen() {
                   <Sparkles className="h-3 w-3 text-primary" /> Use sample (SWOT)
                 </button>
                 <div className="text-xs text-muted-foreground tabular-nums">
-                  {wordCount} words · ~{slideEstimate} slides
+                  {wordCount} words · ~{slideEstimate} scenes
                 </div>
               </div>
             </div>
