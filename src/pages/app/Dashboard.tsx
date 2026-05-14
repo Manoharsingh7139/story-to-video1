@@ -121,9 +121,9 @@ export default function Dashboard() {
                 <Plus className="h-4 w-4" strokeWidth={2} />
               </span>
               <span className="flex-1 min-w-0">
-                <span className="block text-[15px] font-medium text-ink">New video</span>
+                <span className="block text-[15px] font-medium text-ink">New script</span>
                 <span className="block font-serif italic text-[13px] text-muted-foreground mt-0.5">
-                  Paste your writing — we'll turn it into slides with voice.
+                  Paste your writing — we'll cut it into scenes and add a voice over.
                 </span>
               </span>
               <span className="hidden sm:inline-flex items-center gap-1 text-muted-foreground">
