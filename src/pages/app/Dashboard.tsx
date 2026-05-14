@@ -145,7 +145,7 @@ export default function Dashboard() {
           <section>
             <div className="flex items-end justify-between mb-5">
               <div className="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-                In production
+                Recent videos
               </div>
               {recent.length > 0 && (
                 <Link
