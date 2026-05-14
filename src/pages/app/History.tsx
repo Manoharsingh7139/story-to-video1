@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { Topbar } from "@/components/app-shell/AppShell";
-import { Button } from "@/components/ui/button";
 import { useHistoryStore } from "@/lib/data/useHistory";
 import { useProjects } from "@/lib/data/useProjects";
 import { useAuth } from "@/lib/auth/useAuth";
