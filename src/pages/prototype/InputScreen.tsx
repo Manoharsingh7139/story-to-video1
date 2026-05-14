@@ -22,7 +22,7 @@ import {
   Pause,
   AudioLines,
 } from "lucide-react";
-import { Wordmark } from "@/components/Wordmark";
+
 import { useProjects } from "@/lib/data/useProjects";
 
 type SourceTab = "paste" | "upload" | "audio";
