@@ -145,7 +145,7 @@ function AppSidebar({ onOpenCommand: _onOpenCommand, onOpenShortcuts }: { onOpen
         <SidebarMenu className="mb-1">
           <SidebarMenuItem>
             <SidebarMenuButton
-              tooltip="New video"
+              tooltip="New script"
               onClick={() => navigate("/app/new")}
               className={cn(
                 "h-9 px-2.5 group/new",
@@ -155,7 +155,7 @@ function AppSidebar({ onOpenCommand: _onOpenCommand, onOpenShortcuts }: { onOpen
               <Plus className="h-[15px] w-[15px] shrink-0" strokeWidth={2} />
               {!collapsed && (
                 <>
-                  <span className="text-[13px] font-medium">New video</span>
+                  <span className="text-[13px] font-medium">New script</span>
                   <span className="ml-auto opacity-60 group-hover/new:opacity-100">
                     <KBD>⌘</KBD>
                     <KBD className="ml-1">N</KBD>
