@@ -135,7 +135,7 @@ export default function Dashboard() {
                 onClick={(e) => e.stopPropagation()}
                 className="hidden md:inline-flex items-center gap-1 text-[12px] text-muted-foreground hover:text-foreground border-l hairline pl-4 ml-2"
               >
-                Use a demo template
+                Use a template
                 <ArrowRight className="h-3 w-3" />
               </Link>
             </button>
