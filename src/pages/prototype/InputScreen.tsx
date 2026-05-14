@@ -638,9 +638,9 @@ export default function InputScreen() {
                         <div className="h-10 w-10 rounded-full bg-background flex items-center justify-center shadow-sm">
                           <Mic className="h-5 w-5" />
                         </div>
-                        <div className="text-sm font-medium">Upload your voiceover</div>
+                        <div className="text-sm font-medium">Upload your voice over</div>
                         <div className="text-xs text-muted-foreground">
-                          .mp3 or .wav — we'll sync slides to your audio
+                          .mp3 or .wav — we'll sync scenes to your audio
                         </div>
                       </>
                     )}
