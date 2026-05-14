@@ -215,9 +215,9 @@ export default function InputScreen() {
               {/* Tabs */}
               <div className="inline-flex p-0.5 rounded-md bg-muted text-xs">
                 {([
-                  { id: "paste", label: "Paste text", icon: FileText },
+                  { id: "paste", label: "Paste script", icon: FileText },
                   { id: "upload", label: "Upload document", icon: FileUp },
-                  { id: "audio", label: "Audio script", icon: AudioLines },
+                  { id: "audio", label: "Audio recording", icon: AudioLines },
                 ] as const).map((t) => {
                   const Icon = t.icon;
                   const active = sourceTab === t.id;
