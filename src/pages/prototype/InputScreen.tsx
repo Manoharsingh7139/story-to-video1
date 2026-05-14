@@ -375,7 +375,7 @@ export default function InputScreen() {
           {/* LOOK */}
           <Card className="border-border/70 shadow-sm">
             <div className="p-5">
-              <Eyebrow hint="Fonts, colors, and slide style">Look</Eyebrow>
+              <Eyebrow hint="Fonts, colors, and scene style">Visual style</Eyebrow>
 
               <div className="grid grid-cols-3 gap-2">
                 {THEME_LIST.map((t) => {
