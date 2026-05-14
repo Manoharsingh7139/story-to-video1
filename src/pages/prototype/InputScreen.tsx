@@ -738,6 +738,87 @@ export default function InputScreen() {
   );
 }
 
+function MotionPreview({ id }: { id: MotionId }) {
+  // Each variant uses a slightly different bar composition + animation cadence
+  // to communicate "how elements appear on each slide".
+  const variants: Record<MotionId, { bars: { w: string; tone: "accent" | "ink" | "muted" | "faint" }[]; duration: string; ease: string; delayStep: number }> = {
+    subtle: {
+      bars: [
+        { w: "85%", tone: "accent" },
+        { w: "60%", tone: "ink" },
+        { w: "40%", tone: "muted" },
+        { w: "30%", tone: "faint" },
+      ],
+      duration: "2.6s",
+      ease: "ease-out",
+      delayStep: 0.18,
+    },
+    dynamic: {
+      bars: [
+        { w: "85%", tone: "accent" },
+        { w: "55%", tone: "ink" },
+        { w: "40%", tone: "ink" },
+      ],
+      duration: "1.8s",
+      ease: "cubic-bezier(0.34, 1.56, 0.64, 1)",
+      delayStep: 0.14,
+    },
+    dramatic: {
+      bars: [
+        { w: "85%", tone: "accent" },
+        { w: "60%", tone: "ink" },
+        { w: "45%", tone: "ink" },
+      ],
+      duration: "3.2s",
+      ease: "cubic-bezier(0.16, 1, 0.3, 1)",
+      delayStep: 0.32,
+    },
+    cinematic: {
+      bars: [
+        { w: "82%", tone: "accent" },
+        { w: "70%", tone: "ink" },
+        { w: "55%", tone: "ink" },
+      ],
+      duration: "2.6s",
+      ease: "cubic-bezier(0.22, 1, 0.36, 1)",
+      delayStep: 0.22,
+    },
+  };
+
+  const toneClass: Record<string, string> = {
+    accent: "bg-[hsl(22_85%_58%)]",
+    ink: "bg-[hsl(220_25%_15%)]",
+    muted: "bg-[hsl(220_10%_45%)]",
+    faint: "bg-[hsl(220_8%_65%)]",
+  };
+
+  const v = variants[id];
+
+  return (
+    <div className="aspect-[5/3] bg-muted/40 px-4 pt-4 pb-3 flex flex-col gap-2.5">
+      <style>
+        {`
+          @keyframes motion-rise {
+            0% { opacity: 0; transform: translateY(6px); }
+            12%, 92% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-2px); }
+          }
+        `}
+      </style>
+      {v.bars.map((b, i) => (
+        <span
+          key={i}
+          className={`h-[6px] rounded-full ${toneClass[b.tone]}`}
+          style={{
+            width: b.w,
+            animation: `motion-rise ${v.duration} ${v.ease} ${i * v.delayStep}s infinite`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 function StepDots({ step }: { step: 1 | 2 | 3 }) {
   const labels = ["Script", "Render", "Cut"];
   return (
