@@ -478,12 +478,12 @@ export default function InputScreen() {
           {/* VOICE */}
           <Card className="border-border/70 shadow-sm">
             <div className="p-5">
-              <Eyebrow hint="Choose how it sounds">Voice</Eyebrow>
+              <Eyebrow hint="Choose how it sounds">Voice over</Eyebrow>
 
               {/* Mode segmented */}
               <div className="inline-flex p-0.5 rounded-md bg-muted text-xs mb-4">
                 {([
-                  { id: "ai", label: "AI voice", icon: Sparkles },
+                  { id: "ai", label: "AI voice over", icon: Sparkles },
                   { id: "upload", label: "My recording", icon: Mic },
                 ] as const).map((m) => {
                   const Icon = m.icon;
