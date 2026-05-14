@@ -388,109 +388,142 @@ export default function InputScreen() {
 
           {/* RIGHT — grouped Style / Motion / Voice */}
           <Card className="overflow-hidden border-border/70 shadow-sm flex flex-col min-h-0 divide-y divide-border/60">
-            {/* STYLE */}
-            <div className="px-4 py-3 flex items-start gap-3 shrink-0">
-              <RowLabel>Style</RowLabel>
-              <div className="flex-1 min-w-0 flex items-center gap-2 overflow-x-auto no-scrollbar pb-0.5">
-                {THEME_LIST.map((t) => {
-                  const active = themeId === t.id && !customTemplate;
-                  return (
-                    <Tooltip key={t.id}>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={() => {
-                            setThemeId(t.id);
-                            setCustomTemplate(null);
-                          }}
-                          className={cn(
-                            "relative shrink-0 rounded-md overflow-hidden border transition-all",
-                            active
-                              ? "border-primary ring-2 ring-primary/20"
-                              : "border-border hover:border-foreground/30",
-                          )}
-                          aria-label={t.name}
-                        >
-                          <div
-                            className="w-12 h-9 p-1.5 flex flex-col justify-between"
-                            style={{ background: t.bg, color: t.text }}
-                          >
-                            <div
-                              style={{
-                                fontFamily: t.fontHead,
-                                fontWeight: 700,
-                                fontSize: 6,
-                                lineHeight: 1.05,
-                              }}
-                            >
-                              Aa
-                            </div>
-                            <div className="flex items-center gap-0.5">
-                              <span style={{ width: 8, height: 1.5, background: t.accent, borderRadius: 1 }} />
-                              <span style={{ width: 2, height: 2, borderRadius: 999, background: t.muted, opacity: 0.6 }} />
-                            </div>
-                          </div>
-                          {active && (
-                            <span className="absolute top-0.5 right-0.5 h-3 w-3 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-                              <Check className="h-2 w-2" strokeWidth={3} />
-                            </span>
-                          )}
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom" className="text-[11px]">
-                        {t.name}
-                      </TooltipContent>
-                    </Tooltip>
-                  );
-                })}
+            {/* STYLE — large live preview + picker strip */}
+            <div className="px-4 py-3 flex flex-col gap-2 shrink-0">
+              <div className="flex items-center justify-between">
+                <RowLabel>Style</RowLabel>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => templateInputRef.current?.click()}
+                      className={cn(
+                        "shrink-0 h-7 px-2.5 rounded-md border inline-flex items-center gap-1.5 text-[11px] transition-colors",
+                        customTemplate
+                          ? "border-foreground bg-muted/40 text-foreground"
+                          : "border-dashed border-border hover:border-foreground/40 text-muted-foreground hover:text-foreground",
+                      )}
+                    >
+                      {customTemplate ? (
+                        <>
+                          <LayoutTemplate className="h-3.5 w-3.5" />
+                          <span className="max-w-[90px] truncate">{customTemplate}</span>
+                          <X
+                            className="h-3 w-3 hover:text-destructive"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setCustomTemplate(null);
+                            }}
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="h-3.5 w-3.5" /> Upload template
+                        </>
+                      )}
+                      <input
+                        ref={templateInputRef}
+                        type="file"
+                        accept=".pptx,.key,.pdf,image/*"
+                        className="hidden"
+                        onChange={handleTemplateUpload}
+                      />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="text-[11px]">
+                    Upload your own template (.pptx, .key, .pdf)
+                  </TooltipContent>
+                </Tooltip>
               </div>
 
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={() => templateInputRef.current?.click()}
-                    className={cn(
-                      "shrink-0 h-9 px-2.5 rounded-md border inline-flex items-center gap-1.5 text-[11px] transition-colors",
-                      customTemplate
-                        ? "border-foreground bg-muted/40 text-foreground"
-                        : "border-dashed border-border hover:border-foreground/40 text-muted-foreground hover:text-foreground",
-                    )}
-                  >
-                    {customTemplate ? (
-                      <>
-                        <LayoutTemplate className="h-3.5 w-3.5" />
-                        <span className="max-w-[80px] truncate">{customTemplate}</span>
-                        <X
-                          className="h-3 w-3 hover:text-destructive"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setCustomTemplate(null);
-                          }}
-                        />
-                      </>
-                    ) : (
-                      <>
-                        <Upload className="h-3.5 w-3.5" /> Upload
-                      </>
-                    )}
-                    <input
-                      ref={templateInputRef}
-                      type="file"
-                      accept=".pptx,.key,.pdf,image/*"
-                      className="hidden"
-                      onChange={handleTemplateUpload}
-                    />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom" className="text-[11px]">
-                  Upload your own template (.pptx, .key, .pdf)
-                </TooltipContent>
-              </Tooltip>
+              <div className="flex items-stretch gap-3">
+                {/* Big live preview of the selected theme */}
+                {(() => {
+                  const t = THEME_LIST.find((x) => x.id === themeId) ?? THEME_LIST[0];
+                  return (
+                    <div
+                      className="relative rounded-md overflow-hidden border border-border shrink-0 aspect-[16/9] w-[200px]"
+                      style={{ background: t.bg, color: t.text }}
+                    >
+                      <div className="absolute inset-0 p-3 flex flex-col justify-between">
+                        <div className="space-y-1">
+                          <div
+                            style={{ fontFamily: t.fontHead, fontWeight: 700, fontSize: 14, lineHeight: 1.1 }}
+                          >
+                            The Async Advantage
+                          </div>
+                          <div
+                            style={{ fontFamily: t.fontBody, fontSize: 8, lineHeight: 1.3, opacity: 0.75 }}
+                          >
+                            A short visual essay on focus
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <span style={{ width: 24, height: 2, background: t.accent, borderRadius: 1 }} />
+                          <span style={{ width: 4, height: 4, borderRadius: 999, background: t.muted, opacity: 0.7 }} />
+                          <span style={{ fontFamily: t.fontBody, fontSize: 7, opacity: 0.55, marginLeft: "auto" }}>
+                            {t.name}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* Picker grid */}
+                <div className="flex-1 min-w-0 grid grid-cols-4 gap-1.5 content-start">
+                  {THEME_LIST.map((t) => {
+                    const active = themeId === t.id && !customTemplate;
+                    return (
+                      <Tooltip key={t.id}>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => {
+                              setThemeId(t.id);
+                              setCustomTemplate(null);
+                            }}
+                            className={cn(
+                              "relative rounded-md overflow-hidden border transition-all aspect-[16/9]",
+                              active
+                                ? "border-primary ring-2 ring-primary/20"
+                                : "border-border hover:border-foreground/30",
+                            )}
+                            aria-label={t.name}
+                          >
+                            <div
+                              className="absolute inset-0 p-1 flex flex-col justify-between"
+                              style={{ background: t.bg, color: t.text }}
+                            >
+                              <div
+                                style={{ fontFamily: t.fontHead, fontWeight: 700, fontSize: 7, lineHeight: 1 }}
+                              >
+                                Aa
+                              </div>
+                              <div className="flex items-center gap-0.5">
+                                <span style={{ width: 10, height: 1.5, background: t.accent, borderRadius: 1 }} />
+                                <span style={{ width: 2, height: 2, borderRadius: 999, background: t.muted, opacity: 0.6 }} />
+                              </div>
+                            </div>
+                            {active && (
+                              <span className="absolute top-0.5 right-0.5 h-3 w-3 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                                <Check className="h-2 w-2" strokeWidth={3} />
+                              </span>
+                            )}
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom" className="text-[11px]">
+                          {t.name}
+                        </TooltipContent>
+                      </Tooltip>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
 
-            {/* MOTION */}
-            <div className="px-4 py-3 flex items-start gap-3 shrink-0">
+            {/* MOTION — 4 visual preview tiles */}
+            <div className="px-4 py-3 flex flex-col gap-2 shrink-0">
               <RowLabel>Motion</RowLabel>
-              <div className="flex-1 grid grid-cols-4 gap-1.5">
+              <div className="grid grid-cols-4 gap-2">
                 {MOTION_OPTIONS.map((m) => {
                   const active = motion === m.id;
                   return (
@@ -498,22 +531,25 @@ export default function InputScreen() {
                       key={m.id}
                       onClick={() => setMotion(m.id)}
                       className={cn(
-                        "relative rounded-md border px-2 py-1.5 text-left transition-all",
+                        "group relative rounded-md border overflow-hidden text-left transition-all",
                         active
-                          ? "border-foreground bg-foreground/[0.04]"
+                          ? "border-foreground ring-1 ring-foreground/20"
                           : "border-border hover:border-foreground/30",
                       )}
                     >
-                      <div className="flex items-center justify-between">
-                        <span className="text-[12px] font-medium leading-none">{m.name}</span>
+                      <div className="aspect-[16/9] bg-muted/40 relative overflow-hidden">
+                        <MotionPreview id={m.id} />
                         {active && (
-                          <span className="h-3 w-3 rounded-full bg-foreground text-background flex items-center justify-center shrink-0">
+                          <span className="absolute top-1 right-1 h-3.5 w-3.5 rounded-full bg-foreground text-background flex items-center justify-center">
                             <Check className="h-2 w-2" strokeWidth={3} />
                           </span>
                         )}
                       </div>
-                      <div className="text-[10px] text-muted-foreground mt-0.5 leading-tight truncate">
-                        {m.desc}
+                      <div className="px-2 py-1.5 border-t border-border/60">
+                        <div className="text-[12px] font-medium leading-none">{m.name}</div>
+                        <div className="text-[10px] text-muted-foreground mt-0.5 leading-tight truncate">
+                          {m.desc}
+                        </div>
                       </div>
                     </button>
                   );
