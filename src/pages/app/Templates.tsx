@@ -2,28 +2,15 @@ import { useNavigate } from "react-router-dom";
 import { Topbar } from "@/components/app-shell/AppShell";
 import { Button } from "@/components/ui/button";
 import { TEMPLATES } from "@/lib/data/seedTemplates";
-import { useProjects } from "@/lib/data/useProjects";
 import { THEMES } from "@/lib/prototype/themes";
 import { EditorialHeader } from "@/components/editorial/EditorialHeader";
 import { ArrowRight } from "lucide-react";
 
 export default function TemplatesPage() {
   const navigate = useNavigate();
-  const create = useProjects((s) => s.createProject);
 
   const useTemplate = (id: string) => {
-    const tpl = TEMPLATES.find((t) => t.id === id);
-    if (!tpl) return;
-    const project = create({
-      title: tpl.name,
-      themeId: tpl.themeId,
-      voice: tpl.voice,
-      voiceMode: "ai",
-      source: tpl.source,
-      templateId: tpl.id,
-      slides: [],
-    });
-    navigate(`/app/generating?id=${project.id}`);
+    navigate(`/app/new?template=${id}`);
   };
 
   const categories = Array.from(new Set(TEMPLATES.map((t) => t.category)));
