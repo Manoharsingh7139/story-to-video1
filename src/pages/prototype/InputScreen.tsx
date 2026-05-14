@@ -385,7 +385,7 @@ export default function InputScreen() {
                       </div>
                       <div className="text-sm font-medium">Upload an audio recording</div>
                       <div className="text-[11px] text-muted-foreground max-w-sm">
-                        Drop a lecture, podcast, or take. We'll transcribe it and use the script to cut your scenes.
+                        .mp3 or .m4a — we'll sync scenes to your audio.
                       </div>
                     </>
                   )}
@@ -701,7 +701,7 @@ export default function InputScreen() {
                       {uploadedVoice ?? "Upload your voice over"}
                     </div>
                     <div className="text-[11px] text-muted-foreground">
-                      {uploadedVoice ? "Synced to your scenes" : ".mp3 or .wav — we'll sync scenes to your audio"}
+                      {uploadedVoice ? "Synced to your scenes" : "Drop a lecture, podcast, or take. We'll clone it and use that to generate your video."}
                     </div>
                   </div>
                   {uploadedVoice && (
