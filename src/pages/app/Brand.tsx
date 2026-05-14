@@ -185,7 +185,7 @@ export default function BrandPage() {
                       </SelectContent>
                     </Select>
                   </FieldRow>
-                  <FieldRow label="Voice">
+                  <FieldRow label="Voice over">
                     <Select
                       value={kit.defaultVoice}
                       onValueChange={(v) => update({ defaultVoice: v })}
