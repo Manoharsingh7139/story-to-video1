@@ -28,6 +28,7 @@ import {
   ChevronRight,
   Search,
   User as UserIcon,
+  Keyboard,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth/useAuth";
 import { useProjects } from "@/lib/data/useProjects";
