@@ -75,7 +75,7 @@ export function CommandPalette() {
             <span className="ml-auto text-[10px] text-muted-foreground">⌘N</span>
           </CommandItem>
           <CommandItem onSelect={() => go("/app/templates")}>
-            <LayoutTemplate className="h-4 w-4 mr-2" /> Browse demo templates
+            <LayoutTemplate className="h-4 w-4 mr-2" /> Browse templates
           </CommandItem>
         </CommandGroup>
         <CommandSeparator />
