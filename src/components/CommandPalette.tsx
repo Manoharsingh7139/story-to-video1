@@ -84,7 +84,7 @@ export function CommandPalette() {
             <LayoutDashboard className="h-4 w-4 mr-2" /> Dashboard
           </CommandItem>
           <CommandItem onSelect={() => go("/app/library")}>
-            <LibraryIcon className="h-4 w-4 mr-2" /> Scripts
+            <LibraryIcon className="h-4 w-4 mr-2" /> Templates
           </CommandItem>
           <CommandItem onSelect={() => go("/app/history")}>
             <HistoryIcon className="h-4 w-4 mr-2" /> Studio log
