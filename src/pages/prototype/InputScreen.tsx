@@ -692,7 +692,7 @@ export default function InputScreen() {
 }
 
 function StepDots({ step }: { step: 1 | 2 | 3 }) {
-  const labels = ["Setup", "Generate", "Edit"];
+  const labels = ["Script", "Render", "Cut"];
   return (
     <div className="hidden md:flex items-center gap-2 text-[11px] text-muted-foreground">
       {labels.map((l, i) => {
