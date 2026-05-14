@@ -484,6 +484,44 @@ export default function InputScreen() {
             </div>
           </Card>
 
+          {/* MOTION */}
+          <Card className="border-border/70 shadow-sm">
+            <div className="p-5">
+              <Eyebrow hint="How elements appear on each slide">Motion</Eyebrow>
+              <div className="grid grid-cols-2 gap-3">
+                {MOTION_OPTIONS.map((m) => {
+                  const active = motion === m.id;
+                  return (
+                    <button
+                      key={m.id}
+                      onClick={() => setMotion(m.id)}
+                      className={`group relative text-left rounded-lg border overflow-hidden transition-all ${
+                        active
+                          ? "border-foreground ring-2 ring-foreground/10"
+                          : "border-border hover:border-foreground/30"
+                      }`}
+                    >
+                      <MotionPreview id={m.id} />
+                      <div className="px-3 py-2.5 border-t border-border/60 bg-card">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="text-[13px] font-medium truncate">{m.name}</div>
+                          {active && (
+                            <span className="h-3.5 w-3.5 rounded-full bg-foreground text-background flex items-center justify-center shrink-0">
+                              <Check className="h-2 w-2" strokeWidth={3} />
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground mt-0.5 leading-snug">
+                          {m.desc}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </Card>
+
           {/* VOICE */}
           <Card className="border-border/70 shadow-sm">
             <div className="p-5">
