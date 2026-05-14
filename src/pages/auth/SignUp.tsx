@@ -65,8 +65,8 @@ export default function SignUp() {
         <Button type="submit" className="w-full" disabled={loading}>
           {loading ? "Creating account…" : "Create account"}
         </Button>
-        <p className="text-xs text-center text-muted-foreground">
-          Already have an account? <Link to="/signin" className="text-primary hover:underline font-medium">Sign in</Link>
+        <p className="text-[11px] text-center text-muted-foreground">
+          Contact Admin for new account setup.
         </p>
       </form>
     </AuthLayout>
