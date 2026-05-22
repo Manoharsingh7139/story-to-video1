@@ -45,7 +45,7 @@ export function HowItWorks() {
               Sec. 03 — The Production
             </div>
             <h2 className="editorial-display text-foreground text-[42px] md:text-[72px] leading-[0.95]">
-              3 acts, <span className="italic">one take.</span>
+              Three acts, <span className="italic">one take.</span>
             </h2>
           </div>
           <p className="hidden md:block font-serif italic text-[15px] text-foreground/65 max-w-[300px] text-right">
