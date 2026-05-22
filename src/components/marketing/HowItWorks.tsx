@@ -25,7 +25,7 @@ const ACTS = [
     n: "03",
     label: "The Voice",
     title: "Clone, then press play.",
-    body: "Train a voice from sixty seconds of audio. FrameFlow narrates each scene, syncs the cuts, and exports a film you can ship.",
+    body: "Train a voice from a brief audio sample. FrameFlow narrates each scene, syncs the cuts, and exports a film you can ship.",
     Illustration: LogbookIllustration,
     align: "left" as const,
   },
@@ -45,7 +45,7 @@ export function HowItWorks() {
               Sec. 03 — The Production
             </div>
             <h2 className="editorial-display text-foreground text-[42px] md:text-[72px] leading-[0.95]">
-              Three acts, <span className="italic">one take.</span>
+              A few acts, <span className="italic">one take.</span>
             </h2>
           </div>
           <p className="hidden md:block font-serif italic text-[15px] text-foreground/65 max-w-[300px] text-right">

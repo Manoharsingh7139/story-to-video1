@@ -20,7 +20,7 @@ export function MagazineHero() {
               FrameFlow · Est. MMXXVI
             </span>
             <span className="font-serif italic text-[18px] md:text-[20px] text-foreground/80 leading-none">
-              The Studio
+              The Content Studio
             </span>
           </div>
         </div>

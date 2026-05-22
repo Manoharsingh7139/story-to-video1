@@ -60,11 +60,11 @@ export function ThemeGallery() {
               Sec. 04 — The Wardrobe
             </div>
             <h2 className="editorial-display text-foreground text-[42px] md:text-[72px] leading-[0.95]">
-              Nine themes. <span className="italic">One signature.</span>
+              Multiple themes. <span className="italic">One signature.</span>
             </h2>
           </div>
           <p className="hidden md:block font-serif italic text-[15px] text-foreground/65 max-w-[300px] text-right">
-            Same engine, nine wardrobes — from editorial cream to noir gold to midnight emerald.
+            Same engine, multiple wardrobes — from editorial cream to noir gold to midnight emerald.
           </p>
         </div>
 
