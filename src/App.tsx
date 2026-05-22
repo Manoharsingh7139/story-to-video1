@@ -1,9 +1,9 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthProvider, useAuth } from "@/lib/auth/useAuth";
+import { AuthProvider } from "@/lib/auth/useAuth";
 import { RequireAuth } from "@/lib/auth/RequireAuth";
 import AppShell from "@/components/app-shell/AppShell";
 import NotFound from "./pages/NotFound.tsx";
@@ -18,14 +18,9 @@ import SettingsPage from "./pages/app/Settings.tsx";
 import InputScreen from "./pages/prototype/InputScreen.tsx";
 import GeneratingScreen from "./pages/prototype/GeneratingScreen.tsx";
 import EditorScreen from "./pages/prototype/EditorScreen.tsx";
+import Landing from "./pages/marketing/Landing.tsx";
 
 const queryClient = new QueryClient();
-
-function RootRedirect() {
-  const { user, loading } = useAuth();
-  if (loading) return null;
-  return <Navigate to={user ? "/app" : "/signin"} replace />;
-}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -35,7 +30,8 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path="/" element={<RootRedirect />} />
+            <Route path="/" element={<Landing />} />
+
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
 
