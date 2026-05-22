@@ -1,29 +1,34 @@
-## Add Logo to Landing Page
+## Goal
 
-### Context
-The nav bar was removed in a prior edit, so the page currently opens straight into the "Words become watchable." headline with zero brand identification. The `frameflow-logo.png` asset exists but is only used as a tiny 22–36 px icon inside the `<Wordmark>` component.
+Clicking the floating "Sign in" pill on the landing page should open a compact, on-brand modal — not navigate to the two-pane `/signin` page. The modal should feel consistent with the magazine/editorial landing (paper background, hairline borders, serif accents, uppercase tracking) and have a touch of fun and boldness.
 
-### Goal
-Place the logo boldly and meaningfully — bookending the page — so the brand is unmistakable without cluttering the editorial layout.
+## Changes
 
-### Changes
+### 1. New component: `src/components/marketing/SignInDialog.tsx`
+- Wraps shadcn `Dialog` (already in project) with a custom editorial skin.
+- Trigger is rendered by the parent; component accepts `open` / `onOpenChange`.
+- Content:
+  - Small uppercase eyelet: `— Welcome back`
+  - Bold serif headline using `editorial-display` / `font-serif` italic accent, e.g. "Welcome **back.**"
+  - Email + password fields (shadcn `Input` + `Label`) with same zod schema as `SignIn.tsx`.
+  - Primary "Sign in" button (full width, matches floating pill styling — pill radius, uppercase tracking).
+  - Footer line: "Contact admin for new account setup." in muted small caps.
+- Reuses `useAuth().signIn`, toast on success/error, navigates to `/app` on success.
+- Visual touches for "fun + bold":
+  - Paper texture background (`bg-paper`), hairline border, soft `shadow-paper`.
+  - Tiny rotated serif flourish or arrow accent in the corner (decorative).
+  - Subtle pop-in animation on the headline words (reuse the `tagline-pop` keyframes pattern already in `SignIn.tsx`, scaled down).
 
-#### 1. MagazineHero — Masthead logo above the headline
-- Insert the logo image as a large rounded mark (80–100 px) at the very top of the hero, before the headline.
-- Style it with `shadow-paper` and a subtle `border hairline` so it feels like a physical publication stamp.
-- Keep it aligned left with the rest of the hero content (inside the `max-w-[1400px]` container).
-- Fade it in with the same `animate-fade-in-up` timing as the headline.
+### 2. `src/pages/marketing/Landing.tsx`
+- Replace the `<Link to="/signin">` floating pill with a `<button>` that toggles `signInOpen` state.
+- If `user` is signed in, keep it as a `<Link to="/app">` showing "Open Studio" (unchanged behavior).
+- Render `<SignInDialog open={signInOpen} onOpenChange={setSignInOpen} />`.
 
-#### 2. Colophon — Oversized watermark logo
-- Add a second, very large (200–280 px), low-opacity (`text-foreground/[0.04]`) logo mark behind/overlapping the colophon text block, similar to the oversized "FrameFlow." text already there.
-- Position it absolutely so it acts as a watermark rather than pushing content down.
-- This creates a bold visual bookend at the bottom of the page.
+### 3. Leave `/signin` route intact
+- The existing `SignIn.tsx` page still works for direct URL visits and for `RequireAuth` redirects that include a `?next=` param. No changes to routing.
 
-### Technical notes
-- Import the PNG directly into each component: `import logoSrc from "@/assets/frameflow-logo.png"`.
-- Use a rounded container (`rounded-[14px] overflow-hidden`) to match the logo's square mark shape used in `<Wordmark>`.
-- No changes to routing, auth, or other sections.
-
-### Files to edit
-- `src/components/marketing/MagazineHero.tsx`
-- `src/components/marketing/Colophon.tsx`
+## Technical notes
+- Use existing `Dialog`, `Input`, `Label`, `Button` from `@/components/ui/*`.
+- Reuse `useAuth`, `toast`, and the zod schema pattern from `SignIn.tsx` (duplicated locally — small and keeps the page self-contained).
+- All styling via existing semantic tokens (`bg-paper`, `text-ink`, `hairline`, `shadow-paper`, `editorial-display`, `font-serif`) — no new color literals.
+- No backend or auth-logic changes.
