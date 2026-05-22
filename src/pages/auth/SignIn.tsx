@@ -130,7 +130,7 @@ export function AuthLayout({
           </p>
           {children}
         </div>
-        <p className="text-[11px] text-muted-foreground tnum">© Content Studio</p>
+        <p className="text-[11px] text-muted-foreground tnum">© FrameFlow</p>
       </div>
       <div
         className="hidden md:flex relative items-center justify-center p-14 overflow-hidden border-l hairline"
