@@ -1,32 +1,29 @@
-## Scope
+## Add Logo to Landing Page
 
-Tighten the FrameFlow landing page by stripping non-essential CTAs and editorial scaffolding. Pure presentation — no routing or logic changes.
+### Context
+The nav bar was removed in a prior edit, so the page currently opens straight into the "Words become watchable." headline with zero brand identification. The `frameflow-logo.png` asset exists but is only used as a tiny 22–36 px icon inside the `<Wordmark>` component.
 
-## Changes
+### Goal
+Place the logo boldly and meaningfully — bookending the page — so the brand is unmistakable without cluttering the editorial layout.
 
-### 1. `src/components/marketing/Masthead.tsx`
-- Remove the "Start free" button (signed-out state).
-- Keep only the **Sign in** link as the right-side action.
-- Signed-in "Open Studio" button: keep as-is.
-- Nav (How it works / Themes / Demo) and wordmark: keep.
+### Changes
 
-### 2. `src/components/marketing/MagazineHero.tsx`
-- Remove the entire issue-eyebrow strip at the top ("Issue Nº 01 — FrameFlow Quarterly · MAY · MMXXVI · Vol. I · The Studio" + its underline rule).
-- Page now opens directly on the "Words become watchable." headline.
-- Remove the two hero CTAs ("Start free", "Watch the 30s reel") below the lede paragraph. Lede paragraph stays.
-- Remove the right-column "In this issue" table-of-contents block.
-- Remove the bottom "↓ Turn the page · 01 / 04" rule.
+#### 1. MagazineHero — Masthead logo above the headline
+- Insert the logo image as a large rounded mark (80–100 px) at the very top of the hero, before the headline.
+- Style it with `shadow-paper` and a subtle `border hairline` so it feels like a physical publication stamp.
+- Keep it aligned left with the rest of the hero content (inside the `max-w-[1400px]` container).
+- Fade it in with the same `animate-fade-in-up` timing as the headline.
 
-### 3. `src/components/marketing/ThemeGallery.tsx`
-- Editor's Note pull-quote: replace the two-line copy `"Design is our / only moat."` with `Crafted with ♥ in-house` (using the ❤ heart emoji). Keep typography, layout, and the "¶ Editor's Note" eyebrow.
-- Remove the "— Internal memo, week one" attribution line beneath the quote.
+#### 2. Colophon — Oversized watermark logo
+- Add a second, very large (200–280 px), low-opacity (`text-foreground/[0.04]`) logo mark behind/overlapping the colophon text block, similar to the oversized "FrameFlow." text already there.
+- Position it absolutely so it acts as a watermark rather than pushing content down.
+- This creates a bold visual bookend at the bottom of the page.
 
-### 4. `src/components/marketing/Colophon.tsx`
-- Remove the **Product**, **Studio**, and **Colophon** column blocks.
-- Remove the "Start free / Open Studio" CTA link under the wordmark+lede.
-- Keep: left wordmark + serif italic lede, the oversized bleeding "FrameFlow." mark, and the bottom rule (`Vol. I · Issue Nº 01` / `End of issue —`).
-- Collapse the 12-col grid down to a single left-aligned block.
+### Technical notes
+- Import the PNG directly into each component: `import logoSrc from "@/assets/frameflow-logo.png"`.
+- Use a rounded container (`rounded-[14px] overflow-hidden`) to match the logo's square mark shape used in `<Wordmark>`.
+- No changes to routing, auth, or other sections.
 
-## Out of scope
-
-No changes to `Landing.tsx`, `DemoMarquee`, `HowItWorks`, routing, tokens, or anything else.
+### Files to edit
+- `src/components/marketing/MagazineHero.tsx`
+- `src/components/marketing/Colophon.tsx`
