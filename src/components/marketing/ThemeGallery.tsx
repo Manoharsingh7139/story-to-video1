@@ -88,11 +88,8 @@ export function ThemeGallery() {
               maxWidth: "18ch",
             }}
           >
-            "Design is our<br />only moat."
+            Crafted with <span aria-label="love" className="not-italic">❤</span> in-house
           </p>
-          <div className="mt-6 text-[11px] uppercase tracking-[0.22em] text-foreground/55 text-center font-medium tnum">
-            — Internal memo, week one
-          </div>
         </blockquote>
 
         {/* Second half */}

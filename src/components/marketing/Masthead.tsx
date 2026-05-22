@@ -25,16 +25,9 @@ export function Masthead() {
               </Link>
             </Button>
           ) : (
-            <>
-              <Button asChild variant="ghost" size="sm" className="h-8 px-3 text-[12.5px] hidden sm:inline-flex">
-                <Link to="/signin">Sign in</Link>
-              </Button>
-              <Button asChild size="sm" className="h-8 rounded-full px-4 text-[12.5px]">
-                <Link to="/signup">
-                  Start free <ArrowUpRight className="h-3.5 w-3.5 ml-1" strokeWidth={2} />
-                </Link>
-              </Button>
-            </>
+            <Button asChild variant="ghost" size="sm" className="h-8 px-3 text-[12.5px]">
+              <Link to="/signin">Sign in</Link>
+            </Button>
           )}
         </div>
       </div>
