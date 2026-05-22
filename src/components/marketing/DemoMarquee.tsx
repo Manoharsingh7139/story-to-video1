@@ -22,14 +22,14 @@ export function DemoMarquee() {
     <section
       id="demo"
       aria-label="Live demo strip"
-      className="relative overflow-hidden border-b hairline py-14 md:py-20 bg-paper"
+      className="relative overflow-hidden border-b hairline py-12 md:py-20 bg-paper"
     >
-      <div className="max-w-[1400px] mx-auto px-6 md:px-10 mb-8 md:mb-12 flex items-end justify-between gap-6">
+      <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-10 mb-8 md:mb-12 flex items-end justify-between gap-6">
         <div>
           <div className="text-[10.5px] uppercase tracking-[0.22em] text-foreground/55 mb-3 font-medium">
             Sec. 02 — On the cutting room floor
           </div>
-          <h2 className="editorial-display text-foreground text-[36px] md:text-[56px] leading-[0.95]">
+          <h2 className="editorial-display text-foreground text-[32px] sm:text-[40px] md:text-[56px] leading-[0.95]">
             A reel of <span className="italic text-primary">just-baked</span> scenes.
           </h2>
         </div>
@@ -41,11 +41,11 @@ export function DemoMarquee() {
       {/* Marquee */}
       <div className="group/marquee relative">
         {/* Fades */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-24 z-10 bg-gradient-to-r from-background to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-24 z-10 bg-gradient-to-l from-background to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-10 md:w-24 z-10 bg-gradient-to-r from-background to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-10 md:w-24 z-10 bg-gradient-to-l from-background to-transparent" />
 
         <div
-          className="flex gap-6 md:gap-8 w-max ff-marquee"
+          className="flex gap-5 md:gap-8 w-max ff-marquee"
           style={{ animation: "ff-marquee 60s linear infinite" }}
         >
           {reel.map((p, i) => {
@@ -58,7 +58,7 @@ export function DemoMarquee() {
                 style={{ transform: `rotate(${p.tilt}deg)` }}
               >
                 <div
-                  className="w-[420px] md:w-[520px] aspect-video bg-card overflow-hidden rounded-md"
+                  className="w-[300px] sm:w-[400px] md:w-[520px] aspect-video bg-card overflow-hidden rounded-md"
                   style={{ boxShadow: "var(--shadow-paper)" }}
                 >
                   <div className="w-full h-full pointer-events-none select-none">

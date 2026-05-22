@@ -38,13 +38,13 @@ export function HowItWorks() {
       aria-label="How it works"
       className="border-b hairline bg-background"
     >
-      <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-20 md:py-32">
-        <div className="flex items-end justify-between gap-6 mb-16 md:mb-24">
+      <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-10 py-16 md:py-32">
+        <div className="flex items-end justify-between gap-6 mb-14 md:mb-24">
           <div>
             <div className="text-[10.5px] uppercase tracking-[0.22em] text-foreground/55 mb-3 font-medium">
               Sec. 03 — The Production
             </div>
-            <h2 className="editorial-display text-foreground text-[42px] md:text-[72px] leading-[0.95]">
+            <h2 className="editorial-display text-foreground text-[36px] sm:text-[48px] md:text-[72px] leading-[0.95]">
               Three acts, <span className="italic">one take.</span>
             </h2>
           </div>
@@ -53,7 +53,7 @@ export function HowItWorks() {
           </p>
         </div>
 
-        <div className="space-y-24 md:space-y-40">
+        <div className="space-y-16 md:space-y-40">
           {ACTS.map((act, i) => {
             const Illo = act.Illustration;
             const isLeft = act.align === "left";
@@ -74,14 +74,14 @@ export function HowItWorks() {
                     <div
                       className="editorial-display tnum text-foreground/[0.08] leading-none select-none"
                       style={{
-                        fontSize: "clamp(180px, 28vw, 380px)",
+                        fontSize: "clamp(140px, 38vw, 380px)",
                         letterSpacing: "-0.06em",
                       }}
                     >
                       {act.n}
                     </div>
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <Illo className="w-32 md:w-44 text-primary" />
+                      <Illo className="w-24 sm:w-32 md:w-44 text-primary" />
                     </div>
                   </div>
                 </div>
@@ -97,11 +97,11 @@ export function HowItWorks() {
                   <div className="text-[10.5px] uppercase tracking-[0.22em] text-primary mb-4 font-medium tnum">
                     Act {act.n} — {act.label}
                   </div>
-                  <h3 className="editorial-display text-foreground text-[32px] md:text-[44px] leading-[1.02] mb-5">
+                  <h3 className="editorial-display text-foreground text-[28px] sm:text-[34px] md:text-[44px] leading-[1.02] mb-5">
                     {act.title}
                   </h3>
                   <div className="h-px w-12 bg-foreground/25 mb-5" />
-                  <p className="font-serif italic text-[18px] md:text-[20px] leading-[1.45] text-foreground/75 max-w-prose">
+                  <p className="font-serif italic text-[17px] sm:text-[18px] md:text-[20px] leading-[1.45] text-foreground/75 max-w-prose">
                     {act.body}
                   </p>
                 </div>
