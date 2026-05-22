@@ -1,8 +1,8 @@
 import { Composition } from "remotion";
 import { MainVideo } from "./MainVideo";
 
-// 28s at 30fps = 840 frames
-const DURATION = 840;
+// Scenes: 90+150+180+180+150+120 = 870, minus overlaps 82 = 788 frames (~26s @ 30fps)
+const DURATION = 788;
 const FPS = 30;
 
 export const RemotionRoot: React.FC = () => {
