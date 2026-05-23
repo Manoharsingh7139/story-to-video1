@@ -17,7 +17,7 @@ export default function Landing() {
   const { user } = useAuth();
   const [signInOpen, setSignInOpen] = useState(false);
   const [morphed, setMorphed] = useState(false);
-  const seededPrompt = useRef<string>("");
+  
 
   useEffect(() => {
     const onScroll = () => setMorphed(window.scrollY > window.innerHeight * 1.2);
@@ -38,12 +38,6 @@ export default function Landing() {
       <LiveTransform />
       <HowItWorks />
       <ThemeGallery />
-      <PromptTeaser
-        onSubmit={(p) => {
-          seededPrompt.current = p;
-          if (!user) setSignInOpen(true);
-        }}
-      />
       <Colophon />
 
       <Marginalia />
