@@ -9,6 +9,7 @@ import { groupByDay } from "@/lib/format";
 import { Layers, User as UserIcon, Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { HistoryEntry, HistoryType } from "@/lib/data/types";
+import { MOCK_HISTORY, MOCK_SLIDE_COUNTS, MOCK_ERROR_DETAILS } from "@/lib/data/mockHistory";
 
 type StatusKey = "awaiting" | "done" | "processing" | "error";
 
@@ -151,9 +152,12 @@ function HistoryRow({ entry, email, slideCount, errorDetail }: RowProps) {
 }
 
 export default function HistoryPage() {
-  const entries = useHistoryStore((s) => s.entries);
+  const realEntries = useHistoryStore((s) => s.entries);
   const projects = useProjects((s) => s.projects);
   const { user } = useAuth();
+
+  const usingMock = realEntries.length === 0;
+  const entries = usingMock ? MOCK_HISTORY : realEntries;
   const groups = groupByDay(entries);
 
   const projectsById = new Map(projects.map((p) => [p.id, p]));
@@ -202,12 +206,15 @@ export default function HistoryPage() {
                   <div className="space-y-2.5">
                     {g.items.map((e) => {
                       const proj = e.projectId ? projectsById.get(e.projectId) : undefined;
+                      const slideCount = proj?.slides.length ?? (usingMock ? MOCK_SLIDE_COUNTS[e.id] : undefined);
+                      const errorDetail = usingMock ? MOCK_ERROR_DETAILS[e.id] : undefined;
                       return (
                         <HistoryRow
                           key={e.id}
                           entry={e}
                           email={userEmail}
-                          slideCount={proj?.slides.length}
+                          slideCount={slideCount}
+                          errorDetail={errorDetail}
                         />
                       );
                     })}
