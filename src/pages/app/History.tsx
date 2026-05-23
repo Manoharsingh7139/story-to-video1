@@ -206,12 +206,15 @@ export default function HistoryPage() {
                   <div className="space-y-2.5">
                     {g.items.map((e) => {
                       const proj = e.projectId ? projectsById.get(e.projectId) : undefined;
+                      const slideCount = proj?.slides.length ?? (usingMock ? MOCK_SLIDE_COUNTS[e.id] : undefined);
+                      const errorDetail = usingMock ? MOCK_ERROR_DETAILS[e.id] : undefined;
                       return (
                         <HistoryRow
                           key={e.id}
                           entry={e}
                           email={userEmail}
-                          slideCount={proj?.slides.length}
+                          slideCount={slideCount}
+                          errorDetail={errorDetail}
                         />
                       );
                     })}
