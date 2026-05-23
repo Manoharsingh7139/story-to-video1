@@ -152,9 +152,12 @@ function HistoryRow({ entry, email, slideCount, errorDetail }: RowProps) {
 }
 
 export default function HistoryPage() {
-  const entries = useHistoryStore((s) => s.entries);
+  const realEntries = useHistoryStore((s) => s.entries);
   const projects = useProjects((s) => s.projects);
   const { user } = useAuth();
+
+  const usingMock = realEntries.length === 0;
+  const entries = usingMock ? MOCK_HISTORY : realEntries;
   const groups = groupByDay(entries);
 
   const projectsById = new Map(projects.map((p) => [p.id, p]));
