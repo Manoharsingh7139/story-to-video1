@@ -1,17 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { MagazineHero } from "@/components/marketing/MagazineHero";
 import { DemoMarquee } from "@/components/marketing/DemoMarquee";
 import { LiveTransform } from "@/components/marketing/LiveTransform";
 import { HowItWorks } from "@/components/marketing/HowItWorks";
 import { ThemeGallery } from "@/components/marketing/ThemeGallery";
-import { PromptTeaser } from "@/components/marketing/PromptTeaser";
 import { Colophon } from "@/components/marketing/Colophon";
 import { SignInDialog } from "@/components/marketing/SignInDialog";
 import { GlyphConfetti } from "@/components/marketing/GlyphConfetti";
 import { Marginalia } from "@/components/marketing/Marginalia";
 import { useAuth } from "@/lib/auth/useAuth";
 import { ArrowUpRight } from "lucide-react";
+
 
 export default function Landing() {
   const { user } = useAuth();
