@@ -30,11 +30,27 @@ const readUsers = (): StoredUser[] => {
 };
 const writeUsers = (u: StoredUser[]) => localStorage.setItem(USERS_KEY, JSON.stringify(u));
 
+const DEMO_USER: StoredUser = {
+  id: "u-demo",
+  email: "demo@studio.com",
+  name: "Demo",
+  password: "Password@123",
+  createdAt: 1700000000000,
+};
+
+const ensureDemoUser = () => {
+  const users = readUsers();
+  if (!users.some((u) => u.email.toLowerCase() === DEMO_USER.email)) {
+    writeUsers([...users, DEMO_USER]);
+  }
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    ensureDemoUser();
     try {
       const raw = localStorage.getItem(SESSION_KEY);
       if (raw) setUser(JSON.parse(raw));

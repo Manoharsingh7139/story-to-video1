@@ -18,8 +18,8 @@ export default function SignIn() {
   const [params] = useSearchParams();
   const next = params.get("next") || "/app";
   const { signIn } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("demo@studio.com");
+  const [password, setPassword] = useState("Password@123");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [loading, setLoading] = useState(false);
 
