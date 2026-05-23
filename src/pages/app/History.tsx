@@ -9,6 +9,7 @@ import { groupByDay } from "@/lib/format";
 import { Layers, User as UserIcon, Loader2, CheckCircle2, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { HistoryEntry, HistoryType } from "@/lib/data/types";
+import { MOCK_HISTORY, MOCK_SLIDE_COUNTS, MOCK_ERROR_DETAILS } from "@/lib/data/mockHistory";
 
 type StatusKey = "awaiting" | "done" | "processing" | "error";
 
