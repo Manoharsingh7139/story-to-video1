@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 type Stage = {
   prompt: string;
-  frames: string[]; // 3 short labels for storyboard
+  frames: string[];
   title: string;
   accent: string;
 };
@@ -49,7 +49,7 @@ export function LiveTransform() {
   const typed = useTypewriter(stage.prompt);
 
   useEffect(() => {
-    const id = setInterval(() => setIdx((i) => (i + 1) % STAGES.length), 6500);
+    const id = setInterval(() => setIdx((i) => (i + 1) % STAGES.length), 7500);
     return () => clearInterval(id);
   }, []);
 
@@ -58,14 +58,14 @@ export function LiveTransform() {
       aria-label="Watch it think"
       className="relative overflow-hidden border-b hairline bg-background"
     >
-      <div className="max-w-[1400px] mx-auto px-5 sm:px-6 md:px-10 py-16 md:py-28">
-        <div className="flex items-end justify-between gap-6 mb-10 md:mb-16">
+      <div className="max-w-[1100px] mx-auto px-5 sm:px-6 md:px-10 py-16 md:py-28">
+        <div className="flex items-end justify-between gap-6 mb-12 md:mb-20">
           <div>
             <div className="text-[10.5px] uppercase tracking-[0.22em] text-foreground/55 mb-3 font-medium">
               Sec. 02½ — Watch it think
             </div>
             <h2 className="editorial-display text-foreground text-[32px] sm:text-[40px] md:text-[60px] leading-[0.95]">
-              From a sentence <span className="italic text-primary">to a film,</span> live.
+              From a sentence <span className="italic text-primary">to a film,</span> in three steps.
             </h2>
           </div>
           <div className="hidden md:flex items-center gap-2 text-[10.5px] uppercase tracking-[0.2em] text-foreground/55 tnum">
@@ -85,62 +85,92 @@ export function LiveTransform() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto_1fr] items-stretch gap-4 md:gap-6">
-          {/* Pane 1 — typed prompt */}
-          <Pane label="01 · Your idea">
-            <div className="font-serif italic text-[15px] md:text-[17px] leading-[1.5] text-foreground/85 min-h-[120px] md:min-h-[160px]">
-              "{typed}
-              <span className="inline-block w-[2px] h-[1em] align-[-2px] ml-[2px] bg-primary animate-[ff-blink_1s_steps(2)_infinite]" />"
+        {/* Vertical stepper */}
+        <ol className="relative">
+          {/* Connecting rail */}
+          <div
+            aria-hidden
+            className="absolute left-[19px] md:left-[27px] top-2 bottom-2 w-px bg-foreground/15"
+          />
+
+          <Step
+            n="01"
+            label="Your idea"
+            caption="Paste a sentence, a paragraph, or an entire script."
+          >
+            <div
+              className="rounded-md border hairline bg-card p-5 md:p-6"
+              style={{ boxShadow: "var(--shadow-paper)" }}
+            >
+              <div className="text-[10px] uppercase tracking-[0.22em] text-foreground/55 mb-3 font-medium tnum">
+                Prompt
+              </div>
+              <div className="font-serif italic text-[17px] md:text-[20px] leading-[1.5] text-foreground/90 min-h-[64px]">
+                "{typed}
+                <span className="inline-block w-[2px] h-[1em] align-[-2px] ml-[2px] bg-primary animate-[ff-blink_1s_steps(2)_infinite]" />"
+              </div>
             </div>
-          </Pane>
+          </Step>
 
-          <Arrow />
-
-          {/* Pane 2 — storyboard frames */}
-          <Pane label="02 · Storyboard">
-            <div className="flex gap-2 md:gap-3 h-full items-stretch">
-              {stage.frames.map((f, i) => (
-                <div
-                  key={stage.title + i}
-                  className="flex-1 aspect-[3/4] rounded-sm border hairline bg-card relative overflow-hidden animate-[ff-frame-in_0.6s_ease-out_both]"
-                  style={{ animationDelay: `${i * 140}ms` }}
-                >
+          <Step
+            n="02"
+            label="Storyboard"
+            caption="FrameFlow breaks it into scenes and lays out the frames."
+          >
+            <div
+              className="rounded-md border hairline bg-card p-5 md:p-6"
+              style={{ boxShadow: "var(--shadow-paper)" }}
+            >
+              <div className="text-[10px] uppercase tracking-[0.22em] text-foreground/55 mb-4 font-medium tnum">
+                Scenes
+              </div>
+              <div className="grid grid-cols-3 gap-3 md:gap-4">
+                {stage.frames.map((f, i) => (
                   <div
-                    className="absolute inset-x-2 top-2 h-1 rounded-full"
-                    style={{ background: stage.accent, opacity: 0.85 }}
-                  />
-                  <div className="absolute inset-x-2 bottom-2 text-[9.5px] uppercase tracking-[0.18em] text-foreground/70 leading-tight">
-                    {f}
+                    key={stage.title + i}
+                    className="aspect-[3/4] rounded-sm border hairline bg-paper relative overflow-hidden animate-[ff-frame-in_0.6s_ease-out_both]"
+                    style={{ animationDelay: `${i * 140}ms` }}
+                  >
+                    <div
+                      className="absolute inset-x-2 top-2 h-1 rounded-full"
+                      style={{ background: stage.accent, opacity: 0.85 }}
+                    />
+                    <div className="absolute inset-x-2 bottom-2 text-[9.5px] uppercase tracking-[0.18em] text-foreground/70 leading-tight">
+                      {f}
+                    </div>
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[11px] tnum text-foreground/35">
+                      {String(i + 1).padStart(2, "0")}
+                    </div>
                   </div>
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] tnum text-foreground/40">
-                    {String(i + 1).padStart(2, "0")}
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </Pane>
+          </Step>
 
-          <Arrow />
-
-          {/* Pane 3 — final film */}
-          <Pane label="03 · Final film">
+          <Step
+            n="03"
+            label="Final film"
+            caption="Voice cloned, scenes scored, exported and ready to ship."
+            last
+          >
             <div
               key={stage.title}
-              className="relative aspect-video rounded-sm overflow-hidden animate-[ff-frame-in_0.7s_ease-out_both]"
+              className="relative aspect-video rounded-md overflow-hidden animate-[ff-frame-in_0.7s_ease-out_both]"
               style={{
                 background: `linear-gradient(135deg, ${stage.accent} 0%, hsl(var(--foreground)) 140%)`,
+                boxShadow: "var(--shadow-paper)",
               }}
             >
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.18),transparent_60%)]" />
-              <div className="absolute inset-0 p-4 flex flex-col justify-between text-[#faf8f3]">
+              <div className="absolute inset-0 p-5 md:p-7 flex flex-col justify-between text-[#faf8f3]">
                 <div className="text-[9.5px] uppercase tracking-[0.22em] opacity-80">
                   FrameFlow · Reel
                 </div>
                 <div>
-                  <div className="font-serif italic text-[22px] md:text-[26px] leading-[1.05]">
+                  <div className="font-serif italic text-[26px] md:text-[34px] leading-[1.05]">
                     {stage.title}
                   </div>
-                  <div className="mt-2 flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] opacity-80 tnum">
+                  <div className="mt-3 flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] opacity-80 tnum">
                     <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/90 text-foreground">
                       ▶
                     </span>
@@ -148,11 +178,10 @@ export function LiveTransform() {
                   </div>
                 </div>
               </div>
-              {/* sweeping shimmer */}
               <div className="absolute inset-0 bg-[linear-gradient(110deg,transparent_40%,rgba(255,255,255,0.18)_50%,transparent_60%)] bg-[length:200%_100%] animate-[ff-shimmer_3.5s_linear_infinite]" />
             </div>
-          </Pane>
-        </div>
+          </Step>
+        </ol>
       </div>
 
       <style>{`
@@ -173,22 +202,39 @@ export function LiveTransform() {
   );
 }
 
-function Pane({ label, children }: { label: string; children: React.ReactNode }) {
+function Step({
+  n,
+  label,
+  caption,
+  children,
+  last,
+}: {
+  n: string;
+  label: string;
+  caption: string;
+  children: React.ReactNode;
+  last?: boolean;
+}) {
   return (
-    <div className="rounded-md border hairline bg-card p-4 md:p-5 flex flex-col gap-3" style={{ boxShadow: "var(--shadow-paper)" }}>
-      <div className="text-[10px] uppercase tracking-[0.22em] text-foreground/55 font-medium tnum">
-        {label}
+    <li className={`relative pl-14 md:pl-20 ${last ? "" : "pb-12 md:pb-16"}`}>
+      {/* Numeral marker */}
+      <div
+        className="absolute left-0 top-0 h-10 w-10 md:h-14 md:w-14 rounded-full bg-card border hairline flex items-center justify-center text-[12px] md:text-[13px] tnum font-medium text-foreground tracking-wider"
+        style={{ boxShadow: "var(--shadow-paper)" }}
+      >
+        {n}
       </div>
-      <div className="flex-1">{children}</div>
-    </div>
-  );
-}
 
-function Arrow() {
-  return (
-    <div className="hidden md:flex items-center justify-center text-foreground/35 text-[20px]">
-      <span className="animate-[ff-arrow_2s_ease-in-out_infinite]">→</span>
-      <style>{`@keyframes ff-arrow { 0%,100% { transform: translateX(0); } 50% { transform: translateX(4px); } }`}</style>
-    </div>
+      <div className="mb-4 md:mb-5">
+        <div className="text-[10.5px] uppercase tracking-[0.22em] text-primary font-medium mb-1.5">
+          Step {n} — {label}
+        </div>
+        <p className="font-serif italic text-[15px] md:text-[17px] text-foreground/65 max-w-[52ch]">
+          {caption}
+        </p>
+      </div>
+
+      {children}
+    </li>
   );
 }
