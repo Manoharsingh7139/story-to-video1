@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
+import { ensureDemoUser } from "./demoUser";
 
 export interface AuthUser {
   id: string;
@@ -29,21 +30,6 @@ const readUsers = (): StoredUser[] => {
   try { return JSON.parse(localStorage.getItem(USERS_KEY) || "[]"); } catch { return []; }
 };
 const writeUsers = (u: StoredUser[]) => localStorage.setItem(USERS_KEY, JSON.stringify(u));
-
-const DEMO_USER: StoredUser = {
-  id: "u-demo",
-  email: "demo@studio.com",
-  name: "Demo",
-  password: "Password@123",
-  createdAt: 1700000000000,
-};
-
-const ensureDemoUser = () => {
-  const users = readUsers();
-  if (!users.some((u) => u.email.toLowerCase() === DEMO_USER.email)) {
-    writeUsers([...users, DEMO_USER]);
-  }
-};
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
