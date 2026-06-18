@@ -44,6 +44,7 @@ export type TextWeight = "regular" | "bold";
 export type TextAlign = "left" | "center" | "right";
 export type TextColor = "text" | "muted" | "accent" | "neutral1" | "neutral2" | "neutral3";
 export type BulletVariant = "list" | "numbered" | "process" | "cards" | "pillars" | "checklist";
+export type BulletMarker = "dot" | "square" | "dash" | "triangle" | "check" | "number";
 export type ImageShape = "square" | "rounded" | "circle" | "blob";
 export type ImageTreatment = "none" | "grayscale" | "duotone" | "blur";
 export type ImageBorder = "none" | "thin" | "thick";
