@@ -145,6 +145,35 @@ export const usePrototypeStore = create<PrototypeState>((set, get) => ({
       }),
     })),
 
+  duplicateBullet: (id, index) =>
+    set((state) => ({
+      slides: state.slides.map((s) => {
+        if (s.id !== id) return s;
+        const src = s.content.bullets ?? [];
+        if (index < 0 || index >= src.length) return s;
+        const bullets = [...src];
+        bullets.splice(index + 1, 0, src[index]);
+        return { ...s, content: { ...s.content, bullets } };
+      }),
+    })),
+
+  reorderBullets: (id, from, to) =>
+    set((state) => ({
+      slides: state.slides.map((s) => {
+        if (s.id !== id) return s;
+        const bullets = [...(s.content.bullets ?? [])];
+        if (from < 0 || to < 0 || from >= bullets.length || to >= bullets.length) return s;
+        const [m] = bullets.splice(from, 1);
+        bullets.splice(to, 0, m);
+        return { ...s, content: { ...s.content, bullets } };
+      }),
+    })),
+
+  panelSections: { content: true, typography: true, marker: false, image: true, background: false },
+  setPanelSection: (key, open) =>
+    set((state) => ({ panelSections: { ...state.panelSections, [key]: open } })),
+
+
   reorderSlides: (fromId, toId) =>
     set((state) => {
       if (fromId === toId) return state;
