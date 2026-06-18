@@ -81,6 +81,7 @@ export const VoiceoverPanel = () => {
   const addBullet = usePrototypeStore((s) => s.addBullet);
   const removeBullet = usePrototypeStore((s) => s.removeBullet);
   const duplicateBullet = usePrototypeStore((s) => s.duplicateBullet);
+  const insertBulletAt = usePrototypeStore((s) => s.insertBulletAt);
   const voice = usePrototypeStore((s) => s.voice);
   const setVoice = usePrototypeStore((s) => s.setVoice);
   const selectedElementKey = usePrototypeStore((s) => s.selectedElementKey);
