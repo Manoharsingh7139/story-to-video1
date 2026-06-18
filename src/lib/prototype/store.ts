@@ -158,6 +158,18 @@ export const usePrototypeStore = create<PrototypeState>((set, get) => ({
       }),
     })),
 
+  insertBulletAt: (id, index) =>
+    set((state) => ({
+      slides: state.slides.map((s) => {
+        if (s.id !== id) return s;
+        const src = s.content.bullets ?? [];
+        const insertIdx = Math.max(0, Math.min(src.length, index + 1));
+        const bullets = [...src];
+        bullets.splice(insertIdx, 0, "New point");
+        return { ...s, content: { ...s.content, bullets } };
+      }),
+    })),
+
   reorderBullets: (id, from, to) =>
     set((state) => ({
       slides: state.slides.map((s) => {
