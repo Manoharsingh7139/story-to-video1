@@ -301,7 +301,6 @@ export const VoiceoverPanel = () => {
           <PanelSection id="image" title="Image style" defaultOpen>
             <ImageStyleControls slideId={slide.id} isGrid={isGrid} layout={slide.layout} />
           </PanelSection>
-          <SlideBackgroundSection />
           <ImageReplaceDialog
             open={imgDialogOpen}
             onOpenChange={setImgDialogOpen}
