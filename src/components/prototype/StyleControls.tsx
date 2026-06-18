@@ -1,11 +1,12 @@
 import { usePrototypeStore } from "@/lib/prototype/store";
 import { THEMES } from "@/lib/prototype/themes";
 import type {
-  SlideStyle, BulletVariant, TextSize, TextWeight, TextAlign, TextColor,
+  SlideStyle, BulletVariant, BulletMarker, TextSize, TextWeight, TextAlign, TextColor,
   ImageShape, ImageTreatment, ImageBorder, CaptionPosition, StatSize, StatDecoration,
   LayoutId, OverlayTint, OverlayStrength, SideChoice, QuadrantPalette,
 } from "@/lib/prototype/types";
 import { cn } from "@/lib/utils";
+import { AlignLeft, AlignCenter, AlignRight } from "lucide-react";
 
 const Section = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <div className="space-y-1.5">
@@ -87,9 +88,13 @@ export const TextStyleControls = ({ slideId, field }: TextProps) => {
       </Section>
       <Section label="Align">
         <ChipRow>
-          {(["left", "center", "right"] as TextAlign[]).map((a) => (
-            <Chip key={a} active={align === a} onClick={() => setSlideStyle(slideId, { [alignKey]: a } as any)}>
-              {a[0].toUpperCase() + a.slice(1)}
+          {([
+            { id: "left" as TextAlign, Icon: AlignLeft },
+            { id: "center" as TextAlign, Icon: AlignCenter },
+            { id: "right" as TextAlign, Icon: AlignRight },
+          ]).map(({ id, Icon }) => (
+            <Chip key={id} active={align === id} onClick={() => setSlideStyle(slideId, { [alignKey]: id } as any)} title={id}>
+              <Icon className="h-3.5 w-3.5" />
             </Chip>
           ))}
         </ChipRow>
@@ -397,6 +402,47 @@ export const StatStyleControls = ({ slideId }: { slideId: string }) => {
           ))}
         </ChipRow>
       </Section>
+    </div>
+  );
+};
+
+// ============ BULLET MARKER (simple glyph row) ============
+const MARKERS: { id: BulletMarker; label: string }[] = [
+  { id: "dot", label: "•" },
+  { id: "square", label: "■" },
+  { id: "dash", label: "—" },
+  { id: "triangle", label: "▸" },
+  { id: "check", label: "✓" },
+  { id: "number", label: "1." },
+];
+
+export const BulletMarkerControls = ({ slideId }: { slideId: string }) => {
+  const setSlideStyle = usePrototypeStore((s) => s.setSlideStyle);
+  const style = useStyle(slideId);
+  const variant = style.bulletVariant ?? "list";
+  const current = style.bulletMarker ?? "dot";
+  return (
+    <div className="space-y-3">
+      <Section label="Marker">
+        <ChipRow>
+          {MARKERS.map((m) => (
+            <Chip
+              key={m.id}
+              active={variant === "list" && current === m.id}
+              onClick={() => setSlideStyle(slideId, { bulletVariant: "list", bulletMarker: m.id })}
+              title={m.id}
+            >
+              <span className="inline-block min-w-[16px] text-center">{m.label}</span>
+            </Chip>
+          ))}
+        </ChipRow>
+        {variant !== "list" && (
+          <p className="text-[10px] text-muted-foreground mt-1.5">
+            Picking a marker will switch from "{variant}" to a plain list.
+          </p>
+        )}
+      </Section>
+      <BulletSmartArtPicker slideId={slideId} />
     </div>
   );
 };

@@ -44,6 +44,7 @@ export type TextWeight = "regular" | "bold";
 export type TextAlign = "left" | "center" | "right";
 export type TextColor = "text" | "muted" | "accent" | "neutral1" | "neutral2" | "neutral3";
 export type BulletVariant = "list" | "numbered" | "process" | "cards" | "pillars" | "checklist";
+export type BulletMarker = "dot" | "square" | "dash" | "triangle" | "check" | "number";
 export type ImageShape = "square" | "rounded" | "circle" | "blob";
 export type ImageTreatment = "none" | "grayscale" | "duotone" | "blur";
 export type ImageBorder = "none" | "thin" | "thick";
@@ -53,6 +54,9 @@ export type StatDecoration = "none" | "underline" | "circle" | "gradient";
 
 export interface SlideStyle {
   bulletVariant?: BulletVariant;
+  bulletMarker?: BulletMarker;
+  bgImageUrl?: string;
+  bgImageOpacity?: number; // 0..1
   titleSize?: TextSize; titleWeight?: TextWeight; titleAlign?: TextAlign; titleColor?: TextColor; titleAccentBar?: boolean;
   subtitleSize?: TextSize; subtitleWeight?: TextWeight; subtitleAlign?: TextAlign; subtitleColor?: TextColor;
   bodySize?: TextSize; bodyWeight?: TextWeight; bodyAlign?: TextAlign; bodyColor?: TextColor;

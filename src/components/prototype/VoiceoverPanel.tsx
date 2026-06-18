@@ -5,16 +5,28 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
+import { Slider } from "@/components/ui/slider";
 import { VOICES } from "@/lib/prototype/sampleDeck";
-import { Play, Pause, RefreshCw, Mic, Clock, ImageIcon, Type, Trash2, Sparkles, Plus, GripVertical, List } from "lucide-react";
+import {
+  Play, Pause, RefreshCw, Mic, Clock, ImageIcon, Trash2, Sparkles, Plus, GripVertical,
+  MoreHorizontal, Copy, X, ChevronRight, Upload, Search,
+} from "lucide-react";
 import { toast } from "sonner";
 import { ImageReplaceDialog } from "./ImageReplaceDialog";
-import { TextStyleControls, BulletSmartArtPicker, ImageStyleControls, StatStyleControls, QuadrantStyleControls } from "./StyleControls";
+import {
+  TextStyleControls, ImageStyleControls, StatStyleControls,
+  QuadrantStyleControls, BulletMarkerControls,
+} from "./StyleControls";
+import { cn } from "@/lib/utils";
 
 const ELEMENT_LABELS: Record<string, string> = {
   title: "Title",
   subtitle: "Subtitle",
   body: "Body",
+  bullets: "Bullets",
   stat: "Stat",
   statLabel: "Stat label",
   leftTitle: "Left title",
@@ -22,17 +34,41 @@ const ELEMENT_LABELS: Record<string, string> = {
   rightTitle: "Right title",
   rightBody: "Right body",
   caption: "Caption",
-  caption2: "Caption 2",
-  caption3: "Caption 3",
-  caption4: "Caption 4",
-  imageUrl: "Image",
-  imageUrl2: "Image 2",
-  imageUrl3: "Image 3",
-  imageUrl4: "Image 4",
+  image: "Image",
   q1Title: "Strengths title", q1Body: "Strengths body",
   q2Title: "Weaknesses title", q2Body: "Weaknesses body",
   q3Title: "Opportunities title", q3Body: "Opportunities body",
   q4Title: "Threats title", q4Body: "Threats body",
+};
+
+const labelFor = (k: string) => {
+  if (k.startsWith("bullet:")) return `Bullet ${Number(k.split(":")[1]) + 1}`;
+  if (k.startsWith("image:")) return `Image ${k.split(":")[1]}`;
+  if (k.startsWith("caption:")) return `Caption ${k.split(":")[1]}`;
+  return ELEMENT_LABELS[k] ?? k;
+};
+
+// Local accordion section
+const PanelSection = ({
+  id, title, defaultOpen = false, children,
+}: { id: string; title: string; defaultOpen?: boolean; children: React.ReactNode }) => {
+  const open = usePrototypeStore((s) => s.panelSections[id] ?? defaultOpen);
+  const setPanelSection = usePrototypeStore((s) => s.setPanelSection);
+  return (
+    <div className="border-b border-border">
+      <button
+        type="button"
+        onClick={() => setPanelSection(id, !open)}
+        className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-muted/50 transition"
+      >
+        <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+          {title}
+        </span>
+        <ChevronRight className={cn("h-3.5 w-3.5 text-muted-foreground transition-transform", open && "rotate-90")} />
+      </button>
+      {open && <div className="px-3 pb-4 pt-1">{children}</div>}
+    </div>
+  );
 };
 
 export const VoiceoverPanel = () => {
@@ -41,8 +77,10 @@ export const VoiceoverPanel = () => {
   const setSlideScript = usePrototypeStore((s) => s.setSlideScript);
   const setSlideContent = usePrototypeStore((s) => s.setSlideContent);
   const setSlideBullet = usePrototypeStore((s) => s.setSlideBullet);
+  const setSlideStyle = usePrototypeStore((s) => s.setSlideStyle);
   const addBullet = usePrototypeStore((s) => s.addBullet);
   const removeBullet = usePrototypeStore((s) => s.removeBullet);
+  const duplicateBullet = usePrototypeStore((s) => s.duplicateBullet);
   const voice = usePrototypeStore((s) => s.voice);
   const setVoice = usePrototypeStore((s) => s.setVoice);
   const selectedElementKey = usePrototypeStore((s) => s.selectedElementKey);
@@ -52,14 +90,15 @@ export const VoiceoverPanel = () => {
   const [regenerating, setRegenerating] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [imgDialogOpen, setImgDialogOpen] = useState(false);
+  const [bgDialogOpen, setBgDialogOpen] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [tab, setTab] = useState<"voice" | "element">("voice");
 
-  // auto-switch to element tab when something gets selected
   if (selectedElementKey && tab === "voice") setTab("element");
 
   if (!slide) return null;
 
+  const style = slide.content.style ?? {};
   const duration = estimateDuration(slide.script);
   const wordCount = slide.script.trim().split(/\s+/).filter(Boolean).length;
 
@@ -68,14 +107,8 @@ export const VoiceoverPanel = () => {
       audioRef.current = new Audio("/preview.mp3");
       audioRef.current.addEventListener("ended", () => setPlaying(false));
     }
-    if (playing) {
-      audioRef.current.pause();
-      setPlaying(false);
-    } else {
-      audioRef.current.currentTime = 0;
-      audioRef.current.play();
-      setPlaying(true);
-    }
+    if (playing) { audioRef.current.pause(); setPlaying(false); }
+    else { audioRef.current.currentTime = 0; audioRef.current.play(); setPlaying(true); }
   };
 
   const handleRegenerate = () => {
@@ -86,67 +119,136 @@ export const VoiceoverPanel = () => {
     }, 1500);
   };
 
-  const SectionHeader = ({ label }: { label: string }) => (
-    <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2 pt-1">{label}</div>
+  // ---------- SLIDE BACKGROUND (always available) ----------
+  const SlideBackgroundSection = () => (
+    <PanelSection id="background" title="Slide background" defaultOpen={!selectedElementKey}>
+      <div className="space-y-3">
+        <div className="aspect-video rounded-md overflow-hidden border border-border bg-muted relative">
+          {style.bgImageUrl ? (
+            <>
+              <img src={style.bgImageUrl} alt="" className="w-full h-full object-cover" style={{ opacity: style.bgImageOpacity ?? 0.3 }} />
+              <div className="absolute inset-0 flex items-center justify-center text-[11px] text-muted-foreground/80 bg-background/40">
+                {Math.round((style.bgImageOpacity ?? 0.3) * 100)}% opacity
+              </div>
+            </>
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center text-[11px] text-muted-foreground gap-1">
+              <ImageIcon className="h-5 w-5 opacity-50" />
+              No background
+            </div>
+          )}
+        </div>
+        <div className="grid grid-cols-2 gap-1.5">
+          <Button variant="outline" size="sm" className="text-xs h-8" onClick={() => setBgDialogOpen(true)}>
+            <Search className="h-3 w-3 mr-1" /> Search
+          </Button>
+          <Button variant="outline" size="sm" className="text-xs h-8" onClick={() => setBgDialogOpen(true)}>
+            <Upload className="h-3 w-3 mr-1" /> Upload
+          </Button>
+        </div>
+        {style.bgImageUrl && (
+          <>
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[11px] text-muted-foreground">Opacity</span>
+                <span className="text-[11px] tabular-nums text-foreground">
+                  {Math.round((style.bgImageOpacity ?? 0.3) * 100)}%
+                </span>
+              </div>
+              <Slider
+                min={0} max={100} step={1}
+                value={[Math.round((style.bgImageOpacity ?? 0.3) * 100)]}
+                onValueChange={([v]) => setSlideStyle(slide.id, { bgImageOpacity: v / 100 })}
+              />
+            </div>
+            <Button
+              variant="ghost" size="sm"
+              className="w-full h-7 text-xs text-muted-foreground hover:text-destructive"
+              onClick={() => setSlideStyle(slide.id, { bgImageUrl: undefined })}
+            >
+              <Trash2 className="h-3 w-3 mr-1" /> Remove background
+            </Button>
+          </>
+        )}
+      </div>
+      <ImageReplaceDialog
+        open={bgDialogOpen}
+        onOpenChange={setBgDialogOpen}
+        currentUrl={style.bgImageUrl}
+        onPick={(u) => setSlideStyle(slide.id, { bgImageUrl: u, bgImageOpacity: style.bgImageOpacity ?? 0.3 })}
+      />
+    </PanelSection>
   );
 
-  const renderElementEditor = () => {
+  // ---------- ELEMENT-SPECIFIC SECTIONS ----------
+  const renderElementSections = () => {
     if (!selectedElementKey) {
       return (
-        <div className="text-center py-12 text-sm text-muted-foreground">
-          Click any element on the slide to edit it here.
+        <div className="px-4 py-8 text-center text-xs text-muted-foreground border-b border-border">
+          Click any element on the slide to edit it.
         </div>
       );
     }
 
     const k = selectedElementKey;
 
-    // Bullet group OR single bullet — both show the same content + smartart picker
+    // BULLETS
     if (k === "bullets" || k.startsWith("bullet:")) {
       const bullets = slide.content.bullets ?? [];
       return (
-        <div className="space-y-4">
-          <div>
-            <SectionHeader label="Content — Bullets" />
+        <>
+          <PanelSection id="content" title="Content" defaultOpen>
             <div className="space-y-1.5">
               {bullets.map((b, i) => (
-                <div key={i} className="flex items-center gap-1.5 group">
-                  <GripVertical className="h-3.5 w-3.5 text-muted-foreground/50 flex-shrink-0" />
+                <div key={i} className="flex items-center gap-1 group">
+                  <GripVertical className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0 cursor-grab" />
                   <Input
                     value={b}
                     onChange={(e) => setSlideBullet(slide.id, i, e.target.value)}
                     onFocus={() => selectElement(`bullet:${i}`)}
                     className="h-8 text-xs"
                   />
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-7 w-7 p-0 opacity-50 hover:opacity-100"
-                    onClick={() => removeBullet(slide.id, i)}
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button size="sm" variant="ghost" className="h-7 w-7 p-0 opacity-40 hover:opacity-100">
+                        <MoreHorizontal className="h-3.5 w-3.5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-36">
+                      <DropdownMenuItem onClick={() => duplicateBullet(slide.id, i)}>
+                        <Copy className="h-3.5 w-3.5 mr-2" /> Duplicate
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="text-destructive focus:text-destructive"
+                        onClick={() => removeBullet(slide.id, i)}
+                      >
+                        <Trash2 className="h-3.5 w-3.5 mr-2" /> Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               ))}
               <Button
-                size="sm"
-                variant="outline"
-                className="w-full h-7 text-xs"
+                size="sm" variant="outline"
+                className="w-full h-7 text-xs border-dashed mt-1"
                 onClick={() => addBullet(slide.id)}
               >
                 <Plus className="h-3 w-3 mr-1" /> Add bullet
               </Button>
             </div>
-          </div>
-          <div className="border-t border-border pt-3">
-            <SectionHeader label="Style" />
-            <BulletSmartArtPicker slideId={slide.id} />
-          </div>
-        </div>
+          </PanelSection>
+          <PanelSection id="typography" title="Typography" defaultOpen>
+            <TextStyleControls slideId={slide.id} field="body" />
+          </PanelSection>
+          <PanelSection id="marker" title="Bullet marker">
+            <BulletMarkerControls slideId={slide.id} />
+          </PanelSection>
+          <SlideBackgroundSection />
+        </>
       );
     }
 
-    // Image element
+    // IMAGE
     if (k === "image" || k.startsWith("image:")) {
       const fieldKey = k === "image" ? "imageUrl" : `imageUrl${k.split(":")[1]}`;
       const capKey = k === "image" ? "caption" : `caption${k.split(":")[1]}`;
@@ -154,9 +256,8 @@ export const VoiceoverPanel = () => {
       const cap = (slide.content as any)[capKey] as string | undefined;
       const isGrid = slide.layout === "image-grid";
       return (
-        <div className="space-y-4">
-          <div>
-            <SectionHeader label="Content — Image" />
+        <>
+          <PanelSection id="content" title="Content" defaultOpen>
             <div className="space-y-2">
               <div className="aspect-video rounded overflow-hidden border border-border bg-muted">
                 {url ? <img src={url} alt="" className="w-full h-full object-cover" /> : (
@@ -164,11 +265,11 @@ export const VoiceoverPanel = () => {
                 )}
               </div>
               <div className="grid grid-cols-2 gap-1.5">
-                <Button variant="outline" size="sm" className="text-xs" onClick={() => setImgDialogOpen(true)}>
+                <Button variant="outline" size="sm" className="text-xs h-8" onClick={() => setImgDialogOpen(true)}>
                   <ImageIcon className="h-3 w-3 mr-1" /> Replace
                 </Button>
                 <Button
-                  variant="outline" size="sm" className="text-xs"
+                  variant="outline" size="sm" className="text-xs h-8"
                   onClick={() => { setSlideContent(slide.id, fieldKey, ""); toast.success("Image removed"); }}
                 >
                   <Trash2 className="h-3 w-3 mr-1" /> Remove
@@ -183,62 +284,63 @@ export const VoiceoverPanel = () => {
                 />
               )}
             </div>
-          </div>
-          <div className="border-t border-border pt-3">
-            <SectionHeader label="Style" />
+          </PanelSection>
+          <PanelSection id="image" title="Image style" defaultOpen>
             <ImageStyleControls slideId={slide.id} isGrid={isGrid} layout={slide.layout} />
-          </div>
+          </PanelSection>
+          <SlideBackgroundSection />
           <ImageReplaceDialog
             open={imgDialogOpen}
             onOpenChange={setImgDialogOpen}
             currentUrl={url}
             onPick={(u) => setSlideContent(slide.id, fieldKey, u)}
           />
-        </div>
+        </>
       );
     }
 
-    // Caption (text)
-    if (k.startsWith("caption:")) {
-      const n = k.split(":")[1];
-      const fieldKey = n === "1" ? "caption" : `caption${n}`;
-      const value = (slide.content as any)[fieldKey] as string | undefined;
-      return (
-        <div className="space-y-3">
-          <SectionHeader label={`Content — Caption ${n}`} />
-          <Input
-            value={value ?? ""}
-            onChange={(e) => setSlideContent(slide.id, fieldKey, e.target.value)}
-            className="h-9 text-sm"
-          />
-        </div>
-      );
-    }
-
-    // Stat
+    // STAT
     if (k === "stat" || k === "statLabel") {
       const value = (slide.content as any)[k] as string | undefined;
       return (
-        <div className="space-y-4">
-          <div>
-            <SectionHeader label={`Content — ${ELEMENT_LABELS[k]}`} />
+        <>
+          <PanelSection id="content" title="Content" defaultOpen>
             <Input
               value={value ?? ""}
               onChange={(e) => setSlideContent(slide.id, k, e.target.value)}
               className="h-9 text-sm"
             />
-          </div>
+          </PanelSection>
           {k === "stat" && (
-            <div className="border-t border-border pt-3">
-              <SectionHeader label="Style" />
+            <PanelSection id="typography" title="Stat style" defaultOpen>
               <StatStyleControls slideId={slide.id} />
-            </div>
+            </PanelSection>
           )}
-        </div>
+          <SlideBackgroundSection />
+        </>
       );
     }
 
-    // Generic text field — title, subtitle, body, leftTitle, etc.
+    // CAPTION
+    if (k.startsWith("caption:")) {
+      const n = k.split(":")[1];
+      const fieldKey = n === "1" ? "caption" : `caption${n}`;
+      const value = (slide.content as any)[fieldKey] as string | undefined;
+      return (
+        <>
+          <PanelSection id="content" title="Content" defaultOpen>
+            <Input
+              value={value ?? ""}
+              onChange={(e) => setSlideContent(slide.id, fieldKey, e.target.value)}
+              className="h-9 text-sm"
+            />
+          </PanelSection>
+          <SlideBackgroundSection />
+        </>
+      );
+    }
+
+    // GENERIC TEXT
     const value = (slide.content as any)[k] as string | undefined;
     const isLong = k === "body" || k === "leftBody" || k === "rightBody" || /Body$/.test(k);
     const styleField: "title" | "subtitle" | "body" | null =
@@ -247,9 +349,8 @@ export const VoiceoverPanel = () => {
       (k === "body" || k === "leftBody" || k === "rightBody" || /Body$/.test(k)) ? "body" :
       (k === "leftTitle" || k === "rightTitle" || /Title$/.test(k)) ? "title" : null;
     return (
-      <div className="space-y-4">
-        <div>
-          <SectionHeader label={`Content — ${ELEMENT_LABELS[k] ?? k}`} />
+      <>
+        <PanelSection id="content" title="Content" defaultOpen>
           {isLong ? (
             <Textarea
               value={value ?? ""}
@@ -270,19 +371,19 @@ export const VoiceoverPanel = () => {
           >
             <Trash2 className="h-3 w-3 mr-1" /> Clear text
           </Button>
-        </div>
+        </PanelSection>
         {styleField && (
-          <div className="border-t border-border pt-3">
-            <SectionHeader label="Style" />
+          <PanelSection id="typography" title="Typography" defaultOpen>
             <TextStyleControls slideId={slide.id} field={styleField} />
-          </div>
+          </PanelSection>
         )}
         {slide.layout === "quadrant" && /^q[1-4](Title|Body)$/.test(k) && (
-          <div className="border-t border-border pt-3">
+          <PanelSection id="marker" title="Quadrant palette" defaultOpen>
             <QuadrantStyleControls slideId={slide.id} />
-          </div>
+          </PanelSection>
         )}
-      </div>
+        <SlideBackgroundSection />
+      </>
     );
   };
 
@@ -334,13 +435,9 @@ export const VoiceoverPanel = () => {
               Voice
             </label>
             <Select value={voice} onValueChange={setVoice}>
-              <SelectTrigger className="h-9">
-                <SelectValue />
-              </SelectTrigger>
+              <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
               <SelectContent>
-                {VOICES.map((v) => (
-                  <SelectItem key={v} value={v}>{v}</SelectItem>
-                ))}
+                {VOICES.map((v) => <SelectItem key={v} value={v}>{v}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
@@ -353,8 +450,28 @@ export const VoiceoverPanel = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="element" className="flex-1 overflow-y-auto p-4 mt-0">
-          {renderElementEditor()}
+        <TabsContent value="element" className="flex-1 overflow-y-auto mt-0 p-0">
+          {/* Sticky context bar */}
+          <div className="sticky top-0 z-10 bg-card/95 backdrop-blur border-b border-border px-3 py-2 flex items-center justify-between">
+            <div className="min-w-0 flex items-center gap-2">
+              <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Editing</span>
+              <span className="text-xs font-medium text-foreground truncate">
+                {selectedElementKey ? labelFor(selectedElementKey) : "Nothing selected"}
+              </span>
+            </div>
+            {selectedElementKey && (
+              <Button
+                size="sm" variant="ghost"
+                className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
+                onClick={() => selectElement(null)}
+                title="Deselect"
+              >
+                <X className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </div>
+          {renderElementSections()}
+          {!selectedElementKey && <SlideBackgroundSection />}
         </TabsContent>
       </Tabs>
     </div>

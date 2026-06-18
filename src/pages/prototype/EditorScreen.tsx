@@ -240,9 +240,21 @@ export default function EditorScreen() {
 
           <div className="flex-1 bg-muted/40 flex items-center justify-center p-8 min-h-0">
             <div
-              className="w-full h-full max-w-[1100px] aspect-video rounded-xl shadow-premium-xl overflow-hidden border border-border"
+              className="relative w-full h-full max-w-[1100px] aspect-video rounded-xl shadow-premium-xl overflow-hidden border border-border"
               style={{ background: theme.bg }}
             >
+              {slide.content.style?.bgImageUrl && (
+                <div
+                  aria-hidden
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    backgroundImage: `url(${slide.content.style.bgImageUrl})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    opacity: slide.content.style.bgImageOpacity ?? 0.3,
+                  }}
+                />
+              )}
               <SlideView
                 slide={slide}
                 theme={theme}
