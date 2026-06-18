@@ -259,11 +259,26 @@ export const SlideView = ({
     };
 
     if (variant === "list") {
+      const marker = st.bulletMarker ?? "dot";
+      const renderMarker = () => {
+        const base = { color: theme.accent, fontFamily: theme.fontHead, fontWeight: 800, fontSize: 32, lineHeight: 1, marginTop: 12, flexShrink: 0, display: "inline-block", minWidth: 24 } as React.CSSProperties;
+        switch (marker) {
+          case "square": return <span style={{ width: 14, height: 14, background: theme.accent, marginTop: 16, flexShrink: 0 }} />;
+          case "dash":   return <span style={{ ...base }}>—</span>;
+          case "triangle": return <span style={{ ...base }}>▸</span>;
+          case "check":  return <span style={{ ...base }}>✓</span>;
+          case "number": return null; // handled inline
+          case "dot":
+          default:       return <span style={{ width: 14, height: 14, borderRadius: 999, background: theme.accent, marginTop: 16, flexShrink: 0 }} />;
+        }
+      };
       return (
         <ul className="flex flex-col gap-7">
           {items.map((b, i) => (
             <li key={i} className="flex gap-6 items-start">
-              <span style={{ width: 14, height: 14, borderRadius: 999, background: theme.accent, marginTop: 16, flexShrink: 0 }} />
+              {marker === "number"
+                ? <span style={{ color: theme.accent, fontFamily: theme.fontHead, fontWeight: 800, fontSize: 32, lineHeight: 1, marginTop: 12, flexShrink: 0, minWidth: 40 }}>{i + 1}.</span>
+                : renderMarker()}
               <Selectable elKey={`bullet:${i}`} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
                 <EditableText
                   value={b}
