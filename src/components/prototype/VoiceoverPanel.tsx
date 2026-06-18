@@ -329,7 +329,6 @@ export const VoiceoverPanel = () => {
               <StatStyleControls slideId={slide.id} />
             </PanelSection>
           )}
-          <SlideBackgroundSection />
         </>
       );
     }
