@@ -11,7 +11,7 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { VOICES } from "@/lib/prototype/sampleDeck";
 import {
-  Play, Pause, RefreshCw, Mic, Clock, ImageIcon, Trash2, Sparkles, Plus, GripVertical,
+  Play, Pause, RefreshCw, Mic, Clock, ImageIcon, Trash2, Sparkles, Plus, PlusCircle,
   MoreHorizontal, Copy, X, ChevronRight, Upload, Search,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -81,6 +81,7 @@ export const VoiceoverPanel = () => {
   const addBullet = usePrototypeStore((s) => s.addBullet);
   const removeBullet = usePrototypeStore((s) => s.removeBullet);
   const duplicateBullet = usePrototypeStore((s) => s.duplicateBullet);
+  const insertBulletAt = usePrototypeStore((s) => s.insertBulletAt);
   const voice = usePrototypeStore((s) => s.voice);
   const setVoice = usePrototypeStore((s) => s.setVoice);
   const selectedElementKey = usePrototypeStore((s) => s.selectedElementKey);
@@ -197,35 +198,44 @@ export const VoiceoverPanel = () => {
       const bullets = slide.content.bullets ?? [];
       return (
         <>
+          <SlideBackgroundSection />
           <PanelSection id="content" title="Content" defaultOpen>
             <div className="space-y-1.5">
               {bullets.map((b, i) => (
-                <div key={i} className="flex items-center gap-1 group">
-                  <GripVertical className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0 cursor-grab" />
-                  <Input
-                    value={b}
-                    onChange={(e) => setSlideBullet(slide.id, i, e.target.value)}
-                    onFocus={() => selectElement(`bullet:${i}`)}
-                    className="h-8 text-xs"
-                  />
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button size="sm" variant="ghost" className="h-7 w-7 p-0 opacity-40 hover:opacity-100">
-                        <MoreHorizontal className="h-3.5 w-3.5" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-36">
-                      <DropdownMenuItem onClick={() => duplicateBullet(slide.id, i)}>
-                        <Copy className="h-3.5 w-3.5 mr-2" /> Duplicate
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="text-destructive focus:text-destructive"
-                        onClick={() => removeBullet(slide.id, i)}
-                      >
-                        <Trash2 className="h-3.5 w-3.5 mr-2" /> Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                <div key={i} className="space-y-1">
+                  <div className="flex items-center gap-1 group">
+                    <Input
+                      value={b}
+                      onChange={(e) => setSlideBullet(slide.id, i, e.target.value)}
+                      onFocus={() => selectElement(`bullet:${i}`)}
+                      className="h-8 text-xs"
+                    />
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="sm" variant="ghost" className="h-7 w-7 p-0 opacity-40 hover:opacity-100">
+                          <MoreHorizontal className="h-3.5 w-3.5" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-36">
+                        <DropdownMenuItem onClick={() => duplicateBullet(slide.id, i)}>
+                          <Copy className="h-3.5 w-3.5 mr-2" /> Duplicate
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="text-destructive focus:text-destructive"
+                          onClick={() => removeBullet(slide.id, i)}
+                        >
+                          <Trash2 className="h-3.5 w-3.5 mr-2" /> Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => insertBulletAt(slide.id, i)}
+                    className="w-full flex items-center justify-center gap-1 py-0.5 text-[10px] text-muted-foreground/60 hover:text-primary opacity-0 group-hover:opacity-100 hover:opacity-100 transition"
+                  >
+                    <PlusCircle className="h-3 w-3" /> Insert below
+                  </button>
                 </div>
               ))}
               <Button
@@ -240,10 +250,12 @@ export const VoiceoverPanel = () => {
           <PanelSection id="typography" title="Typography" defaultOpen>
             <TextStyleControls slideId={slide.id} field="body" />
           </PanelSection>
-          <PanelSection id="marker" title="Bullet marker">
+          <div className="border-b border-border px-3 pt-3 pb-4">
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">
+              Bullet marker
+            </div>
             <BulletMarkerControls slideId={slide.id} />
-          </PanelSection>
-          <SlideBackgroundSection />
+          </div>
         </>
       );
     }
@@ -257,6 +269,7 @@ export const VoiceoverPanel = () => {
       const isGrid = slide.layout === "image-grid";
       return (
         <>
+          <SlideBackgroundSection />
           <PanelSection id="content" title="Content" defaultOpen>
             <div className="space-y-2">
               <div className="aspect-video rounded overflow-hidden border border-border bg-muted">
@@ -288,7 +301,6 @@ export const VoiceoverPanel = () => {
           <PanelSection id="image" title="Image style" defaultOpen>
             <ImageStyleControls slideId={slide.id} isGrid={isGrid} layout={slide.layout} />
           </PanelSection>
-          <SlideBackgroundSection />
           <ImageReplaceDialog
             open={imgDialogOpen}
             onOpenChange={setImgDialogOpen}
@@ -304,6 +316,7 @@ export const VoiceoverPanel = () => {
       const value = (slide.content as any)[k] as string | undefined;
       return (
         <>
+          <SlideBackgroundSection />
           <PanelSection id="content" title="Content" defaultOpen>
             <Input
               value={value ?? ""}
@@ -316,7 +329,6 @@ export const VoiceoverPanel = () => {
               <StatStyleControls slideId={slide.id} />
             </PanelSection>
           )}
-          <SlideBackgroundSection />
         </>
       );
     }
@@ -328,6 +340,7 @@ export const VoiceoverPanel = () => {
       const value = (slide.content as any)[fieldKey] as string | undefined;
       return (
         <>
+          <SlideBackgroundSection />
           <PanelSection id="content" title="Content" defaultOpen>
             <Input
               value={value ?? ""}
@@ -335,7 +348,6 @@ export const VoiceoverPanel = () => {
               className="h-9 text-sm"
             />
           </PanelSection>
-          <SlideBackgroundSection />
         </>
       );
     }
@@ -350,6 +362,7 @@ export const VoiceoverPanel = () => {
       (k === "leftTitle" || k === "rightTitle" || /Title$/.test(k)) ? "title" : null;
     return (
       <>
+        <SlideBackgroundSection />
         <PanelSection id="content" title="Content" defaultOpen>
           {isLong ? (
             <Textarea
@@ -382,7 +395,6 @@ export const VoiceoverPanel = () => {
             <QuadrantStyleControls slideId={slide.id} />
           </PanelSection>
         )}
-        <SlideBackgroundSection />
       </>
     );
   };

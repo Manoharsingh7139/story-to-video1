@@ -1,12 +1,14 @@
 import { usePrototypeStore } from "@/lib/prototype/store";
 import { THEMES } from "@/lib/prototype/themes";
 import type {
-  SlideStyle, BulletVariant, BulletMarker, TextSize, TextWeight, TextAlign, TextColor,
+  SlideStyle, BulletVariant, BulletMarker, TextSize, TextWeight, TextAlign, TextVAlign, TextColor,
   ImageShape, ImageTreatment, ImageBorder, CaptionPosition, StatSize, StatDecoration,
   LayoutId, OverlayTint, OverlayStrength, SideChoice, QuadrantPalette,
 } from "@/lib/prototype/types";
 import { cn } from "@/lib/utils";
-import { AlignLeft, AlignCenter, AlignRight } from "lucide-react";
+import { AlignLeft, AlignCenter, AlignRight, AlignStartVertical, AlignCenterVertical, AlignEndVertical, Minus, Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const Section = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <div className="space-y-1.5">
@@ -69,16 +71,39 @@ export const TextStyleControls = ({ slideId, field }: TextProps) => {
     { id: "neutral3", bg: "#f59e0b" },
   ];
 
+  const pxKey = `${field}Px` as keyof SlideStyle;
+  const vAlignKey = `${field}VAlign` as keyof SlideStyle;
+  const defaultPx = field === "title" ? 48 : field === "subtitle" ? 28 : 20;
+  const currentPx = (style[pxKey] as number | undefined) ?? defaultPx;
+  const vAlign = (style[vAlignKey] as TextVAlign) ?? "top";
+
   return (
     <div className="space-y-3">
-      <Section label="Size">
-        <ChipRow>
-          {(["s", "m", "l", "xl"] as TextSize[]).map((s) => (
-            <Chip key={s} active={size === s} onClick={() => setSlideStyle(slideId, { [sizeKey]: s } as any)}>
-              {s.toUpperCase()}
-            </Chip>
-          ))}
-        </ChipRow>
+      <Section label="Size (px)">
+        <div className="flex items-center gap-1.5">
+          <Button
+            type="button" size="sm" variant="outline" className="h-8 w-8 p-0"
+            onClick={() => setSlideStyle(slideId, { [pxKey]: Math.max(8, currentPx - 2) } as any)}
+          >
+            <Minus className="h-3 w-3" />
+          </Button>
+          <Input
+            type="number" min={8} max={200}
+            value={currentPx}
+            onChange={(e) => {
+              const v = parseInt(e.target.value, 10);
+              if (!Number.isNaN(v)) setSlideStyle(slideId, { [pxKey]: Math.max(8, Math.min(200, v)) } as any);
+            }}
+            className="h-8 w-16 text-xs text-center"
+          />
+          <Button
+            type="button" size="sm" variant="outline" className="h-8 w-8 p-0"
+            onClick={() => setSlideStyle(slideId, { [pxKey]: Math.min(200, currentPx + 2) } as any)}
+          >
+            <Plus className="h-3 w-3" />
+          </Button>
+          <span className="text-[10px] text-muted-foreground ml-1">px</span>
+        </div>
       </Section>
       <Section label="Weight">
         <ChipRow>
@@ -86,7 +111,7 @@ export const TextStyleControls = ({ slideId, field }: TextProps) => {
           <Chip active={weight === "bold"} onClick={() => setSlideStyle(slideId, { [weightKey]: "bold" } as any)}>Bold</Chip>
         </ChipRow>
       </Section>
-      <Section label="Align">
+      <Section label="Align (horizontal)">
         <ChipRow>
           {([
             { id: "left" as TextAlign, Icon: AlignLeft },
@@ -94,6 +119,19 @@ export const TextStyleControls = ({ slideId, field }: TextProps) => {
             { id: "right" as TextAlign, Icon: AlignRight },
           ]).map(({ id, Icon }) => (
             <Chip key={id} active={align === id} onClick={() => setSlideStyle(slideId, { [alignKey]: id } as any)} title={id}>
+              <Icon className="h-3.5 w-3.5" />
+            </Chip>
+          ))}
+        </ChipRow>
+      </Section>
+      <Section label="Align (vertical)">
+        <ChipRow>
+          {([
+            { id: "top" as TextVAlign, Icon: AlignStartVertical },
+            { id: "middle" as TextVAlign, Icon: AlignCenterVertical },
+            { id: "bottom" as TextVAlign, Icon: AlignEndVertical },
+          ]).map(({ id, Icon }) => (
+            <Chip key={id} active={vAlign === id} onClick={() => setSlideStyle(slideId, { [vAlignKey]: id } as any)} title={id}>
               <Icon className="h-3.5 w-3.5" />
             </Chip>
           ))}

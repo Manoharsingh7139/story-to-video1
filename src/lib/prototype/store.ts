@@ -32,6 +32,7 @@ interface PrototypeState {
   addBullet: (id: string) => void;
   removeBullet: (id: string, index: number) => void;
   duplicateBullet: (id: string, index: number) => void;
+  insertBulletAt: (id: string, index: number) => void;
   reorderBullets: (id: string, from: number, to: number) => void;
   panelSections: Record<string, boolean>;
   setPanelSection: (key: string, open: boolean) => void;
@@ -153,6 +154,18 @@ export const usePrototypeStore = create<PrototypeState>((set, get) => ({
         if (index < 0 || index >= src.length) return s;
         const bullets = [...src];
         bullets.splice(index + 1, 0, src[index]);
+        return { ...s, content: { ...s.content, bullets } };
+      }),
+    })),
+
+  insertBulletAt: (id, index) =>
+    set((state) => ({
+      slides: state.slides.map((s) => {
+        if (s.id !== id) return s;
+        const src = s.content.bullets ?? [];
+        const insertIdx = Math.max(0, Math.min(src.length, index + 1));
+        const bullets = [...src];
+        bullets.splice(insertIdx, 0, "New point");
         return { ...s, content: { ...s.content, bullets } };
       }),
     })),
