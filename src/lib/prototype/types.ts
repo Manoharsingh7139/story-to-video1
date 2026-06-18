@@ -42,6 +42,7 @@ export type QuadrantPalette = "swot" | "neutral" | "accent";
 export type TextSize = "s" | "m" | "l" | "xl";
 export type TextWeight = "regular" | "bold";
 export type TextAlign = "left" | "center" | "right";
+export type TextVAlign = "top" | "middle" | "bottom";
 export type TextColor = "text" | "muted" | "accent" | "neutral1" | "neutral2" | "neutral3";
 export type BulletVariant = "list" | "numbered" | "process" | "cards" | "pillars" | "checklist";
 export type BulletMarker = "dot" | "square" | "dash" | "triangle" | "check" | "number";
