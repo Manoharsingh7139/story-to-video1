@@ -405,3 +405,44 @@ export const StatStyleControls = ({ slideId }: { slideId: string }) => {
     </div>
   );
 };
+
+// ============ BULLET MARKER (simple glyph row) ============
+const MARKERS: { id: BulletMarker; label: string }[] = [
+  { id: "dot", label: "•" },
+  { id: "square", label: "■" },
+  { id: "dash", label: "—" },
+  { id: "triangle", label: "▸" },
+  { id: "check", label: "✓" },
+  { id: "number", label: "1." },
+];
+
+export const BulletMarkerControls = ({ slideId }: { slideId: string }) => {
+  const setSlideStyle = usePrototypeStore((s) => s.setSlideStyle);
+  const style = useStyle(slideId);
+  const variant = style.bulletVariant ?? "list";
+  const current = style.bulletMarker ?? "dot";
+  return (
+    <div className="space-y-3">
+      <Section label="Marker">
+        <ChipRow>
+          {MARKERS.map((m) => (
+            <Chip
+              key={m.id}
+              active={variant === "list" && current === m.id}
+              onClick={() => setSlideStyle(slideId, { bulletVariant: "list", bulletMarker: m.id })}
+              title={m.id}
+            >
+              <span className="inline-block min-w-[16px] text-center">{m.label}</span>
+            </Chip>
+          ))}
+        </ChipRow>
+        {variant !== "list" && (
+          <p className="text-[10px] text-muted-foreground mt-1.5">
+            Picking a marker will switch from "{variant}" to a plain list.
+          </p>
+        )}
+      </Section>
+      <BulletSmartArtPicker slideId={slideId} />
+    </div>
+  );
+};
