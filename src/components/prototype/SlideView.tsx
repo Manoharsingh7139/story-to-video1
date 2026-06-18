@@ -176,28 +176,33 @@ export const SlideView = ({
   const headFont = theme.fontHead;
   const bodyFont = theme.fontBody;
 
+  const vAlignToFlex = (v?: string) => v === "middle" ? "center" : v === "bottom" ? "flex-end" : v === "top" ? "flex-start" : undefined;
+
   const titleStyle = (baseSize: number): React.CSSProperties => ({
     fontFamily: headFont,
     color: resolveColor(st.titleColor, theme, theme.text),
     fontWeight: weightVal(st.titleWeight, 700),
-    fontSize: baseSize * sizeMul(st.titleSize),
+    fontSize: st.titlePx ?? (baseSize * sizeMul(st.titleSize)),
     textAlign: alignVal(st.titleAlign),
     lineHeight: 1.1,
+    ...(st.titleVAlign ? { display: "flex", flexDirection: "column", justifyContent: vAlignToFlex(st.titleVAlign), height: "100%" } : {}),
   });
   const subtitleStyle = (baseSize: number): React.CSSProperties => ({
     fontFamily: bodyFont,
     color: resolveColor(st.subtitleColor, theme, theme.muted),
     fontWeight: weightVal(st.subtitleWeight, 400),
-    fontSize: baseSize * sizeMul(st.subtitleSize),
+    fontSize: st.subtitlePx ?? (baseSize * sizeMul(st.subtitleSize)),
     textAlign: alignVal(st.subtitleAlign),
+    ...(st.subtitleVAlign ? { display: "flex", flexDirection: "column", justifyContent: vAlignToFlex(st.subtitleVAlign), height: "100%" } : {}),
   });
   const bodyStyle = (baseSize: number): React.CSSProperties => ({
     fontFamily: bodyFont,
     color: resolveColor(st.bodyColor, theme, theme.text),
     fontWeight: weightVal(st.bodyWeight, 400),
-    fontSize: baseSize * sizeMul(st.bodySize),
+    fontSize: st.bodyPx ?? (baseSize * sizeMul(st.bodySize)),
     textAlign: alignVal(st.bodyAlign),
     lineHeight: 1.5,
+    ...(st.bodyVAlign ? { display: "flex", flexDirection: "column", justifyContent: vAlignToFlex(st.bodyVAlign), height: "100%" } : {}),
   });
   const mutedStyle = { fontFamily: bodyFont, color: theme.muted };
 
