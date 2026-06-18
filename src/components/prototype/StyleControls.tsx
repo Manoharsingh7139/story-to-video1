@@ -88,9 +88,13 @@ export const TextStyleControls = ({ slideId, field }: TextProps) => {
       </Section>
       <Section label="Align">
         <ChipRow>
-          {(["left", "center", "right"] as TextAlign[]).map((a) => (
-            <Chip key={a} active={align === a} onClick={() => setSlideStyle(slideId, { [alignKey]: a } as any)}>
-              {a[0].toUpperCase() + a.slice(1)}
+          {([
+            { id: "left" as TextAlign, Icon: AlignLeft },
+            { id: "center" as TextAlign, Icon: AlignCenter },
+            { id: "right" as TextAlign, Icon: AlignRight },
+          ]).map(({ id, Icon }) => (
+            <Chip key={id} active={align === id} onClick={() => setSlideStyle(slideId, { [alignKey]: id } as any)} title={id}>
+              <Icon className="h-3.5 w-3.5" />
             </Chip>
           ))}
         </ChipRow>
