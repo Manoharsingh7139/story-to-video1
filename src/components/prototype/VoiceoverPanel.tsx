@@ -362,6 +362,7 @@ export const VoiceoverPanel = () => {
       (k === "leftTitle" || k === "rightTitle" || /Title$/.test(k)) ? "title" : null;
     return (
       <>
+        <SlideBackgroundSection />
         <PanelSection id="content" title="Content" defaultOpen>
           {isLong ? (
             <Textarea
