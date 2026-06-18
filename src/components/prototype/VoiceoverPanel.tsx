@@ -11,7 +11,7 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { VOICES } from "@/lib/prototype/sampleDeck";
 import {
-  Play, Pause, RefreshCw, Mic, Clock, ImageIcon, Trash2, Sparkles, Plus, GripVertical,
+  Play, Pause, RefreshCw, Mic, Clock, ImageIcon, Trash2, Sparkles, Plus, PlusCircle,
   MoreHorizontal, Copy, X, ChevronRight, Upload, Search,
 } from "lucide-react";
 import { toast } from "sonner";
