@@ -316,6 +316,7 @@ export const VoiceoverPanel = () => {
       const value = (slide.content as any)[k] as string | undefined;
       return (
         <>
+          <SlideBackgroundSection />
           <PanelSection id="content" title="Content" defaultOpen>
             <Input
               value={value ?? ""}
