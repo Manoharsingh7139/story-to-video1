@@ -395,7 +395,6 @@ export const VoiceoverPanel = () => {
             <QuadrantStyleControls slideId={slide.id} />
           </PanelSection>
         )}
-        <SlideBackgroundSection />
       </>
     );
   };
