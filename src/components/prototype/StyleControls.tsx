@@ -1,12 +1,14 @@
 import { usePrototypeStore } from "@/lib/prototype/store";
 import { THEMES } from "@/lib/prototype/themes";
 import type {
-  SlideStyle, BulletVariant, BulletMarker, TextSize, TextWeight, TextAlign, TextColor,
+  SlideStyle, BulletVariant, BulletMarker, TextSize, TextWeight, TextAlign, TextVAlign, TextColor,
   ImageShape, ImageTreatment, ImageBorder, CaptionPosition, StatSize, StatDecoration,
   LayoutId, OverlayTint, OverlayStrength, SideChoice, QuadrantPalette,
 } from "@/lib/prototype/types";
 import { cn } from "@/lib/utils";
-import { AlignLeft, AlignCenter, AlignRight } from "lucide-react";
+import { AlignLeft, AlignCenter, AlignRight, AlignStartVertical, AlignCenterVertical, AlignEndVertical, Minus, Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const Section = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <div className="space-y-1.5">
