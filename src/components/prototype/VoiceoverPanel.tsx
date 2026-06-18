@@ -269,6 +269,7 @@ export const VoiceoverPanel = () => {
       const isGrid = slide.layout === "image-grid";
       return (
         <>
+          <SlideBackgroundSection />
           <PanelSection id="content" title="Content" defaultOpen>
             <div className="space-y-2">
               <div className="aspect-video rounded overflow-hidden border border-border bg-muted">
