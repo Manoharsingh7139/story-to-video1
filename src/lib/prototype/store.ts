@@ -32,6 +32,7 @@ interface PrototypeState {
   addBullet: (id: string) => void;
   removeBullet: (id: string, index: number) => void;
   duplicateBullet: (id: string, index: number) => void;
+  insertBulletAt: (id: string, index: number) => void;
   reorderBullets: (id: string, from: number, to: number) => void;
   panelSections: Record<string, boolean>;
   setPanelSection: (key: string, open: boolean) => void;
