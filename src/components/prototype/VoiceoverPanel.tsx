@@ -340,6 +340,7 @@ export const VoiceoverPanel = () => {
       const value = (slide.content as any)[fieldKey] as string | undefined;
       return (
         <>
+          <SlideBackgroundSection />
           <PanelSection id="content" title="Content" defaultOpen>
             <Input
               value={value ?? ""}
@@ -347,7 +348,6 @@ export const VoiceoverPanel = () => {
               className="h-9 text-sm"
             />
           </PanelSection>
-          <SlideBackgroundSection />
         </>
       );
     }
