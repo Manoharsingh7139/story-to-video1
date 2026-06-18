@@ -54,6 +54,9 @@ export type StatDecoration = "none" | "underline" | "circle" | "gradient";
 
 export interface SlideStyle {
   bulletVariant?: BulletVariant;
+  bulletMarker?: BulletMarker;
+  bgImageUrl?: string;
+  bgImageOpacity?: number; // 0..1
   titleSize?: TextSize; titleWeight?: TextWeight; titleAlign?: TextAlign; titleColor?: TextColor; titleAccentBar?: boolean;
   subtitleSize?: TextSize; subtitleWeight?: TextWeight; subtitleAlign?: TextAlign; subtitleColor?: TextColor;
   bodySize?: TextSize; bodyWeight?: TextWeight; bodyAlign?: TextAlign; bodyColor?: TextColor;
