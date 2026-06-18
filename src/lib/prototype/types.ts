@@ -58,9 +58,9 @@ export interface SlideStyle {
   bulletMarker?: BulletMarker;
   bgImageUrl?: string;
   bgImageOpacity?: number; // 0..1
-  titleSize?: TextSize; titleWeight?: TextWeight; titleAlign?: TextAlign; titleColor?: TextColor; titleAccentBar?: boolean;
-  subtitleSize?: TextSize; subtitleWeight?: TextWeight; subtitleAlign?: TextAlign; subtitleColor?: TextColor;
-  bodySize?: TextSize; bodyWeight?: TextWeight; bodyAlign?: TextAlign; bodyColor?: TextColor;
+  titleSize?: TextSize; titleWeight?: TextWeight; titleAlign?: TextAlign; titleVAlign?: TextVAlign; titlePx?: number; titleColor?: TextColor; titleAccentBar?: boolean;
+  subtitleSize?: TextSize; subtitleWeight?: TextWeight; subtitleAlign?: TextAlign; subtitleVAlign?: TextVAlign; subtitlePx?: number; subtitleColor?: TextColor;
+  bodySize?: TextSize; bodyWeight?: TextWeight; bodyAlign?: TextAlign; bodyVAlign?: TextVAlign; bodyPx?: number; bodyColor?: TextColor;
   statSize?: StatSize; statColor?: TextColor; statDecoration?: StatDecoration;
   imageShape?: ImageShape; imageTreatment?: ImageTreatment; imageBorder?: ImageBorder;
   captionPosition?: CaptionPosition;
