@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
-  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
+  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { Slider } from "@/components/ui/slider";
 import { VOICES } from "@/lib/prototype/sampleDeck";
@@ -20,7 +20,14 @@ import {
   TextStyleControls, ImageStyleControls, StatStyleControls,
   QuadrantStyleControls, BulletMarkerControls,
 } from "./StyleControls";
+import { RichTextEditor } from "./RichTextEditor";
+import type { BulletMarker } from "@/lib/prototype/types";
 import { cn } from "@/lib/utils";
+
+const MARKER_GLYPH: Record<BulletMarker, string> = {
+  dot: "•", square: "▪", dash: "–", triangle: "▸", check: "✓", number: "1.",
+};
+const MARKER_OPTIONS: BulletMarker[] = ["dot", "square", "dash", "triangle", "check", "number"];
 
 const ELEMENT_LABELS: Record<string, string> = {
   title: "Title",
