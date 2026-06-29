@@ -208,7 +208,7 @@ export const RichTextEditor = ({
           <Toolbar editor={editor} allowLists={allowLists} />
         </div>
       )}
-      <BubbleMenu editor={editor} tippyOptions={{ duration: 80, placement: "top" }}>
+      <BubbleMenu editor={editor}>
         <Toolbar editor={editor} allowLists={allowLists} />
       </BubbleMenu>
       <div style={contentStyle}>
