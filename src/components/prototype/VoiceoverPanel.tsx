@@ -203,8 +203,8 @@ export const VoiceoverPanel = () => {
     // BULLETS
     if (k === "bullets" || k.startsWith("bullet:")) {
       const bullets = slide.content.bullets ?? [];
-      const perBulletMarkers = slide.style?.bulletMarkers ?? [];
-      const fallbackMarker: BulletMarker = slide.style?.bulletMarker ?? "dot";
+      const perBulletMarkers = slide.content.style?.bulletMarkers ?? [];
+      const fallbackMarker: BulletMarker = slide.content.style?.bulletMarker ?? "dot";
       const setBulletMarker = (i: number, m: BulletMarker | undefined) => {
         const next = [...perBulletMarkers];
         while (next.length <= i) next.push(undefined);
