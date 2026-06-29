@@ -203,48 +203,88 @@ export const VoiceoverPanel = () => {
     // BULLETS
     if (k === "bullets" || k.startsWith("bullet:")) {
       const bullets = slide.content.bullets ?? [];
+      const perBulletMarkers = slide.style?.bulletMarkers ?? [];
+      const fallbackMarker: BulletMarker = slide.style?.bulletMarker ?? "dot";
+      const setBulletMarker = (i: number, m: BulletMarker | undefined) => {
+        const next = [...perBulletMarkers];
+        while (next.length <= i) next.push(undefined);
+        next[i] = m;
+        setSlideStyle(slide.id, { bulletMarkers: next });
+      };
       return (
         <>
           <SlideBackgroundSection />
           <PanelSection id="content" title="Content" defaultOpen>
             <div className="space-y-1.5">
-              {bullets.map((b, i) => (
-                <div key={i} className="space-y-1">
-                  <div className="flex items-center gap-1 group">
-                    <Input
-                      value={b}
-                      onChange={(e) => setSlideBullet(slide.id, i, e.target.value)}
-                      onFocus={() => selectElement(`bullet:${i}`)}
-                      className="h-8 text-xs"
-                    />
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button size="sm" variant="ghost" className="h-7 w-7 p-0 opacity-40 hover:opacity-100">
-                          <MoreHorizontal className="h-3.5 w-3.5" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-36">
-                        <DropdownMenuItem onClick={() => duplicateBullet(slide.id, i)}>
-                          <Copy className="h-3.5 w-3.5 mr-2" /> Duplicate
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-destructive focus:text-destructive"
-                          onClick={() => removeBullet(slide.id, i)}
-                        >
-                          <Trash2 className="h-3.5 w-3.5 mr-2" /> Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+              {bullets.map((b, i) => {
+                const marker = perBulletMarkers[i] ?? fallbackMarker;
+                return (
+                  <div key={i} className="space-y-1 group">
+                    <div className="flex items-start gap-1">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button
+                            type="button"
+                            title="Bullet marker"
+                            className="mt-1 h-7 w-7 inline-flex items-center justify-center rounded border border-border bg-muted/40 hover:bg-muted text-xs font-medium text-foreground shrink-0"
+                          >
+                            {MARKER_GLYPH[marker]}
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start" className="w-36">
+                          <DropdownMenuLabel className="text-[10px] uppercase tracking-wider">Marker</DropdownMenuLabel>
+                          {MARKER_OPTIONS.map((m) => (
+                            <DropdownMenuItem key={m} onClick={() => setBulletMarker(i, m)}>
+                              <span className="w-4 text-center mr-2">{MARKER_GLYPH[m]}</span>
+                              <span className="capitalize">{m}</span>
+                            </DropdownMenuItem>
+                          ))}
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={() => setBulletMarker(i, undefined)} className="text-muted-foreground">
+                            Use default ({MARKER_GLYPH[fallbackMarker]})
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                      <div className="flex-1 min-w-0">
+                        <RichTextEditor
+                          value={b}
+                          onChange={(html) => setSlideBullet(slide.id, i, html)}
+                          onFocus={() => selectElement(`bullet:${i}`)}
+                          singleLine
+                          showToolbar={false}
+                          className="min-h-0"
+                          contentClassName="px-2 py-1 text-xs leading-snug min-h-0"
+                        />
+                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button size="sm" variant="ghost" className="h-7 w-7 p-0 opacity-40 group-hover:opacity-100 shrink-0">
+                            <MoreHorizontal className="h-3.5 w-3.5" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-36">
+                          <DropdownMenuItem onClick={() => duplicateBullet(slide.id, i)}>
+                            <Copy className="h-3.5 w-3.5 mr-2" /> Duplicate
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-destructive focus:text-destructive"
+                            onClick={() => removeBullet(slide.id, i)}
+                          >
+                            <Trash2 className="h-3.5 w-3.5 mr-2" /> Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => insertBulletAt(slide.id, i)}
+                      className="w-full flex items-center justify-center gap-1 py-0.5 text-[10px] text-muted-foreground/60 hover:text-primary opacity-0 group-hover:opacity-100 transition"
+                    >
+                      <PlusCircle className="h-3 w-3" /> Insert below
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => insertBulletAt(slide.id, i)}
-                    className="w-full flex items-center justify-center gap-1 py-0.5 text-[10px] text-muted-foreground/60 hover:text-primary opacity-0 group-hover:opacity-100 hover:opacity-100 transition"
-                  >
-                    <PlusCircle className="h-3 w-3" /> Insert below
-                  </button>
-                </div>
-              ))}
+                );
+              })}
               <Button
                 size="sm" variant="outline"
                 className="w-full h-7 text-xs border-dashed mt-1"
@@ -259,7 +299,7 @@ export const VoiceoverPanel = () => {
           </PanelSection>
           <div className="border-b border-border px-3 pt-3 pb-4">
             <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">
-              Bullet marker
+              Default bullet marker
             </div>
             <BulletMarkerControls slideId={slide.id} />
           </div>
