@@ -1,93 +1,82 @@
-# Side Panel Redesign — Element Editor
+## Rich Text Editing for Slide Elements
 
-## Problem
+Replace the plain `<textarea>` content editor (and the basic contentEditable on the canvas) with an inline rich text editor that lets users select any character/word/line and apply formatting, line breaks, and per-line bullet markers.
 
-The current "Element" tab in the right panel (`VoiceoverPanel.tsx` + `StyleControls.tsx`) stacks every control as a flat list — Background Image, Image search, slider, Slide header, Bullet textarea, Add/Remove buttons all visible at once. With background image, image search, transparency, header, bullets, font color, alignment, size, bullet marker, and add/remove all wedged into one column it reads as a wall of pills and inputs with no hierarchy.
+### UX flow
 
-## Goal
+**1. Two editing surfaces, one model**
+- **On-canvas inline editing** (primary): clicking an element on the slide makes it directly editable in place — exactly where the text lives. A **floating selection toolbar** appears above the highlighted text when the user selects any range.
+- **Side panel mirror** (Element tab → CONTENT): same content shown in a compact rich editor so users can edit even when not double-clicking the slide. Both stay in sync via the store.
 
-Restructure the panel into clear, collapsible groups with a consistent visual rhythm so the user always sees:
-1. **What** element they're editing (sticky context header).
-2. **Content** edits first (text, bullets, image source).
-3. **Style** edits second, grouped by concern (typography, color, layout, marker).
-4. **Slide-level** controls (background, theme override) as a separate section that's always reachable but not mixed with element style.
+**2. Floating selection toolbar (bubble menu)**
+Appears on text selection, anchored above the selection. Contains:
+- **B** Bold · **I** Italic · **U** Underline · **S** Strike
+- **A▾** Text color (swatch popover using theme tokens)
+- **🖍 Highlight** (subtle accent tints)
+- **Size** small numeric stepper (overrides only the selected span)
+- **Link** (for future; hidden v1)
+- **✕ Clear formatting**
 
-## New panel structure
+Hides on blur/escape. Keyboard: ⌘B / ⌘I / ⌘U / ⌘\ (clear).
 
-```
-┌─ Right Panel ──────────────────────────────┐
-│ [ Voiceover ] [ Element ]                  │  ← existing tabs
-├────────────────────────────────────────────┤
-│ ▸ Selected: "Bullet 2"          [Deselect] │  ← sticky context bar
-├────────────────────────────────────────────┤
-│ ▼ CONTENT                                  │  ← Accordion, open by default
-│   • Bullet list editor                     │
-│     ├ drag handle  [text input]  [⋯]       │
-│     │   └ menu: Duplicate / Delete         │
-│     └ [+ Add bullet]                       │
-│                                            │
-│ ▼ TYPOGRAPHY                               │  ← open by default for text
-│   Size      [S] [M] [L] [XL]               │
-│   Weight    [Regular] [Bold]               │
-│   Align     [⬅] [⬌] [➡]   (icon chips)     │
-│   Color     ● ● ● ● ● ● (swatches)         │
-│                                            │
-│ ▸ BULLET MARKER                            │  ← collapsed by default
-│   Style     [• List] [1. Num] [✓ Check]    │
-│   SmartArt  (existing 6-tile grid)         │
-│                                            │
-│ ▸ SLIDE BACKGROUND                         │  ← always present, collapsed
-│   Image preview / Upload / Search          │
-│   Opacity slider                           │
-│   [Remove background]                      │
-└────────────────────────────────────────────┘
-[ Export Video ]                              ← unchanged footer
-```
+**3. Per-line controls (left gutter handle)**
+For multi-line elements (body, bullets), each line/paragraph gets a small **⋮⋮ handle** on hover at the left margin. Clicking it opens a popover:
+- Turn line into: **Paragraph · Bulleted · Numbered · Checklist · Quote**
+- Bullet marker for this line: **• ▪ – ▸ ✓ 1.**
+- Indent / Outdent
+- Duplicate line · Delete line · Insert line below
 
-The same shell adapts per selection:
+This replaces the current global "Bullet marker" section for bullet slides — markers become per-line so users can mix (e.g., 3 bullets + 1 checkmark).
 
-| Selected element | Sections shown (in order) |
-|---|---|
-| Title / Subtitle / generic text | Content · Typography · (Accent bar for title) · Slide background |
-| Bullet / Bullets group | Content (list editor) · Typography · Bullet marker · Slide background |
-| Image | Content (preview, replace, search, remove, caption) · Image style (shape, treatment, border) · Layout (side / overlay) · Slide background |
-| Stat | Content · Stat style (size, color, decoration) · Slide background |
-| Quadrant cell | Content · Typography · Quadrant palette · Slide background |
-| Nothing selected | Slide background (expanded) · hint to click an element |
+**4. Line breaks**
+- **Enter** = new paragraph / new bullet
+- **Shift+Enter** = soft line break inside same paragraph/bullet
+- **Backspace at line start** = outdent or merge into previous
 
-## Visual / interaction rules
+**5. Side-panel CONTENT section redesign**
+- Replace `<textarea>` with the same Tiptap editor in a bordered container
+- Above the editor: a compact **static toolbar** (B I U • 1. ✓ ↶ ↷) for users who prefer toolbar over selection bubble
+- Below: "Clear text" stays. Remove the now-redundant global "Bullet marker" accordion section (markers are per-line).
 
-- **Accordion**: use existing `@/components/ui/accordion` (single-or-multiple, multiple open allowed, state persisted per session in `usePrototypeStore`).
-- **Section header**: small uppercase eyebrow (10px tracked) + chevron, identical to current `SectionHeader` typography so it doesn't feel like a new design system. Hover row highlights.
-- **Sticky context bar** at top of the Element tab shows the friendly element label from `ELEMENT_LABELS` plus a "Deselect" ghost button (calls `selectElement(null)`).
-- **Slide background** moves out of the element-specific block into its own always-available accordion section so it's no longer first thing the user sees when editing a bullet.
-- **Bullet row**: drag handle · input · overflow menu (`⋯`) with Duplicate / Delete instead of an always-visible trash. Keeps the row to one line and removes visual noise. "Add bullet" stays as a full-width dashed button at the end of the list.
-- **Alignment** becomes icon chips (`AlignLeft`, `AlignCenter`, `AlignRight` from lucide) instead of text "Left / Center / Right" — saves a row and matches industry convention.
-- **Color swatches**: keep round swatches but lay them out in a 6-column grid with a tiny "+" tile that opens a popover for custom hex (out of scope for v1, just reserve the slot).
-- **Bullet marker** gets its own section combining `bulletVariant` SmartArt picker + a simpler "marker only" row (•, 1., ✓, –, ▸) for quick changes without committing to full SmartArt.
-- Consistent **12px padding** inside sections, **16px between sections**, hairline borders only between accordion items.
+**6. Visual treatment**
+- Selection toolbar: rounded pill, paper-tone surface, hairline border, subtle shadow, small icons (`h-3.5 w-3.5`), 28px tall — matches the existing editorial palette already in `index.css`.
+- Active state for marks uses `bg-primary/10` + `text-foreground`.
+- All colors via existing semantic tokens (no hardcoded hex).
 
-## Files to change
+### Technical implementation
 
-- `src/components/prototype/VoiceoverPanel.tsx` — rebuild `renderElementEditor()` around the accordion + sticky context bar; move slide background here from wherever it currently lives.
-- `src/components/prototype/StyleControls.tsx` — swap text "Left/Center/Right" chips for icon chips, tighten swatch grid, add `BulletMarkerControls` (marker glyph row).
-- `src/lib/prototype/store.ts` — add `duplicateBullet(slideId, index)` action and `panelSections: Record<string, boolean>` for accordion persistence.
-- `src/lib/prototype/types.ts` — add `bulletMarker` field (`"dot" | "number" | "check" | "dash" | "triangle"`) to `SlideStyle` (separate from `bulletVariant` SmartArt).
-- `src/components/prototype/SlideView.tsx` — honor the new `bulletMarker` field when rendering the `list` variant.
+**Library**
+- Add **Tiptap** (`@tiptap/react`, `@tiptap/starter-kit`, `@tiptap/extension-underline`, `@tiptap/extension-text-style`, `@tiptap/extension-color`, `@tiptap/extension-highlight`, `@tiptap/extension-task-list`, `@tiptap/extension-task-item`, `@tiptap/extension-bubble-menu`). Tiptap is the standard headless rich-text framework for React and ships all needed primitives.
 
-## Out of scope for this pass
+**Data model migration**
+- `SlideContent` text fields (`title`, `subtitle`, `body`, `bullets[]`, `leftBody`, `rightBody`, `q1Body`…`q4Body`, `caption`…) become **HTML strings** instead of plain strings.
+- Backward compatible: a helper `toRichHtml(value)` wraps legacy plain strings in `<p>…</p>` on read so existing decks render unchanged.
+- Per-line bullet marker is encoded as a `data-marker` attribute on `<li>` via a custom Tiptap node attribute, read by `SlideView` to render the chosen glyph.
 
-- Background image upload backend (already mocked).
-- Custom hex color picker (slot reserved, popover deferred).
-- Multi-element selection.
+**New files**
+- `src/components/prototype/RichTextEditor.tsx` — Tiptap wrapper. Props: `value`, `onChange`, `mode: "inline" | "panel"`, `singleLine?`, `allowLists?`. Mounts BubbleMenu with formatting buttons.
+- `src/components/prototype/RichTextToolbar.tsx` — static toolbar variant for the side panel.
+- `src/components/prototype/LineMenu.tsx` — hover gutter popover for line-level actions (turn-into, marker, indent, duplicate, delete).
+- `src/lib/prototype/richText.ts` — `toRichHtml`, `htmlToPlain`, sanitization helpers.
 
-## Build order
+**Edited files**
+- `src/components/prototype/SlideView.tsx` — render text fields with `dangerouslySetInnerHTML` (sanitized), respect per-`<li>` `data-marker`. Replace inline contentEditable with mounting `<RichTextEditor mode="inline">` on the focused element.
+- `src/components/prototype/VoiceoverPanel.tsx` — swap `<textarea>` for `<RichTextEditor mode="panel">`; remove standalone `BulletMarkerControls` section (now per-line).
+- `src/lib/prototype/store.ts` — `setSlideContent` / `setSlideBullet` accept HTML strings; add `setSlideContentHtml` if needed. No structural change to bullets array (still `string[]` of HTML fragments).
+- `src/lib/prototype/types.ts` — note: text fields hold HTML; add `BulletMarker` per-line via inline attribute (no schema change needed).
 
-1. Add accordion shell + sticky context bar (no logic change). Verify all existing controls still reachable.
-2. Move Slide background into its own accordion section; remove duplicates.
-3. Replace alignment text chips with icon chips; tighten swatch + size layout.
-4. Add `BulletMarkerControls`, wire `bulletMarker` through types/store/SlideView.
-5. Replace per-row Trash with `⋯` overflow menu (Duplicate / Delete); add `duplicateBullet` store action.
-6. Polish: persist open/closed accordion state in store; verify panel at 320px width without horizontal scroll.
+**Sanitization**
+- Use a small allowlist sanitizer (DOMPurify already used? if not, add `dompurify`) before rendering. Only allow: `p, br, strong, em, u, s, span[style], ul, ol, li[data-marker], blockquote, mark`.
 
-Approve and I'll implement in this order.
+**Out of scope (v1)**
+- Tables, images inside text, links, collaborative cursors, font-family per span (we already have global font).
+- Migration of stored decks beyond the read-time wrapper.
+
+### Build order
+1. Add Tiptap + DOMPurify deps, create `richText.ts` helpers
+2. Build `RichTextEditor` with BubbleMenu (B/I/U/S, color, clear)
+3. Swap side-panel textarea → `RichTextEditor mode="panel"` with static toolbar
+4. Update `SlideView` to render HTML safely; mount inline editor on focus
+5. Add `LineMenu` for per-line marker + turn-into + indent/duplicate/delete
+6. Remove redundant global "Bullet marker" section
+7. Verify legacy plain-text decks still render via `toRichHtml` shim

@@ -50,23 +50,36 @@ const Selectable = ({ elKey, selectedKey, onSelect, editable, children, style, c
   );
 };
 
+import { RichTextEditor } from "./RichTextEditor";
+import { sanitizeHtml, toRichHtml } from "@/lib/prototype/richText";
+
 const EditableText = ({
   value, onChange, style, multiline = false, active,
 }: {
   value: string; onChange?: (v: string) => void; style?: React.CSSProperties; multiline?: boolean; active?: boolean;
 }) => {
+  const html = toRichHtml(value);
   if (!onChange || !active) {
-    return <div style={style} className={multiline ? "whitespace-pre-wrap" : ""}>{value}</div>;
+    return (
+      <div
+        style={style}
+        className={multiline ? "rt-content whitespace-pre-wrap" : "rt-content"}
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(html) }}
+      />
+    );
   }
   return (
-    <div
-      contentEditable
-      suppressContentEditableWarning
-      onBlur={(e) => onChange(e.currentTarget.textContent ?? "")}
-      onClick={(e) => e.stopPropagation()}
-      style={{ ...style, outline: "none", cursor: "text" }}
-    >
-      {value}
+    <div onClick={(e) => e.stopPropagation()} style={{ cursor: "text" }}>
+      <RichTextEditor
+        value={value}
+        onChange={onChange}
+        inline
+        singleLine={!multiline}
+        showToolbar={false}
+        autoFocus
+        contentStyle={style}
+        contentClassName="rt-content outline-none"
+      />
     </div>
   );
 };
@@ -264,36 +277,38 @@ export const SlideView = ({
     };
 
     if (variant === "list") {
-      const marker = st.bulletMarker ?? "dot";
-      const renderMarker = () => {
+      const defaultMarker = st.bulletMarker ?? "dot";
+      const perMarkers = st.bulletMarkers ?? [];
+      const renderMarker = (m: typeof defaultMarker, idx: number) => {
         const base = { color: theme.accent, fontFamily: theme.fontHead, fontWeight: 800, fontSize: 32, lineHeight: 1, marginTop: 12, flexShrink: 0, display: "inline-block", minWidth: 24 } as React.CSSProperties;
-        switch (marker) {
+        switch (m) {
           case "square": return <span style={{ width: 14, height: 14, background: theme.accent, marginTop: 16, flexShrink: 0 }} />;
           case "dash":   return <span style={{ ...base }}>—</span>;
           case "triangle": return <span style={{ ...base }}>▸</span>;
           case "check":  return <span style={{ ...base }}>✓</span>;
-          case "number": return null; // handled inline
+          case "number": return <span style={{ color: theme.accent, fontFamily: theme.fontHead, fontWeight: 800, fontSize: 32, lineHeight: 1, marginTop: 12, flexShrink: 0, minWidth: 40 }}>{idx + 1}.</span>;
           case "dot":
           default:       return <span style={{ width: 14, height: 14, borderRadius: 999, background: theme.accent, marginTop: 16, flexShrink: 0 }} />;
         }
       };
       return (
         <ul className="flex flex-col gap-7">
-          {items.map((b, i) => (
-            <li key={i} className="flex gap-6 items-start">
-              {marker === "number"
-                ? <span style={{ color: theme.accent, fontFamily: theme.fontHead, fontWeight: 800, fontSize: 32, lineHeight: 1, marginTop: 12, flexShrink: 0, minWidth: 40 }}>{i + 1}.</span>
-                : renderMarker()}
-              <Selectable elKey={`bullet:${i}`} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
-                <EditableText
-                  value={b}
-                  onChange={onEditBullet ? (v) => onEditBullet(i, v) : undefined}
-                  style={{ fontFamily: bodyFont, color: theme.text, fontSize: 36, lineHeight: 1.4 }}
-                  active={editable && selectedKey === `bullet:${i}`}
-                />
-              </Selectable>
-            </li>
-          ))}
+          {items.map((b, i) => {
+            const m = perMarkers[i] ?? defaultMarker;
+            return (
+              <li key={i} className="flex gap-6 items-start">
+                {renderMarker(m, i)}
+                <Selectable elKey={`bullet:${i}`} selectedKey={selectedKey} onSelect={onSelectElement} editable={editable}>
+                  <EditableText
+                    value={b}
+                    onChange={onEditBullet ? (v) => onEditBullet(i, v) : undefined}
+                    style={{ fontFamily: bodyFont, color: theme.text, fontSize: 36, lineHeight: 1.4 }}
+                    active={editable && selectedKey === `bullet:${i}`}
+                  />
+                </Selectable>
+              </li>
+            );
+          })}
         </ul>
       );
     }
