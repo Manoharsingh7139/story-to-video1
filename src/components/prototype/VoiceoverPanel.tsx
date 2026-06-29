@@ -411,19 +411,14 @@ export const VoiceoverPanel = () => {
       <>
         <SlideBackgroundSection />
         <PanelSection id="content" title="Content" defaultOpen>
-          {isLong ? (
-            <Textarea
-              value={value ?? ""}
-              onChange={(e) => setSlideContent(slide.id, k, e.target.value)}
-              className="min-h-[120px] text-sm"
-            />
-          ) : (
-            <Input
-              value={value ?? ""}
-              onChange={(e) => setSlideContent(slide.id, k, e.target.value)}
-              className="h-9 text-sm"
-            />
-          )}
+          <RichTextEditor
+            value={value ?? ""}
+            onChange={(html) => setSlideContent(slide.id, k, html)}
+            singleLine={!isLong}
+            showToolbar
+            contentClassName={isLong ? "min-h-[120px] text-sm leading-relaxed" : "text-sm"}
+          />
+
           <Button
             variant="ghost" size="sm"
             className="w-full mt-1.5 h-7 text-xs text-muted-foreground hover:text-destructive"
