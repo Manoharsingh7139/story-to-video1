@@ -50,23 +50,36 @@ const Selectable = ({ elKey, selectedKey, onSelect, editable, children, style, c
   );
 };
 
+import { RichTextEditor } from "./RichTextEditor";
+import { sanitizeHtml, toRichHtml } from "@/lib/prototype/richText";
+
 const EditableText = ({
   value, onChange, style, multiline = false, active,
 }: {
   value: string; onChange?: (v: string) => void; style?: React.CSSProperties; multiline?: boolean; active?: boolean;
 }) => {
+  const html = toRichHtml(value);
   if (!onChange || !active) {
-    return <div style={style} className={multiline ? "whitespace-pre-wrap" : ""}>{value}</div>;
+    return (
+      <div
+        style={style}
+        className={multiline ? "rt-content whitespace-pre-wrap" : "rt-content"}
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(html) }}
+      />
+    );
   }
   return (
-    <div
-      contentEditable
-      suppressContentEditableWarning
-      onBlur={(e) => onChange(e.currentTarget.textContent ?? "")}
-      onClick={(e) => e.stopPropagation()}
-      style={{ ...style, outline: "none", cursor: "text" }}
-    >
-      {value}
+    <div onClick={(e) => e.stopPropagation()} style={{ cursor: "text" }}>
+      <RichTextEditor
+        value={value}
+        onChange={onChange}
+        inline
+        singleLine={!multiline}
+        showToolbar={false}
+        autoFocus
+        contentStyle={style}
+        contentClassName="rt-content outline-none"
+      />
     </div>
   );
 };
