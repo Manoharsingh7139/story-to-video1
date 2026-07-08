@@ -94,7 +94,7 @@ const MotionPreview = ({ id, active }: { id: MotionId; active: boolean }) => {
       />
       <div className={cn("h-1 w-full rounded-sm", active ? "bg-emerald/40" : "bg-ink-warm/25")} style={anim(1)} />
       <div className={cn("h-1 w-5/6 rounded-sm", active ? "bg-emerald/40" : "bg-ink-warm/25")} style={anim(2)} />
-      <div className={cn("h-1 w-3/5 rounded-sm", active ? "bg-gold", "bg-ink-warm/25")} style={anim(3)} />
+      <div className={cn("h-1 w-3/5 rounded-sm", active ? "bg-gold" : "bg-ink-warm/25")} style={anim(3)} />
     </div>
   );
 };
