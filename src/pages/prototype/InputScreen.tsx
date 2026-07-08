@@ -490,20 +490,35 @@ export default function InputScreen() {
                             style={{ background: t.bg, color: t.text }}
                           >
                             <div className="absolute inset-0 p-3 flex flex-col justify-between">
-                              <div style={{ fontFamily: t.fontHead, fontWeight: 700, fontSize: 13, lineHeight: 1.1 }}>
-                                Aa
+                              <div className="flex items-start justify-between">
+                                <div style={{ fontFamily: t.fontHead, fontWeight: 600, fontSize: 11, lineHeight: 1, letterSpacing: "-0.02em" }}>
+                                  Aa
+                                </div>
+                                <span
+                                  style={{ background: t.accent }}
+                                  className="h-1.5 w-1.5 rounded-full opacity-90"
+                                />
                               </div>
-                              <div className="flex items-center gap-1">
-                                <span style={{ width: 16, height: 2, background: t.accent, borderRadius: 1 }} />
-                                <span style={{ width: 3, height: 3, borderRadius: 999, background: t.muted, opacity: 0.7 }} />
+                              <div>
+                                <div
+                                  style={{ fontFamily: t.fontHead, fontWeight: 600, fontSize: 10, lineHeight: 1.15, letterSpacing: "-0.01em" }}
+                                  className="mb-1.5"
+                                >
+                                  A quiet<br />headline.
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <span style={{ width: 14, height: 1.5, background: t.accent, borderRadius: 1 }} />
+                                  <span style={{ width: 8, height: 1.5, background: t.muted, borderRadius: 1, opacity: 0.5 }} />
+                                </div>
                               </div>
                             </div>
                           </div>
-                          <div className="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/45 to-transparent">
-                            <span className="text-[10px] font-semibold text-white tracking-wider uppercase">
+                          <div className="absolute inset-x-0 bottom-0 px-2 pt-6 pb-1.5 bg-gradient-to-t from-black/55 via-black/20 to-transparent">
+                            <span className="text-[9px] font-semibold text-white tracking-[0.18em] uppercase">
                               {t.name}
                             </span>
                           </div>
+
                           {active && (
                             <span className="absolute top-2 right-2 h-4 w-4 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md">
                               <Check className="h-2.5 w-2.5" strokeWidth={3} />
