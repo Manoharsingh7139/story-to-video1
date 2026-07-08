@@ -467,10 +467,8 @@ export default function InputScreen() {
           <aside className="flex flex-col gap-7 min-h-0 overflow-y-auto pr-1 -mr-1 studio-rail">
             {/* Visual Style */}
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <Eyebrow>Visual style</Eyebrow>
-                <span className="text-[10px] text-muted-foreground/70 font-medium">{activeTheme.name}</span>
-              </div>
+              <SectionLabel step="01" label="Visual style" hint={activeTheme.name} />
+
               <div className="grid grid-cols-3 gap-3">
                 {THEME_LIST.slice(0, 3).map((t) => {
                   const active = themeId === t.id;
