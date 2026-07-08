@@ -12,9 +12,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['"Work Sans"', "Inter", "system-ui", "sans-serif"],
-        display: ['"Instrument Serif"', "Fraunces", "Georgia", "serif"],
-        serif: ['"Instrument Serif"', "Fraunces", "Iowan Old Style", "Georgia", "serif"],
+        sans: ["Inter", "system-ui", "sans-serif"],
+        display: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+        serif: ["Fraunces", "Iowan Old Style", "Georgia", "serif"],
         mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       colors: {
