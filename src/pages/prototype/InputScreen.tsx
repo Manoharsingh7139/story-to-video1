@@ -69,6 +69,36 @@ const Eyebrow = ({ children, className }: { children: React.ReactNode; className
   </h3>
 );
 
+// Numbered editorial section header — italic serif numeral + label
+const SectionLabel = ({
+  step,
+  label,
+  hint,
+  action,
+}: {
+  step: string;
+  label: string;
+  hint?: string;
+  action?: React.ReactNode;
+}) => (
+  <div className="flex items-end justify-between mb-3 gap-3">
+    <div className="flex items-baseline gap-2.5 min-w-0">
+      <span className="editorial-display italic text-primary/70 text-[22px] leading-none tabular-nums translate-y-[1px]">
+        {step}
+      </span>
+      <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-foreground/80">
+        {label}
+      </span>
+      {hint && (
+        <span className="text-[10px] text-muted-foreground/70 font-medium truncate">
+          — {hint}
+        </span>
+      )}
+    </div>
+    {action}
+  </div>
+);
+
 // Tiny animated preview per motion preset
 const MotionPreview = ({ id, active }: { id: MotionId; active: boolean }) => {
   const cfg: Record<MotionId, { dur: string; translate: string; scale: string; ease: string; stagger: number }> = {
