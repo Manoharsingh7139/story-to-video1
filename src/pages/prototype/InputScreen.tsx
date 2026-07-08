@@ -49,17 +49,19 @@ const MOTION_OPTIONS = [
 ] as const;
 type MotionId = typeof MOTION_OPTIONS[number]["id"];
 
-// Warm deterministic gradient per voice name
+// Deterministic warm gradient per voice name — uses primary hue
 const voiceGradient = (name: string) => {
   let h = 0;
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 40;
-  return `linear-gradient(135deg, hsl(${163 - h * 0.4} 55% 40%), hsl(${42 + h * 0.3} 55% 68%))`;
+  const base = 140 + h;
+  const warm = 30 + (h % 20);
+  return `linear-gradient(135deg, hsl(${base} 35% 55%), hsl(${warm} 45% 75%))`;
 };
 
 const Eyebrow = ({ children, className }: { children: React.ReactNode; className?: string }) => (
   <h3
     className={cn(
-      "font-sans text-[10px] font-bold uppercase tracking-[0.22em] text-emerald/50",
+      "text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground/80",
       className,
     )}
   >
@@ -88,13 +90,10 @@ const MotionPreview = ({ id, active }: { id: MotionId; active: boolean }) => {
   return (
     <div className="absolute inset-0 p-2 flex flex-col gap-1 justify-center">
       <style>{keyframes}</style>
-      <div
-        className={cn("h-1.5 w-2/3 rounded-sm", active ? "bg-emerald" : "bg-ink-warm/60")}
-        style={anim(0)}
-      />
-      <div className={cn("h-1 w-full rounded-sm", active ? "bg-emerald/40" : "bg-ink-warm/25")} style={anim(1)} />
-      <div className={cn("h-1 w-5/6 rounded-sm", active ? "bg-emerald/40" : "bg-ink-warm/25")} style={anim(2)} />
-      <div className={cn("h-1 w-3/5 rounded-sm", active ? "bg-gold" : "bg-ink-warm/25")} style={anim(3)} />
+      <div className={cn("h-1.5 w-2/3 rounded-sm", active ? "bg-primary" : "bg-foreground/60")} style={anim(0)} />
+      <div className={cn("h-1 w-full rounded-sm", active ? "bg-primary/40" : "bg-foreground/25")} style={anim(1)} />
+      <div className={cn("h-1 w-5/6 rounded-sm", active ? "bg-primary/40" : "bg-foreground/25")} style={anim(2)} />
+      <div className={cn("h-1 w-3/5 rounded-sm bg-foreground/25")} style={anim(3)} />
     </div>
   );
 };
@@ -222,26 +221,26 @@ export default function InputScreen() {
         actions={
           <button
             onClick={onSkip}
-            className="text-xs text-ink-muted hover:text-emerald inline-flex items-center gap-1.5 transition-colors"
+            className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 transition-colors"
           >
             Skip with sample <ArrowRight className="h-3 w-3" />
           </button>
         }
       />
 
-      {/* Page canvas — cream background */}
-      <div className="flex-1 flex flex-col min-h-0 bg-canvas font-sans text-ink-warm overflow-hidden">
+      {/* Page canvas — uses existing bg-paper */}
+      <div className="flex-1 flex flex-col min-h-0 bg-paper overflow-hidden">
         {/* Hero header */}
         <header className="max-w-[1400px] w-full mx-auto px-8 lg:px-12 pt-8 pb-6 shrink-0">
           <nav className="flex items-center gap-3 mb-3">
-            <span className="text-[10px] font-bold tracking-[0.22em] text-gold uppercase">
+            <span className="text-[10px] font-semibold tracking-[0.22em] text-primary uppercase">
               New video
             </span>
-            <span className="h-px w-8 bg-gold/40" aria-hidden />
-            <div className="flex items-center gap-1.5 text-[11px] font-medium text-emerald/70 uppercase tracking-[0.14em]">
+            <span className="h-px w-8 bg-hairline" aria-hidden />
+            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground uppercase tracking-[0.14em]">
               <span>Library</span>
               <ChevronRight className="h-3 w-3 opacity-50" />
-              <span className="text-emerald">Draft</span>
+              <span className="text-foreground/80">Draft</span>
             </div>
           </nav>
           <input
@@ -250,10 +249,9 @@ export default function InputScreen() {
             placeholder="Untitled video"
             className={cn(
               "w-full bg-transparent border-none outline-none",
-              "font-display italic text-emerald text-[44px] md:text-[56px] leading-[1.02] tracking-tight",
-              "placeholder:text-emerald/25",
-              "focus:ring-0",
-              "border-b border-transparent focus:border-gold/60 transition-colors pb-1",
+              "editorial-display text-ink text-[40px] md:text-[52px]",
+              "placeholder:text-muted-foreground/30",
+              "focus:ring-0 border-b border-transparent focus:border-primary/40 transition-colors pb-1",
             )}
           />
         </header>
@@ -262,13 +260,13 @@ export default function InputScreen() {
         <main className="flex-1 min-h-0 max-w-[1400px] w-full mx-auto px-8 lg:px-12 pb-24 grid grid-cols-1 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-8 items-stretch">
           {/* LEFT — Script paper */}
           <section className="flex flex-col min-h-0">
-            <div className="flex-1 min-h-0 rounded-[20px] bg-panel/50 border border-emerald/[0.08] shadow-[0_2px_20px_-8px_hsl(163_40%_20%_/_0.08)] flex flex-col overflow-hidden">
+            <div className="flex-1 min-h-0 rounded-2xl bg-card border hairline shadow-paper flex flex-col overflow-hidden">
               {/* Tabs */}
-              <div className="flex items-center gap-8 px-8 pt-6 pb-3 border-b border-emerald/[0.08]">
+              <div className="flex items-center gap-6 px-7 pt-5 pb-0 border-b hairline">
                 {([
-                  { id: "paste", label: "Paste Script", icon: FileText },
+                  { id: "paste", label: "Paste script", icon: FileText },
                   { id: "upload", label: "Document", icon: FileUp },
-                  { id: "audio", label: "Audio Link", icon: AudioLines },
+                  { id: "audio", label: "Audio", icon: AudioLines },
                 ] as const).map((t) => {
                   const active = sourceTab === t.id;
                   const Icon = t.icon;
@@ -277,15 +275,15 @@ export default function InputScreen() {
                       key={t.id}
                       onClick={() => setSourceTab(t.id as SourceTab)}
                       className={cn(
-                        "relative pb-3 text-sm font-medium inline-flex items-center gap-2 transition-colors",
-                        active ? "text-emerald" : "text-ink-muted/70 hover:text-emerald",
+                        "relative pb-3 text-[13px] font-medium inline-flex items-center gap-2 transition-colors",
+                        active ? "text-foreground" : "text-muted-foreground hover:text-foreground",
                       )}
                     >
                       <Icon className="h-3.5 w-3.5" />
                       {t.label}
                       <span
                         className={cn(
-                          "absolute -bottom-px left-0 h-[2px] bg-emerald origin-left transition-transform duration-300",
+                          "absolute -bottom-px left-0 h-[2px] bg-primary origin-left transition-transform duration-300",
                           active ? "w-full scale-x-100" : "w-full scale-x-0",
                         )}
                       />
@@ -295,30 +293,26 @@ export default function InputScreen() {
               </div>
 
               {/* Body */}
-              <div className="flex-1 min-h-0 px-8 py-6 relative flex flex-col">
+              <div className="flex-1 min-h-0 px-7 py-6 relative flex flex-col">
                 {sourceTab === "paste" && (
                   <>
                     <textarea
                       value={sourceText}
                       onChange={(e) => setSourceText(e.target.value)}
-                      placeholder="In the future of work, alignment doesn't happen in real-time…"
+                      placeholder="Paste your script — an article, brief, lecture transcript, or chapter notes…"
                       className={cn(
                         "flex-1 min-h-0 w-full bg-transparent resize-none focus:outline-none",
-                        "font-sans text-[16px] leading-[1.75] text-ink-warm/90",
-                        "placeholder:text-emerald/25 placeholder:italic placeholder:font-display placeholder:text-[20px]",
+                        "text-[15px] leading-[1.7] text-foreground",
+                        "placeholder:text-muted-foreground/50",
                       )}
                     />
-                    {/* Sample chip — floats bottom-left when empty */}
                     {isEmpty && (
                       <button
                         onClick={() => setSourceText(SAMPLE_TEXT)}
-                        className="absolute bottom-6 left-8 group inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-paper-white border border-gold/25 shadow-sm hover:border-gold hover:-translate-y-0.5 transition-all"
+                        className="absolute bottom-6 left-7 group inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-background border hairline shadow-sm hover:border-primary/40 hover:-translate-y-0.5 transition-all"
                       >
-                        <span className="relative flex h-1.5 w-1.5">
-                          <span className="absolute inset-0 rounded-full bg-gold animate-ping opacity-60" />
-                          <span className="relative rounded-full h-1.5 w-1.5 bg-gold" />
-                        </span>
-                        <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-gold">
+                        <Sparkles className="h-3 w-3 text-primary" />
+                        <span className="text-[11px] font-medium text-foreground">
                           Try a sample script
                         </span>
                       </button>
@@ -331,31 +325,31 @@ export default function InputScreen() {
                     type="button"
                     onClick={() => docInputRef.current?.click()}
                     className={cn(
-                      "flex-1 min-h-0 rounded-2xl border-2 border-dashed border-emerald/15 hover:border-gold/60",
+                      "flex-1 min-h-0 rounded-xl border-2 border-dashed border-border hover:border-primary/40",
                       "flex flex-col items-center justify-center gap-3 text-center px-6",
-                      "bg-paper-white/40 hover:bg-paper-white/70 transition-all group",
+                      "bg-muted/20 hover:bg-muted/30 transition-all group",
                     )}
                   >
                     {uploadedDoc ? (
                       <>
-                        <div className="h-12 w-12 rounded-full bg-paper-white flex items-center justify-center shadow-sm">
-                          <FileText className="h-5 w-5 text-emerald" />
+                        <div className="h-12 w-12 rounded-full bg-background flex items-center justify-center shadow-sm">
+                          <FileText className="h-5 w-5 text-primary" />
                         </div>
-                        <div className="text-sm font-medium text-ink-warm">{uploadedDoc}</div>
+                        <div className="text-sm font-medium">{uploadedDoc}</div>
                         <button
                           onClick={(e) => { e.stopPropagation(); setUploadedDoc(null); }}
-                          className="text-xs text-ink-muted hover:text-emerald inline-flex items-center gap-1"
+                          className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
                         >
                           <X className="h-3 w-3" /> Remove
                         </button>
                       </>
                     ) : (
                       <>
-                        <div className="h-12 w-12 rounded-full bg-paper-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                          <Upload className="h-5 w-5 text-emerald" />
+                        <div className="h-12 w-12 rounded-full bg-background flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                          <Upload className="h-5 w-5 text-primary" />
                         </div>
-                        <div className="text-sm font-medium text-ink-warm">Drop a file or click to browse</div>
-                        <div className="text-[11px] text-ink-muted">.pdf, .docx, .txt — up to 20 MB</div>
+                        <div className="text-sm font-medium">Drop a file or click to browse</div>
+                        <div className="text-[11px] text-muted-foreground">.pdf, .docx, .txt — up to 20 MB</div>
                       </>
                     )}
                     <input
@@ -373,13 +367,13 @@ export default function InputScreen() {
                     type="button"
                     onClick={() => audioScriptInputRef.current?.click()}
                     className={cn(
-                      "flex-1 min-h-0 rounded-2xl border-2 border-dashed border-emerald/15 hover:border-gold/60",
+                      "flex-1 min-h-0 rounded-xl border-2 border-dashed border-border hover:border-primary/40",
                       "flex flex-col items-center justify-center gap-3 text-center px-6",
-                      "bg-paper-white/40 hover:bg-paper-white/70 transition-all group",
+                      "bg-muted/20 hover:bg-muted/30 transition-all group",
                     )}
                   >
-                    <div className="h-12 w-12 rounded-full bg-paper-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                      <AudioLines className="h-5 w-5 text-emerald" />
+                    <div className="h-12 w-12 rounded-full bg-background flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                      <AudioLines className="h-5 w-5 text-primary" />
                     </div>
                     {uploadedAudioScript ? (
                       <>
@@ -387,22 +381,22 @@ export default function InputScreen() {
                           {Array.from({ length: 40 }).map((_, i) => {
                             const h = 4 + Math.abs(Math.sin(i * 0.7)) * 18 + (i % 3) * 2;
                             return (
-                              <rect key={i} x={i * 5} y={(28 - h) / 2} width={2.5} height={h} rx={1} className="fill-emerald/70" />
+                              <rect key={i} x={i * 5} y={(28 - h) / 2} width={2.5} height={h} rx={1} className="fill-primary/70" />
                             );
                           })}
                         </svg>
-                        <div className="text-sm font-medium text-ink-warm">{uploadedAudioScript}</div>
+                        <div className="text-sm font-medium">{uploadedAudioScript}</div>
                         <button
                           onClick={(e) => { e.stopPropagation(); setUploadedAudioScript(null); }}
-                          className="text-xs text-ink-muted hover:text-emerald inline-flex items-center gap-1"
+                          className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
                         >
                           <X className="h-3 w-3" /> Remove
                         </button>
                       </>
                     ) : (
                       <>
-                        <div className="text-sm font-medium text-ink-warm">Upload an audio recording</div>
-                        <div className="text-[11px] text-ink-muted max-w-sm">
+                        <div className="text-sm font-medium">Upload an audio recording</div>
+                        <div className="text-[11px] text-muted-foreground max-w-sm">
                           .mp3 or .m4a — we'll sync scenes to your audio.
                         </div>
                       </>
@@ -417,11 +411,10 @@ export default function InputScreen() {
                   </button>
                 )}
 
-                {/* char counter */}
                 {sourceTab === "paste" && (
                   <div className="flex justify-end pt-3 shrink-0">
-                    <span className="text-[10px] font-mono font-medium tracking-tight text-ink-muted/60 uppercase tabular-nums">
-                      {charCount.toLocaleString()} / {CHAR_MAX.toLocaleString()} characters
+                    <span className="text-[10px] font-mono text-muted-foreground/60 tabular-nums uppercase tracking-tight">
+                      {charCount.toLocaleString()} / {CHAR_MAX.toLocaleString()} chars
                     </span>
                   </div>
                 )}
@@ -430,53 +423,57 @@ export default function InputScreen() {
           </section>
 
           {/* RIGHT — Studio rail */}
-          <aside className="flex flex-col gap-8 min-h-0 overflow-y-auto pr-1 -mr-1 studio-rail">
+          <aside className="flex flex-col gap-7 min-h-0 overflow-y-auto pr-1 -mr-1 studio-rail">
             {/* Visual Style */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <Eyebrow>Visual Style</Eyebrow>
-                <span className="text-[10px] text-ink-muted/60 font-medium">{activeTheme.name}</span>
+                <Eyebrow>Visual style</Eyebrow>
+                <span className="text-[10px] text-muted-foreground/70 font-medium">{activeTheme.name}</span>
               </div>
               <div className="grid grid-cols-3 gap-3">
                 {THEME_LIST.slice(0, 3).map((t) => {
                   const active = themeId === t.id;
                   return (
-                    <button
-                      key={t.id}
-                      onClick={() => setThemeId(t.id)}
-                      className={cn(
-                        "group relative aspect-[4/5] rounded-xl overflow-hidden border transition-all",
-                        active
-                          ? "border-emerald ring-2 ring-emerald/20 shadow-[0_8px_24px_-12px_hsl(163_80%_20%_/_0.4)]"
-                          : "border-emerald/[0.08] hover:border-gold hover:-translate-y-0.5",
-                      )}
-                      aria-label={t.name}
-                    >
-                      <div
-                        className="absolute inset-0 transition-transform duration-700 group-hover:scale-110"
-                        style={{ background: t.bg, color: t.text }}
-                      >
-                        <div className="absolute inset-0 p-3 flex flex-col justify-between">
-                          <div style={{ fontFamily: t.fontHead, fontWeight: 700, fontSize: 13, lineHeight: 1.1 }}>
-                            Aa
+                    <Tooltip key={t.id}>
+                      <TooltipTrigger asChild>
+                        <button
+                          onClick={() => setThemeId(t.id)}
+                          className={cn(
+                            "group relative aspect-[4/5] rounded-xl overflow-hidden border transition-all",
+                            active
+                              ? "border-primary ring-2 ring-primary/20 shadow-premium"
+                              : "border-border hover:border-primary/40 hover:-translate-y-0.5",
+                          )}
+                          aria-label={t.name}
+                        >
+                          <div
+                            className="absolute inset-0 transition-transform duration-700 group-hover:scale-[1.06]"
+                            style={{ background: t.bg, color: t.text }}
+                          >
+                            <div className="absolute inset-0 p-3 flex flex-col justify-between">
+                              <div style={{ fontFamily: t.fontHead, fontWeight: 700, fontSize: 13, lineHeight: 1.1 }}>
+                                Aa
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <span style={{ width: 16, height: 2, background: t.accent, borderRadius: 1 }} />
+                                <span style={{ width: 3, height: 3, borderRadius: 999, background: t.muted, opacity: 0.7 }} />
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-1">
-                            <span style={{ width: 16, height: 2, background: t.accent, borderRadius: 1 }} />
-                            <span style={{ width: 3, height: 3, borderRadius: 999, background: t.muted, opacity: 0.7 }} />
+                          <div className="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/45 to-transparent">
+                            <span className="text-[10px] font-semibold text-white tracking-wider uppercase">
+                              {t.name}
+                            </span>
                           </div>
-                        </div>
-                      </div>
-                      <div className="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/50 to-transparent">
-                        <span className="text-[10px] font-bold text-white tracking-widest uppercase">
-                          {t.name}
-                        </span>
-                      </div>
-                      {active && (
-                        <span className="absolute top-2 right-2 h-4 w-4 rounded-full bg-emerald text-white flex items-center justify-center shadow-md">
-                          <Check className="h-2.5 w-2.5" strokeWidth={3} />
-                        </span>
-                      )}
-                    </button>
+                          {active && (
+                            <span className="absolute top-2 right-2 h-4 w-4 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md">
+                              <Check className="h-2.5 w-2.5" strokeWidth={3} />
+                            </span>
+                          )}
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="text-[11px]">{t.name}</TooltipContent>
+                    </Tooltip>
                   );
                 })}
               </div>
@@ -484,7 +481,7 @@ export default function InputScreen() {
 
             {/* Motion Presets */}
             <div>
-              <Eyebrow className="mb-3">Motion Presets</Eyebrow>
+              <Eyebrow className="mb-3">Motion</Eyebrow>
               <div className="grid grid-cols-2 gap-2.5">
                 {MOTION_OPTIONS.map((m) => {
                   const active = motion === m.id;
@@ -493,28 +490,28 @@ export default function InputScreen() {
                       key={m.id}
                       onClick={() => setMotion(m.id)}
                       className={cn(
-                        "group relative flex flex-col rounded-xl border overflow-hidden text-left transition-all",
+                        "group relative flex flex-col rounded-xl border overflow-hidden text-left transition-all bg-card",
                         active
-                          ? "border-emerald border-2 bg-paper-white shadow-[0_6px_20px_-10px_hsl(163_80%_20%_/_0.3)]"
-                          : "border-emerald/[0.08] bg-paper-white hover:border-gold hover:-translate-y-0.5",
+                          ? "border-primary ring-2 ring-primary/15 shadow-premium"
+                          : "border-border hover:border-primary/40 hover:-translate-y-0.5",
                       )}
                     >
-                      <div className="relative aspect-[16/9] bg-panel/60 overflow-hidden">
+                      <div className="relative aspect-[16/9] bg-muted/50 overflow-hidden">
                         <MotionPreview id={m.id} active={active} />
                       </div>
-                      <div className="flex items-center justify-between p-3">
-                        <div>
-                          <div className={cn("text-xs font-semibold", active ? "text-emerald" : "text-ink-warm")}>
+                      <div className="flex items-center justify-between px-3 py-2 border-t hairline">
+                        <div className="min-w-0">
+                          <div className={cn("text-xs font-semibold truncate", active ? "text-primary" : "text-foreground")}>
                             {m.name}
                           </div>
-                          <div className="text-[10px] text-ink-muted/70 mt-0.5 leading-tight truncate">
+                          <div className="text-[10px] text-muted-foreground mt-0.5 leading-tight truncate">
                             {m.desc}
                           </div>
                         </div>
                         <div
                           className={cn(
                             "w-2 h-2 rounded-full shrink-0 transition-colors",
-                            active ? "bg-emerald" : "border border-ink-muted/30 group-hover:bg-gold group-hover:border-gold",
+                            active ? "bg-primary" : "border border-border group-hover:bg-primary/60 group-hover:border-primary/60",
                           )}
                         />
                       </div>
@@ -525,13 +522,13 @@ export default function InputScreen() {
             </div>
 
             {/* Voice */}
-            <div className="p-5 bg-panel/40 border border-emerald/[0.08] rounded-2xl space-y-5">
+            <div className="rounded-2xl bg-card border hairline shadow-paper p-5 space-y-5">
               <div className="flex items-center justify-between">
-                <Eyebrow>Voice Synthesis</Eyebrow>
-                <div className="inline-flex p-0.5 bg-paper-white/70 rounded-lg border border-emerald/[0.06]">
+                <Eyebrow>Voice</Eyebrow>
+                <div className="inline-flex p-0.5 bg-muted rounded-md">
                   {([
-                    { id: "ai", label: "AI VOICE", icon: Sparkles },
-                    { id: "upload", label: "MY RECORDING", icon: Mic },
+                    { id: "ai", label: "AI voice over", icon: Sparkles },
+                    { id: "upload", label: "My recording", icon: Mic },
                   ] as const).map((m) => {
                     const active = voiceMode === m.id;
                     return (
@@ -539,13 +536,13 @@ export default function InputScreen() {
                         key={m.id}
                         onClick={() => setVoiceMode(m.id)}
                         className={cn(
-                          "px-2.5 py-1 text-[9px] font-bold rounded-md transition-all inline-flex items-center gap-1",
+                          "px-2.5 h-7 rounded-[5px] text-[11px] font-medium transition-all inline-flex items-center gap-1.5",
                           active
-                            ? "bg-paper-white shadow-sm text-emerald"
-                            : "text-ink-muted/70 hover:text-emerald",
+                            ? "bg-background shadow-sm text-foreground"
+                            : "text-muted-foreground hover:text-foreground",
                         )}
                       >
-                        <m.icon className="h-2.5 w-2.5" />
+                        <m.icon className="h-3 w-3" />
                         {m.label}
                       </button>
                     );
@@ -555,7 +552,6 @@ export default function InputScreen() {
 
               {voiceMode === "ai" ? (
                 <>
-                  {/* Voice picker */}
                   <div className="flex items-center gap-2">
                     <div
                       className="h-9 w-9 rounded-full flex items-center justify-center text-[12px] font-semibold text-white shadow-sm shrink-0"
@@ -564,7 +560,7 @@ export default function InputScreen() {
                       {selectedVoiceName[0]}
                     </div>
                     <Select value={voice} onValueChange={setVoice}>
-                      <SelectTrigger className="h-9 flex-1 min-w-0 text-xs bg-paper-white border-emerald/[0.08] focus:ring-1 focus:ring-gold">
+                      <SelectTrigger className="h-9 flex-1 min-w-0 text-xs">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -577,25 +573,24 @@ export default function InputScreen() {
                     </Select>
                     <button
                       onClick={() => playPreview(voice)}
-                      className="h-9 w-9 rounded-full bg-paper-white border border-emerald/[0.1] flex items-center justify-center hover:bg-gold-soft hover:border-gold text-emerald shrink-0 transition-all"
+                      className="h-9 w-9 rounded-full bg-background border hairline flex items-center justify-center hover:bg-muted hover:border-primary/40 text-foreground shrink-0 transition-all"
                       aria-label={`Preview ${selectedVoiceName}`}
                     >
                       {previewing === voice ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3 ml-0.5" />}
                     </button>
                   </div>
 
-                  {/* Pace + Tone */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <div className="text-[9px] font-bold text-ink-muted/60 uppercase tracking-widest mb-2">Pace</div>
-                      <div className="inline-flex p-0.5 bg-paper-white/70 rounded-lg border border-emerald/[0.06] w-full">
+                      <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-1.5">Pace</div>
+                      <div className="inline-flex p-0.5 bg-muted rounded-md w-full">
                         {PACE_OPTIONS.map((p) => (
                           <button
                             key={p}
                             onClick={() => setPace(p)}
                             className={cn(
-                              "flex-1 px-2 py-1 text-[10px] font-semibold rounded-md transition-all",
-                              pace === p ? "bg-paper-white shadow-sm text-emerald" : "text-ink-muted/70 hover:text-emerald",
+                              "flex-1 px-2 h-6 text-[11px] font-medium rounded-[5px] transition-all",
+                              pace === p ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground",
                             )}
                           >
                             {p}
@@ -604,15 +599,15 @@ export default function InputScreen() {
                       </div>
                     </div>
                     <div>
-                      <div className="text-[9px] font-bold text-ink-muted/60 uppercase tracking-widest mb-2">Tone</div>
-                      <div className="inline-flex p-0.5 bg-paper-white/70 rounded-lg border border-emerald/[0.06] w-full">
+                      <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest mb-1.5">Tone</div>
+                      <div className="inline-flex p-0.5 bg-muted rounded-md w-full">
                         {TONE_OPTIONS.map((p) => (
                           <button
                             key={p}
                             onClick={() => setTone(p)}
                             className={cn(
-                              "flex-1 px-2 py-1 text-[10px] font-semibold rounded-md transition-all",
-                              tone === p ? "bg-paper-white shadow-sm text-gold" : "text-ink-muted/70 hover:text-gold",
+                              "flex-1 px-2 h-6 text-[11px] font-medium rounded-[5px] transition-all",
+                              tone === p ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground",
                             )}
                           >
                             {p}
@@ -626,23 +621,23 @@ export default function InputScreen() {
                 <button
                   type="button"
                   onClick={() => voiceInputRef.current?.click()}
-                  className="w-full rounded-xl border-2 border-dashed border-emerald/15 hover:border-gold px-4 py-4 flex items-center gap-3 cursor-pointer bg-paper-white/40 text-left transition-all"
+                  className="w-full rounded-xl border-2 border-dashed border-border hover:border-primary/40 px-4 py-4 flex items-center gap-3 cursor-pointer bg-muted/20 text-left transition-all"
                 >
-                  <div className="h-9 w-9 rounded-full bg-paper-white flex items-center justify-center shadow-sm shrink-0">
-                    {uploadedVoice ? <AudioLines className="h-4 w-4 text-emerald" /> : <Mic className="h-4 w-4 text-emerald" />}
+                  <div className="h-9 w-9 rounded-full bg-background flex items-center justify-center shadow-sm shrink-0">
+                    {uploadedVoice ? <AudioLines className="h-4 w-4 text-primary" /> : <Mic className="h-4 w-4 text-primary" />}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-[13px] font-medium truncate text-ink-warm">
+                    <div className="text-[13px] font-medium truncate">
                       {uploadedVoice ?? "Upload your voice over"}
                     </div>
-                    <div className="text-[11px] text-ink-muted/80">
+                    <div className="text-[11px] text-muted-foreground">
                       {uploadedVoice ? "Synced to your scenes" : "Drop a lecture, podcast, or take."}
                     </div>
                   </div>
                   {uploadedVoice && (
                     <button
                       onClick={(e) => { e.stopPropagation(); setUploadedVoice(null); }}
-                      className="text-ink-muted hover:text-emerald p-1"
+                      className="text-muted-foreground hover:text-foreground p-1"
                       aria-label="Remove"
                     >
                       <X className="h-3.5 w-3.5" />
@@ -662,39 +657,31 @@ export default function InputScreen() {
         </main>
 
         {/* Sticky action bar */}
-        <footer className="fixed bottom-0 left-0 right-0 z-30 bg-canvas/85 backdrop-blur-xl border-t border-emerald/[0.08]">
-          <div className="max-w-[1400px] mx-auto px-8 lg:px-12 py-4 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-6">
+        <footer className="fixed bottom-0 left-0 right-0 z-30 bg-background/85 backdrop-blur-md border-t hairline">
+          <div className="max-w-[1400px] mx-auto px-8 lg:px-12 py-3 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-5">
               <Metric label="Words" value={wordCount.toLocaleString()} />
-              <span className="w-px h-8 bg-emerald/10" />
+              <span className="w-px h-7 bg-hairline" />
               <Metric label="Scenes" value={`~${slideEstimate}`} />
-              <span className="w-px h-8 bg-emerald/10 hidden sm:block" />
+              <span className="w-px h-7 bg-hairline hidden sm:block" />
               <Metric label="Runtime" value={`~${minutes} min`} className="hidden sm:flex" />
             </div>
 
             <div className="flex items-center gap-3">
-              <span className="text-[10px] text-ink-muted/70 hidden md:inline-flex items-center gap-1 font-medium">
-                <kbd className="px-1.5 py-0.5 rounded border border-emerald/15 bg-paper-white text-[10px] font-mono">⌘</kbd>
-                <kbd className="px-1.5 py-0.5 rounded border border-emerald/15 bg-paper-white text-[10px] font-mono">↵</kbd>
+              <span className="text-[10px] text-muted-foreground hidden md:inline-flex items-center gap-1">
+                <kbd className="px-1.5 py-0.5 rounded border hairline bg-muted text-[10px] font-mono">⌘</kbd>
+                <kbd className="px-1.5 py-0.5 rounded border hairline bg-muted text-[10px] font-mono">↵</kbd>
                 to generate
               </span>
               <Button
                 disabled={!canGenerate}
                 onClick={onGenerate}
-                className={cn(
-                  "group relative overflow-hidden rounded-full px-8 py-6 h-auto",
-                  "bg-emerald hover:bg-emerald-deep text-white",
-                  "shadow-[0_10px_30px_-10px_hsl(163_80%_20%_/_0.5)] hover:shadow-[0_14px_40px_-12px_hsl(163_80%_20%_/_0.6)]",
-                  "transition-all active:scale-[0.98] disabled:opacity-40 disabled:hover:bg-emerald disabled:cursor-not-allowed",
-                )}
+                size="lg"
+                className="group gap-2"
               >
-                <span className="relative z-10 text-sm font-semibold tracking-wide inline-flex items-center gap-3">
-                  Generate Video
-                  <span className="h-6 w-6 rounded-full bg-gold flex items-center justify-center group-hover:translate-x-1 transition-transform">
-                    <ArrowRight className="h-3 w-3 text-emerald-deep" strokeWidth={3} />
-                  </span>
-                </span>
-                <span className="absolute inset-0 bg-gradient-to-r from-emerald via-emerald-deep to-emerald translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 ease-out" />
+                <Sparkles className="h-4 w-4" />
+                Generate video
+                <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
               </Button>
             </div>
           </div>
@@ -706,11 +693,11 @@ export default function InputScreen() {
 
 function Metric({ label, value, className }: { label: string; value: string; className?: string }) {
   return (
-    <div className={cn("flex flex-col", className)}>
-      <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-ink-muted/60">
+    <div className={cn("flex flex-col leading-tight", className)}>
+      <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
         {label}
       </span>
-      <span className="text-sm font-semibold text-emerald tabular-nums font-display">{value}</span>
+      <span className="text-sm font-semibold text-foreground tabular-nums">{value}</span>
     </div>
   );
 }
