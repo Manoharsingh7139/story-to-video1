@@ -212,6 +212,13 @@
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .studio-rail::-webkit-scrollbar { width: 4px; }
+  .studio-rail::-webkit-scrollbar-track { background: transparent; }
+  .studio-rail::-webkit-scrollbar-thumb {
+    background: hsl(var(--emerald) / 0.15);
+    border-radius: 10px;
+  }
 }
 
 @layer components {
