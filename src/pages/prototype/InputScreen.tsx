@@ -740,12 +740,14 @@ export default function InputScreen() {
                 disabled={!canGenerate}
                 onClick={onGenerate}
                 size="lg"
-                className="group gap-2"
+                className="group gap-2 relative overflow-hidden"
               >
-                <Sparkles className="h-4 w-4" />
-                Generate video
-                <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+                <Sparkles className="h-4 w-4 relative" />
+                <span className="relative editorial-display text-[15px] tracking-tight">Compose video</span>
+                <ArrowRight className="h-4 w-4 relative group-hover:translate-x-0.5 transition-transform" />
               </Button>
+
             </div>
           </div>
         </footer>
