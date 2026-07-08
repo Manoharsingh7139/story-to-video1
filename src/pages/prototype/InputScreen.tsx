@@ -69,6 +69,36 @@ const Eyebrow = ({ children, className }: { children: React.ReactNode; className
   </h3>
 );
 
+// Numbered editorial section header — italic serif numeral + label
+const SectionLabel = ({
+  step,
+  label,
+  hint,
+  action,
+}: {
+  step: string;
+  label: string;
+  hint?: string;
+  action?: React.ReactNode;
+}) => (
+  <div className="flex items-end justify-between mb-3 gap-3">
+    <div className="flex items-baseline gap-2.5 min-w-0">
+      <span className="editorial-display italic text-primary/70 text-[22px] leading-none tabular-nums translate-y-[1px]">
+        {step}
+      </span>
+      <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-foreground/80">
+        {label}
+      </span>
+      {hint && (
+        <span className="text-[10px] text-muted-foreground/70 font-medium truncate">
+          — {hint}
+        </span>
+      )}
+    </div>
+    {action}
+  </div>
+);
+
 // Tiny animated preview per motion preset
 const MotionPreview = ({ id, active }: { id: MotionId; active: boolean }) => {
   const cfg: Record<MotionId, { dur: string; translate: string; scale: string; ease: string; stagger: number }> = {
@@ -231,30 +261,41 @@ export default function InputScreen() {
       {/* Page canvas — uses existing bg-paper */}
       <div className="flex-1 flex flex-col min-h-0 bg-paper overflow-hidden">
         {/* Hero header */}
-        <header className="max-w-[1400px] w-full mx-auto px-8 lg:px-12 pt-8 pb-6 shrink-0">
-          <nav className="flex items-center gap-3 mb-3">
-            <span className="text-[10px] font-semibold tracking-[0.22em] text-primary uppercase">
-              New video
+        <header className="max-w-[1400px] w-full mx-auto px-8 lg:px-12 pt-10 pb-6 shrink-0">
+          <nav className="flex items-center gap-3 mb-4">
+            <span className="editorial-display italic text-primary/80 text-[15px] leading-none">
+              New composition
             </span>
-            <span className="h-px w-8 bg-hairline" aria-hidden />
-            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground uppercase tracking-[0.14em]">
+            <span className="h-px flex-1 max-w-[80px] bg-hairline" aria-hidden />
+            <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground uppercase tracking-[0.22em] font-semibold">
               <span>Library</span>
               <ChevronRight className="h-3 w-3 opacity-50" />
               <span className="text-foreground/80">Draft</span>
+              <span className="ml-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/8 border border-primary/15">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-60 animate-ping" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+                </span>
+                <span className="text-[9px] tracking-[0.18em] text-primary/90">Live</span>
+              </span>
             </div>
           </nav>
           <input
             value={projectTitle}
             onChange={(e) => setProjectTitle(e.target.value)}
-            placeholder="Untitled video"
+            placeholder="Untitled composition"
             className={cn(
               "w-full bg-transparent border-none outline-none",
-              "editorial-display text-ink text-[40px] md:text-[52px]",
-              "placeholder:text-muted-foreground/30",
+              "editorial-display text-ink text-[44px] md:text-[58px]",
+              "placeholder:text-muted-foreground/25 placeholder:italic",
               "focus:ring-0 border-b border-transparent focus:border-primary/40 transition-colors pb-1",
             )}
           />
+          <p className="mt-2 text-[12px] text-muted-foreground/80 font-serif italic">
+            A short piece composed from your words. Set the script, choose a voice, let motion do the rest.
+          </p>
         </header>
+
 
         {/* Main split canvas */}
         <main className="flex-1 min-h-0 max-w-[1400px] w-full mx-auto px-8 lg:px-12 pb-24 grid grid-cols-1 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-8 items-stretch">
@@ -426,10 +467,8 @@ export default function InputScreen() {
           <aside className="flex flex-col gap-7 min-h-0 overflow-y-auto pr-1 -mr-1 studio-rail">
             {/* Visual Style */}
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <Eyebrow>Visual style</Eyebrow>
-                <span className="text-[10px] text-muted-foreground/70 font-medium">{activeTheme.name}</span>
-              </div>
+              <SectionLabel step="01" label="Visual style" hint={activeTheme.name} />
+
               <div className="grid grid-cols-3 gap-3">
                 {THEME_LIST.slice(0, 3).map((t) => {
                   const active = themeId === t.id;
@@ -451,20 +490,35 @@ export default function InputScreen() {
                             style={{ background: t.bg, color: t.text }}
                           >
                             <div className="absolute inset-0 p-3 flex flex-col justify-between">
-                              <div style={{ fontFamily: t.fontHead, fontWeight: 700, fontSize: 13, lineHeight: 1.1 }}>
-                                Aa
+                              <div className="flex items-start justify-between">
+                                <div style={{ fontFamily: t.fontHead, fontWeight: 600, fontSize: 11, lineHeight: 1, letterSpacing: "-0.02em" }}>
+                                  Aa
+                                </div>
+                                <span
+                                  style={{ background: t.accent }}
+                                  className="h-1.5 w-1.5 rounded-full opacity-90"
+                                />
                               </div>
-                              <div className="flex items-center gap-1">
-                                <span style={{ width: 16, height: 2, background: t.accent, borderRadius: 1 }} />
-                                <span style={{ width: 3, height: 3, borderRadius: 999, background: t.muted, opacity: 0.7 }} />
+                              <div>
+                                <div
+                                  style={{ fontFamily: t.fontHead, fontWeight: 600, fontSize: 10, lineHeight: 1.15, letterSpacing: "-0.01em" }}
+                                  className="mb-1.5"
+                                >
+                                  A quiet<br />headline.
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <span style={{ width: 14, height: 1.5, background: t.accent, borderRadius: 1 }} />
+                                  <span style={{ width: 8, height: 1.5, background: t.muted, borderRadius: 1, opacity: 0.5 }} />
+                                </div>
                               </div>
                             </div>
                           </div>
-                          <div className="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/45 to-transparent">
-                            <span className="text-[10px] font-semibold text-white tracking-wider uppercase">
+                          <div className="absolute inset-x-0 bottom-0 px-2 pt-6 pb-1.5 bg-gradient-to-t from-black/55 via-black/20 to-transparent">
+                            <span className="text-[9px] font-semibold text-white tracking-[0.18em] uppercase">
                               {t.name}
                             </span>
                           </div>
+
                           {active && (
                             <span className="absolute top-2 right-2 h-4 w-4 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md">
                               <Check className="h-2.5 w-2.5" strokeWidth={3} />
@@ -481,7 +535,8 @@ export default function InputScreen() {
 
             {/* Motion Presets */}
             <div>
-              <Eyebrow className="mb-3">Motion</Eyebrow>
+              <SectionLabel step="02" label="Motion" hint={MOTION_OPTIONS.find(m => m.id === motion)?.name} />
+
               <div className="grid grid-cols-2 gap-2.5">
                 {MOTION_OPTIONS.map((m) => {
                   const active = motion === m.id;
@@ -522,33 +577,39 @@ export default function InputScreen() {
             </div>
 
             {/* Voice */}
-            <div className="rounded-2xl bg-card border hairline shadow-paper p-5 space-y-5">
-              <div className="flex items-center justify-between">
-                <Eyebrow>Voice</Eyebrow>
-                <div className="inline-flex p-0.5 bg-muted rounded-md">
-                  {([
-                    { id: "ai", label: "AI voice over", icon: Sparkles },
-                    { id: "upload", label: "My recording", icon: Mic },
-                  ] as const).map((m) => {
-                    const active = voiceMode === m.id;
-                    return (
-                      <button
-                        key={m.id}
-                        onClick={() => setVoiceMode(m.id)}
-                        className={cn(
-                          "px-2.5 h-7 rounded-[5px] text-[11px] font-medium transition-all inline-flex items-center gap-1.5",
-                          active
-                            ? "bg-background shadow-sm text-foreground"
-                            : "text-muted-foreground hover:text-foreground",
-                        )}
-                      >
-                        <m.icon className="h-3 w-3" />
-                        {m.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+            <div>
+              <SectionLabel
+                step="03"
+                label="Voice"
+                hint={voiceMode === "ai" ? "Synthesized" : "Your recording"}
+                action={
+                  <div className="inline-flex p-0.5 bg-muted rounded-md">
+                    {([
+                      { id: "ai", label: "AI", icon: Sparkles },
+                      { id: "upload", label: "Mine", icon: Mic },
+                    ] as const).map((m) => {
+                      const active = voiceMode === m.id;
+                      return (
+                        <button
+                          key={m.id}
+                          onClick={() => setVoiceMode(m.id)}
+                          className={cn(
+                            "px-2 h-6 rounded-[5px] text-[10px] font-semibold uppercase tracking-wider transition-all inline-flex items-center gap-1",
+                            active
+                              ? "bg-background shadow-sm text-foreground"
+                              : "text-muted-foreground hover:text-foreground",
+                          )}
+                        >
+                          <m.icon className="h-3 w-3" />
+                          {m.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                }
+              />
+              <div className="rounded-2xl bg-card border hairline shadow-paper p-5 space-y-5">
+
 
               {voiceMode === "ai" ? (
                 <>
@@ -652,8 +713,10 @@ export default function InputScreen() {
                   />
                 </button>
               )}
+              </div>
             </div>
           </aside>
+
         </main>
 
         {/* Sticky action bar */}
@@ -677,12 +740,14 @@ export default function InputScreen() {
                 disabled={!canGenerate}
                 onClick={onGenerate}
                 size="lg"
-                className="group gap-2"
+                className="group gap-2 relative overflow-hidden"
               >
-                <Sparkles className="h-4 w-4" />
-                Generate video
-                <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+                <Sparkles className="h-4 w-4 relative" />
+                <span className="relative editorial-display text-[15px] tracking-tight">Compose video</span>
+                <ArrowRight className="h-4 w-4 relative group-hover:translate-x-0.5 transition-transform" />
               </Button>
+
             </div>
           </div>
         </footer>
