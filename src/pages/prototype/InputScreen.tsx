@@ -562,33 +562,39 @@ export default function InputScreen() {
             </div>
 
             {/* Voice */}
-            <div className="rounded-2xl bg-card border hairline shadow-paper p-5 space-y-5">
-              <div className="flex items-center justify-between">
-                <Eyebrow>Voice</Eyebrow>
-                <div className="inline-flex p-0.5 bg-muted rounded-md">
-                  {([
-                    { id: "ai", label: "AI voice over", icon: Sparkles },
-                    { id: "upload", label: "My recording", icon: Mic },
-                  ] as const).map((m) => {
-                    const active = voiceMode === m.id;
-                    return (
-                      <button
-                        key={m.id}
-                        onClick={() => setVoiceMode(m.id)}
-                        className={cn(
-                          "px-2.5 h-7 rounded-[5px] text-[11px] font-medium transition-all inline-flex items-center gap-1.5",
-                          active
-                            ? "bg-background shadow-sm text-foreground"
-                            : "text-muted-foreground hover:text-foreground",
-                        )}
-                      >
-                        <m.icon className="h-3 w-3" />
-                        {m.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+            <div>
+              <SectionLabel
+                step="03"
+                label="Voice"
+                hint={voiceMode === "ai" ? "Synthesized" : "Your recording"}
+                action={
+                  <div className="inline-flex p-0.5 bg-muted rounded-md">
+                    {([
+                      { id: "ai", label: "AI", icon: Sparkles },
+                      { id: "upload", label: "Mine", icon: Mic },
+                    ] as const).map((m) => {
+                      const active = voiceMode === m.id;
+                      return (
+                        <button
+                          key={m.id}
+                          onClick={() => setVoiceMode(m.id)}
+                          className={cn(
+                            "px-2 h-6 rounded-[5px] text-[10px] font-semibold uppercase tracking-wider transition-all inline-flex items-center gap-1",
+                            active
+                              ? "bg-background shadow-sm text-foreground"
+                              : "text-muted-foreground hover:text-foreground",
+                          )}
+                        >
+                          <m.icon className="h-3 w-3" />
+                          {m.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                }
+              />
+              <div className="rounded-2xl bg-card border hairline shadow-paper p-5 space-y-5">
+
 
               {voiceMode === "ai" ? (
                 <>
