@@ -261,30 +261,41 @@ export default function InputScreen() {
       {/* Page canvas — uses existing bg-paper */}
       <div className="flex-1 flex flex-col min-h-0 bg-paper overflow-hidden">
         {/* Hero header */}
-        <header className="max-w-[1400px] w-full mx-auto px-8 lg:px-12 pt-8 pb-6 shrink-0">
-          <nav className="flex items-center gap-3 mb-3">
-            <span className="text-[10px] font-semibold tracking-[0.22em] text-primary uppercase">
-              New video
+        <header className="max-w-[1400px] w-full mx-auto px-8 lg:px-12 pt-10 pb-6 shrink-0">
+          <nav className="flex items-center gap-3 mb-4">
+            <span className="editorial-display italic text-primary/80 text-[15px] leading-none">
+              New composition
             </span>
-            <span className="h-px w-8 bg-hairline" aria-hidden />
-            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground uppercase tracking-[0.14em]">
+            <span className="h-px flex-1 max-w-[80px] bg-hairline" aria-hidden />
+            <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground uppercase tracking-[0.22em] font-semibold">
               <span>Library</span>
               <ChevronRight className="h-3 w-3 opacity-50" />
               <span className="text-foreground/80">Draft</span>
+              <span className="ml-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/8 border border-primary/15">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-60 animate-ping" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+                </span>
+                <span className="text-[9px] tracking-[0.18em] text-primary/90">Live</span>
+              </span>
             </div>
           </nav>
           <input
             value={projectTitle}
             onChange={(e) => setProjectTitle(e.target.value)}
-            placeholder="Untitled video"
+            placeholder="Untitled composition"
             className={cn(
               "w-full bg-transparent border-none outline-none",
-              "editorial-display text-ink text-[40px] md:text-[52px]",
-              "placeholder:text-muted-foreground/30",
+              "editorial-display text-ink text-[44px] md:text-[58px]",
+              "placeholder:text-muted-foreground/25 placeholder:italic",
               "focus:ring-0 border-b border-transparent focus:border-primary/40 transition-colors pb-1",
             )}
           />
+          <p className="mt-2 text-[12px] text-muted-foreground/80 font-serif italic">
+            A short piece composed from your words. Set the script, choose a voice, let motion do the rest.
+          </p>
         </header>
+
 
         {/* Main split canvas */}
         <main className="flex-1 min-h-0 max-w-[1400px] w-full mx-auto px-8 lg:px-12 pb-24 grid grid-cols-1 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-8 items-stretch">
