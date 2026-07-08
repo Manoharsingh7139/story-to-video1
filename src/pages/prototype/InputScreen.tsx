@@ -520,7 +520,8 @@ export default function InputScreen() {
 
             {/* Motion Presets */}
             <div>
-              <Eyebrow className="mb-3">Motion</Eyebrow>
+              <SectionLabel step="02" label="Motion" hint={MOTION_OPTIONS.find(m => m.id === motion)?.name} />
+
               <div className="grid grid-cols-2 gap-2.5">
                 {MOTION_OPTIONS.map((m) => {
                   const active = motion === m.id;
