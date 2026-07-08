@@ -16,6 +16,18 @@
     --surface: 42 30% 96%;
     --hairline: 35 14% 82%;
 
+    /* Studio Workbench — editorial cream + emerald + gold */
+    --canvas: 45 60% 92%;
+    --panel: 37 24% 89%;
+    --paper-white: 40 40% 98%;
+    --emerald: 163 80% 26%;
+    --emerald-deep: 163 82% 16%;
+    --emerald-soft: 163 40% 94%;
+    --gold: 42 55% 54%;
+    --gold-soft: 42 55% 92%;
+    --ink-warm: 30 12% 15%;
+    --ink-muted: 30 8% 42%;
+
     --background: 45 20% 98%;
     --foreground: 160 15% 15%;
 
@@ -200,6 +212,13 @@
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  .studio-rail::-webkit-scrollbar { width: 4px; }
+  .studio-rail::-webkit-scrollbar-track { background: transparent; }
+  .studio-rail::-webkit-scrollbar-thumb {
+    background: hsl(var(--emerald) / 0.15);
+    border-radius: 10px;
+  }
 }
 
 @layer components {

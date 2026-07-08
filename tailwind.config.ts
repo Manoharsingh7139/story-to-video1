@@ -12,9 +12,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
-        display: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
-        serif: ["Fraunces", "Iowan Old Style", "Georgia", "serif"],
+        sans: ['"Work Sans"', "Inter", "system-ui", "sans-serif"],
+        display: ['"Instrument Serif"', "Fraunces", "Georgia", "serif"],
+        serif: ['"Instrument Serif"', "Fraunces", "Iowan Old Style", "Georgia", "serif"],
         mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       colors: {
@@ -79,6 +79,20 @@ export default {
         ink: "hsl(var(--ink))",
         surface: "hsl(var(--surface))",
         hairline: "hsl(var(--hairline))",
+        canvas: "hsl(var(--canvas))",
+        panel: "hsl(var(--panel))",
+        "paper-white": "hsl(var(--paper-white))",
+        emerald: {
+          DEFAULT: "hsl(var(--emerald))",
+          deep: "hsl(var(--emerald-deep))",
+          soft: "hsl(var(--emerald-soft))",
+        },
+        gold: {
+          DEFAULT: "hsl(var(--gold))",
+          soft: "hsl(var(--gold-soft))",
+        },
+        "ink-warm": "hsl(var(--ink-warm))",
+        "ink-muted": "hsl(var(--ink-muted))",
       },
       borderRadius: {
         lg: "var(--radius)",
