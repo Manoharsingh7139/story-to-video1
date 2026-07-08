@@ -698,8 +698,10 @@ export default function InputScreen() {
                   />
                 </button>
               )}
+              </div>
             </div>
           </aside>
+
         </main>
 
         {/* Sticky action bar */}
